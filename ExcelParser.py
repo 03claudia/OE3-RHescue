@@ -1,5 +1,8 @@
 
 
+from Measured import Measured
+from Measurer import Measurer
+from Question import Question
 from Types import Type
 from layout import Layout
 import pandas as pd
@@ -12,13 +15,35 @@ class ExcelParser:
     def parse(self):
         self.result: list = []
 
+        # Pega em todas as perguntas do layout
         questions = self.layout.get_type(Type.QUESTIONS)[0]["questions"]
+
+        questions_index_list: list = []
+        for question in questions:
+            questions_index_list.append(self.__find_index_of_column(question["label"]))
+
+        question_list: list[Question] = []
+        for question in questions_index_list:
+            question_list.append(Question(question[0], question[1]))
+        
 
         # Pega em todos os avaliadores
         measurer_label = self.layout.get_type(Type.MEASURER)[0]
         measurer_index = self.__find_index_of_column(measurer_label["label"])
-        print(measurer_index)
-        measurer = self.__get_column_values(measurer_index[0])
+        measurers = self.__get_column_values(measurer_index[0])
+
+        measurers_list: list[Measurer] = []
+        for measurer in measurers:
+            measurers_list.append(Measurer(measurer[1], measurer[0]))
+        
+        measured_names = self.layout.get_type(Type.MEASURED)[0]["names"]
+        measured_list: list[Measured] = []
+        for measured in measured_names:
+            measured_list.append(Measured(measured, question_list))
+             
+        # Cria as perguntas todas
+
+
 
         self.__process_questions(questions, measurer)
 
