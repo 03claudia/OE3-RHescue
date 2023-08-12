@@ -12,15 +12,15 @@ class ExcelParser:
     def parse(self):
         self.result: list = []
 
-        layout = self.layout.get_data()
-        questions = self.layout.get_type(Type.QUESTIONS)[0]
+        questions = self.layout.get_type(Type.QUESTIONS)[0]["questions"]
 
         # Pega em todos os avaliadores
         measurer_label = self.layout.get_type(Type.MEASURER)[0]
         measurer_index = self.__find_index_of_column(measurer_label["label"])
-        measurer = self.__get_column_values(measurer_index)
+        print(measurer_index)
+        measurer = self.__get_column_values(measurer_index[0])
 
-        print(measurer)
+        self.__process_questions(questions, measurer)
 
 
 
@@ -35,26 +35,33 @@ class ExcelParser:
             print(e)
             exit(1)
 
-    def __compact_results(self, questions, measured) -> list:
-        result = []
-        columns = self.target_file.columns
-
-        result = self.layout
-        for question in questions["questions"]:
-            col_index = self.__find_index_of_column(question["label"])
-
-        print(questions["questions"])
+    def __process_questions(self, questions: list, measurer: list) -> list:
+        for question in questions:
+            print(self.__find_index_of_column(question["label"]))
+        
     
-    def __find_index_of_column(self, label: str) -> int:
+    def __find_index_of_column(self, label: str) -> list | int:
         label_to_find = label
 
         matching_columns = [col for col in self.target_file.columns if label_to_find.lower() in col.lower()]
 
+        result = []
         if matching_columns:
             for col_name in matching_columns:
-                return self.target_file.columns.get_loc(col_name)
+                col_index = self.target_file.columns.get_loc(col_name)
+                result.append((col_index, col_name))
         else:
             print(f"No column matching label '{label_to_find}' found.")
+        
+        if len(result) == 1:
+            return result[0]
+        
+        return result
 
     def __get_column_values(self, index: int) -> list:
-        return self.target_file.iloc[:, index].values.tolist()
+        values = self.target_file.iloc[:, index].values.tolist()
+        indexes = [i for i in range(len(values))]
+        return list(zip(indexes, values))
+    
+    def __get_questions_index_of_measured(self, measured: str) -> list:
+        pass        
