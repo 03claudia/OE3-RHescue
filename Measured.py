@@ -11,7 +11,7 @@ class Measured:
         self.__questions = self.__my_questions(questions).copy()
     
     def __my_questions(self, questions: list[Question]) -> list[Question]:
-        return [question for question in questions if self.name.lower() in question.get_question().lower()]
+        return [question for question in questions if self.name.lower() in question.get_question()]
     
     def get_questions(self) -> list[Question]:
         return self.__questions

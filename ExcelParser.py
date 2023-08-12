@@ -40,14 +40,13 @@ class ExcelParser:
         measured_list: list[Measured] = []
         for measured in measured_names:
             measured_list.append(Measured(measured, question_list))
+
+        for measured in measured_list:
+            for measurer in measurers_list:
+                measurer.evaluated_with(measured)
              
-        # Cria as perguntas todas
-
-
-
-        self.__process_questions(questions, measurer)
-
-
+        for measured in measured_list:
+            print(measured.get_questions())
 
     def __read_excel(self) -> pd.DataFrame:
         try:

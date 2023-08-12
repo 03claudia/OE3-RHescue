@@ -1,9 +1,10 @@
 
 
+
 class Question:
     grades: list[tuple[float | int, 'Measurer']]
 
-    def __init__(self, pos_in_document, question) -> None:
+    def __init__(self, pos_in_document, question: tuple[int, "Measured"]) -> None:
         self.question = question
         self.pos_in_document = pos_in_document
         self.grades = []
@@ -11,7 +12,7 @@ class Question:
     def __str__(self):
         return f"Question: {self.text}\nAnswer: {self.answer}\n"
     
-    def get_question(self) -> str:
+    def get_question(self) -> tuple[int, "Measured"]:
         return self.question
     
     def is_question_equal(self, question):
