@@ -3,16 +3,14 @@
 
 from typing import Union
 
-
 class Question:
-    grade: Union[float, int]
-    measurer: 'Measurer'
+    grade_and_measurer_list: list[Union[float, int], 'Measurer']
 
     def __init__(self, pos_in_document, question: str) -> None:
         self.question = question
         self.pos_in_document = pos_in_document
         self.grades = []
-        self.measurer = None
+        self.grade_and_measurer_list = []
 
     def __str__(self):
         return f"Question: {self.question}\nAnswers: {self.grades}\n"
@@ -28,11 +26,16 @@ class Question:
 
     def set_grade_number(self, grade: Union[float, int], measurer: 'Measurer'):
         if not grade < 0:
-            self.measurer = measurer
-            self.grade = grade
+            self.grade_and_measurer_list.append((grade, measurer))
 
-    def get_grade(self) -> Union[float, int]:
-        return self.grade
+    def get_grades(self) -> list[Union[float, int], 'Measurer']:
+        return list(self.grade_and_measurer_list)
     
-    def get_measurer(self) -> 'Measurer':
-        return self.measurer
+    def get_measurer_grade(self, measurer: 'Measurer') -> Union[float, int]:
+        for grade, measurer_h in self.grade_and_measurer_list:
+            if measurer_h.get_name() == measurer.get_name():
+                return grade
+        return -1
+    
+    def __copy__(self) -> 'Question':
+        return Question(self.pos_in_document, self.question)

@@ -28,3 +28,6 @@ class Measurer:
     
     def copy(self) -> 'Measurer':
         return Measurer(self.name, self.row_index)
+    
+    def __str__(self) -> str:
+        return f"Measurer: {self.name}"

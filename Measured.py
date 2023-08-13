@@ -7,7 +7,7 @@ class Measured:
 
     def __init__(self, name: str, all_questions: list[Question]) -> None:
         self.name = name
-        self.__questions = self.__my_questions(all_questions).copy()
+        self.__questions = list(self.__my_questions(all_questions))
     
     def __my_questions(self, questions: list[Question]) -> list[Question]:
         result: list[Question] = []

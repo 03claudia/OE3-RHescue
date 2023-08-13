@@ -38,7 +38,7 @@ class ExcelParser:
         
         measured_list: list[Measured] = []
         for measured_name in measured_names:
-            measured_list.append(Measured(measured_name, question_list))
+            measured_list.append(Measured(measured_name, question_list.copy()))
 
         for measured in measured_list:
             for measurer in measurers_list:
@@ -46,7 +46,8 @@ class ExcelParser:
              
         for measured in measured_list:
             for question in measured.get_questions():
-                print(f"\n\nAvaliado [{measured.get_name()}]\nAvaliador [{question.get_measurer().get_name()}]\n{question.get_question()}\nNota {question.get_grade()}")
+                for grade, measurer in question.get_grades():
+                    print(f"\n\nAvaliado [{measured.get_name()}]\nAvaliador [{measurer.get_name()}]\n{question.get_question()}\nNota {grade}")
 
     def __read_excel(self) -> pd.DataFrame:
         try:
