@@ -1,6 +1,3 @@
-
-
-
 from typing import Union
 
 class Question:

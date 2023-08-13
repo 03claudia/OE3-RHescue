@@ -1,7 +1,7 @@
 from pandas.core.frame import DataFrame
-from Measured import Measured
+from Stategies.AvalStrat.Measured import Measured
 
-from Question import Question
+from Stategies.AvalStrat.Question import Question
 
 
 class Measurer:

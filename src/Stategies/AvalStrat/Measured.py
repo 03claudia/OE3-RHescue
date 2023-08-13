@@ -1,6 +1,6 @@
 
 import re
-from Question import Question
+from Stategies.AvalStrat.Question import Question
 
 class Measured:
     __questions = []
