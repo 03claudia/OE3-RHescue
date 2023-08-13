@@ -1,6 +1,6 @@
-
+from pandas.core.frame import DataFrame
 from Measured import Measured
-import pandas as pd
+
 from Question import Question
 
 
@@ -9,10 +9,22 @@ class Measurer:
         self.name = name
         self.row_index = row_index
 
-    def evaluated_with(self, measured: Measured) -> list[Question]:
+    def evaluated_with(self, measured: Measured, file: DataFrame) -> list[Question]:
         question_to_evaluate = measured.get_questions()
+
+        if len(question_to_evaluate) == 0:
+            print(f"No questions to evaluate with {measured.get_name()}")
+            exit(1)
 
         # cross each question col index with the row index of the measurer
         for question in question_to_evaluate:
-            grade = pd.iloc[question.pos_in_document, self.row_index]
-            question.set_grade_number(grade)
+            grade = file.iloc[self.row_index, question.get_pos_in_document()]
+            question.set_grade_number(grade, self)
+        
+        return question_to_evaluate.copy()
+    
+    def get_name(self) -> str:
+        return self.name
+    
+    def copy(self) -> 'Measurer':
+        return Measurer(self.name, self.row_index)

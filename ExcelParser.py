@@ -1,10 +1,11 @@
 
 
+from typing import Union
 from Measured import Measured
 from Measurer import Measurer
 from Question import Question
 from Types import Type
-from layout import Layout
+from Layout import Layout
 import pandas as pd
 
 class ExcelParser:
@@ -18,18 +19,15 @@ class ExcelParser:
         # Pega em todas as perguntas do layout
         questions = self.layout.get_type(Type.QUESTIONS)[0]["questions"]
 
-        questions_index_list: list = []
+        question_list: list = []
         for question in questions:
-            questions_index_list.append(self.__find_index_of_column(question["label"]))
-
-        question_list: list[Question] = []
-        for question in questions_index_list:
-            question_list.append(Question(question[0], question[1]))
-        
+            columns: list[tuple] = self.__find_index_and_value_of_column(question["label"])
+            for column in columns:
+                question_list.append(Question(column[0], column[1]))
 
         # Pega em todos os avaliadores
         measurer_label = self.layout.get_type(Type.MEASURER)[0]
-        measurer_index = self.__find_index_of_column(measurer_label["label"])
+        measurer_index: int = self.__find_index_and_value_of_column(measurer_label["label"])
         measurers = self.__get_column_values(measurer_index[0])
 
         measurers_list: list[Measurer] = []
@@ -37,16 +35,18 @@ class ExcelParser:
             measurers_list.append(Measurer(measurer[1], measurer[0]))
         
         measured_names = self.layout.get_type(Type.MEASURED)[0]["names"]
+        
         measured_list: list[Measured] = []
-        for measured in measured_names:
-            measured_list.append(Measured(measured, question_list))
+        for measured_name in measured_names:
+            measured_list.append(Measured(measured_name, question_list))
 
         for measured in measured_list:
             for measurer in measurers_list:
-                measurer.evaluated_with(measured)
+                measurer.evaluated_with(measured, self.target_file)
              
         for measured in measured_list:
-            print(measured.get_questions())
+            for question in measured.get_questions():
+                print(f"\n\nAvaliado [{measured.get_name()}]\nAvaliador [{question.get_measurer().get_name()}]\n{question.get_question()}\nNota {question.get_grade()}")
 
     def __read_excel(self) -> pd.DataFrame:
         try:
@@ -58,13 +58,9 @@ class ExcelParser:
         except Exception as e:
             print(e)
             exit(1)
-
-    def __process_questions(self, questions: list, measurer: list) -> list:
-        for question in questions:
-            print(self.__find_index_of_column(question["label"]))
         
     
-    def __find_index_of_column(self, label: str) -> list | int:
+    def __find_index_and_value_of_column(self, label: str) -> Union[list, int]:
         label_to_find = label
 
         matching_columns = [col for col in self.target_file.columns if label_to_find.lower() in col.lower()]
@@ -75,7 +71,7 @@ class ExcelParser:
                 col_index = self.target_file.columns.get_loc(col_name)
                 result.append((col_index, col_name))
         else:
-            print(f"No column matching label '{label_to_find}' found.")
+            print(f"\nNo column matching label '{label_to_find}' found.")
         
         if len(result) == 1:
             return result[0]
@@ -85,7 +81,4 @@ class ExcelParser:
     def __get_column_values(self, index: int) -> list:
         values = self.target_file.iloc[:, index].values.tolist()
         indexes = [i for i in range(len(values))]
-        return list(zip(indexes, values))
-    
-    def __get_questions_index_of_measured(self, measured: str) -> list:
-        pass        
+        return list(zip(indexes, values))    
