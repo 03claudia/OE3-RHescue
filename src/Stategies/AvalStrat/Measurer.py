@@ -9,7 +9,7 @@ class Measurer:
         self.name = name
         self.row_index = row_index
 
-    def evaluated_with(self, measured: Measured, file: DataFrame) -> list[Question]:
+    def evaluate(self, measured: Measured, file: DataFrame) -> list[Question]:
         question_to_evaluate = measured.get_questions()
 
         if len(question_to_evaluate) == 0:
