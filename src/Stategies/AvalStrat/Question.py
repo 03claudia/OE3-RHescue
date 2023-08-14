@@ -15,6 +15,9 @@ class Question:
     def get_question(self) -> str:
         return self.question
     
+    def get_question_without_name(self, identifier) -> str:
+        return self.question.split(identifier)[0].strip()
+    
     def get_pos_in_document(self) -> int:
         return self.pos_in_document
     

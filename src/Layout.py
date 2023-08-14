@@ -3,12 +3,18 @@ import json
 from Types import Type
 
 class Layout:
+    data = {}
+
     """
         Caso, read_from_file seja True, o layout será lido do arquivo especificado em filepath.
         Daí, o layout passa a especificar o caminho para o ficheiro a ser lido, assumindo que é
         um ficheiro JSON.
     """
     def __init__(self, read_layout_from_file: bool, layout: str, filepath: str) -> None:
+        if not filepath and not layout:
+            self.filepath = ""
+            self.data = {}
+            return
         self.layout = layout
         content = self.__read_layout_from_file() if read_layout_from_file else layout
         self.data = json.loads(content)
@@ -28,6 +34,9 @@ class Layout:
             
         return result
     
+    def set_data_directly(self, data) -> None:
+        self.data = data
+    
     def __read_layout_from_file(self):
         try:
             with open(self.layout, "r") as file:
@@ -38,4 +47,6 @@ class Layout:
         except Exception as e:
             print(e)
             exit(1)
+
+    
     

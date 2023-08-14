@@ -1,5 +1,6 @@
 
 import re
+from Stategies.AvalStrat.Measurer import Measurer
 from Stategies.AvalStrat.Question import Question
 
 class Measured:
@@ -20,6 +21,14 @@ class Measured:
 
     def get_questions(self) -> list[Question]:
         return self.__questions
+    
+    def get_measurers(self) -> list[Measurer]:
+        measurers = []
+        for question in self.__questions:
+            for _, measurer in question.get_grades():
+                if measurer not in measurers:
+                    measurers.append(measurer)
+        return measurers
     
     def get_name(self) -> str:
         return self.name

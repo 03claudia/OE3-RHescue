@@ -1,6 +1,4 @@
 from pandas.core.frame import DataFrame
-from Stategies.AvalStrat.Measured import Measured
-
 from Stategies.AvalStrat.Question import Question
 
 
@@ -9,7 +7,7 @@ class Measurer:
         self.name = name
         self.row_index = row_index
 
-    def evaluate(self, measured: Measured, file: DataFrame) -> list[Question]:
+    def evaluate(self, measured: 'Measured', file: DataFrame) -> list[Question]:
         question_to_evaluate = measured.get_questions()
 
         if len(question_to_evaluate) == 0:
@@ -31,3 +29,6 @@ class Measurer:
     
     def __str__(self) -> str:
         return f"Measurer: {self.name}"
+    
+    def __eq__(self, other: "Measurer") -> bool:
+        return self.name.lower() == other.name.lower()

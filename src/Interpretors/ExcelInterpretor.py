@@ -1,9 +1,6 @@
 
 
 from typing import Union
-from Stategies.AvalStrat.Measured import Measured
-from Stategies.AvalStrat.Measurer import Measurer
-from Stategies.AvalStrat.Question import Question
 from Types import Type
 from Layout import Layout
 import pandas as pd
