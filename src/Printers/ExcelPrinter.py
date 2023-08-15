@@ -64,66 +64,136 @@ from Types import Type
 
 
 class ExcelPrinter:
+    settings = "_settings"
+    headers = "_headers"
+    content = "_content"
+
     def __init__(self, layout: Layout):
         self.layout = layout
 
     def print(self, filepath):
-        data: dict[str: str] = self.__process_output_layout(self.layout.get_data())
-        print(data)
+        data: dict[str: str] = self.__process_output_layout(self.layout)
         self.__save_file(data, filepath)
     
     """
     data = {
-        'Avaliador': ['Inês Bastos', 'Catarina Milheiro', 'Gonçalo Figueiredo', 'Inês Cabral', 'Mariana Arezes', 'Mariana Oliveira', 'Paula Ferreira', 'Paulo Vieira', 'Rafaela Carvalho'],
-        'Avaliado': ['Catarina Milheiro', '', 'Gonçalo Figueiredo', '', '', '', '', '', ''],
-        '1. O membro cumpriu todos os prazos que foram estabelecidos para as suas tarefas?': [6, 6, 6, 6, 6, 6, 6, 4, 4],
-        '2. O membro apresentou qualidade de trabalho em todas as tarefas entregues?': [6, 3, 3, 3, 3, 6, 3, 3, 3],
-        '3. O membro mostrou-se prestável e amigo para com os outros membros?': [6, 3, 3, 3, 3, 6, 3, 3, 3],
-        '4. O membro chegou sempre a tempo às reuniões de departamento/AR/formações/RGs e AGs marcadas?': [6, 6, 6, 3, 3, 3, 4, 4, 3],
-        '5. O membro mostrou-se empenhado em desempenhar todas as suas tarefas, mesmo quando estas se apresentaram, por algum motivo, mais difíceis de realizar?': [6, 6, 3, 3, 3, 6, 3, 3, 3],
-        '6. O membro mostrou-se participativo durante as reuniões (quer voluntariamente ou não), apresentando comentários construtivos?': [6, 6, 6, 3, 3, 6, 4, 3, 3],
-        '7. Sentiste que algum membro, em algum momento, se demonstrou conflituoso para com alguém dentro da EPIC Júnior?': ['Não', 'Não', '', '', '', '', '', '', ''],
-        'Existe algum comentário que queiras fazer sobre a avaliação que fizeste de algum membro? Se sim, qual?': ['', '', '', '', '', '', '', '', '']
-    }
+        'Rafaela Carvalho': {
+            'Catarina Milheiro': '6', 
+            'Gonçalo Figueiredo': '5', 
+            'Inês Cabral': '5'
+        }, 
+        'Paula Ferreira': {
+            'Catarina Milheiro': '6', 
+            'Gonçalo Figueiredo': '4', 
+            'Inês Cabral': '4'
+        }, 
+        'Mariana Oliveira': {
+            'Catarina Milheiro': '6', 
+            'Gonçalo Figueiredo': '3', 
+            'Inês Cabral': '5'
+        }, 
+        'Inês Cabral': {
+            'Catarina Milheiro': '6', 
+            'Gonçalo Figueiredo': '6', 
+            'Inês Cabral': '6'
+        }, 
+        'Mariana Arezes': {
+            'Catarina Milheiro': '6', 
+            'Gonçalo Figueiredo': '5', 
+            'Inês Cabral': '6'
+        }, 
+        'Paulo Vieira': {
+            'Catarina Milheiro': '6', 
+            'Gonçalo Figueiredo': '5', 
+            'Inês Cabral': '5'
+        }, 
+        'Gonçalo Figueiredo': {'Catarina Milheiro': '6', 'Gonçalo Figueiredo': '4', 'Inês Cabral': '6'}, 'Catarina Milheiro': {'Catarina Milheiro': '6', 'Gonçalo Figueiredo': '4', 'Inês Cabral': '4'}, 'Inês Bastos': {'Catarina Milheiro': '6', 'Gonçalo Figueiredo': '4', 'Inês Cabral': '4'}}
     """
-    def __process_output_layout(self, input_data):
-        data = {}
-        for row in input_data:
-            if row["type"] == Type.CONTENT:
-                data.update(self.__process_output_layout(row["rows"]))
+    def __process_output_layout(self, input_data: Layout) -> dict[str: str]:
+        hashmap = dict[str: str]()
 
-            elif row["type"] == Type.HEADER:
-                # data.update({row.label: row.rows})
-                continue
+        measure_dimentions = self.__process_dimentions_of(Type.MEASURE, input_data)
+        measured_dimentions = self.__process_dimentions_of(Type.MEASURED, input_data)
+        measurer_dimentions = self.__process_dimentions_of(Type.MEASURER, input_data)
+
+        hashmap.update({self.settings: {
+            Type.MEASURE.name: {
+                "col-span": measure_dimentions["col-span"],
+                "row-span": measure_dimentions["row-span"]
+            },
+            Type.MEASURED.name: {
+                "col-span": measured_dimentions["col-span"],
+                "row-span": measured_dimentions["row-span"]
+            },
+            Type.MEASURER.name: {
+                "col-span": measurer_dimentions["col-span"],
+                "row-span": measurer_dimentions["row-span"]
+            }
+        }})
+
+        hashmap.update({self.headers: [
+            input_data.get_type(Type.MEASURER)[0]["label"],
+            input_data.get_type(Type.MEASURED)[0]["label"],
+        ]})
+
+        hashmap.update({self.content: {}})
+        content = hashmap[self.content]
+
+        # iniciar hashmap com as labels dos measurers
+        for question in input_data.get_type(Type.MEASURE):
+            rows = question["rows"]
+            hashmap[self.headers].append(question["label"])
+
+            for row in rows:
+                measurer_name = row["measurer"]
+                measured_name = row["measured"]
+                grade = row["grade"]
+
+                if measurer_name not in content.keys():
+                    content.update({measurer_name: {}})
                 
-            elif row["type"] == Type.MEASURER or row["type"] == Type.MEASURED:
-                data.update({row["label"]: row["rows"]})
+                if measured_name not in content[measurer_name].keys():
+                    content[measurer_name].update({measured_name: grade})
 
-            elif row["type"] == Type.MEASURE:
-                grades: list[str] = []
-                for measure in row["rows"]:
-                    grades.append(measure["grade"])
-                data.update({row["label"]: grades})
+        hashmap[self.settings][Type.MEASURER.name]["row-span"] = len(hashmap.keys()) - 1
+        print(hashmap)
+        return []
+    
+    def __process_dimentions_of(self, type: Type, data: Layout) -> { "row-span": int, "col-span": int}:
+        obj = data.get_type(type)
 
-            if not row["type"]:
-                data.update({row["label"]: row["rows"]})
-        
-        return data
+        if not obj:
+            return {
+                "row-span": 0,
+                "col-span": 0
+            }
+
+        try:
+            row_span = obj["row-span"] if obj["row-span"] else 1
+            col_span = obj["col-span"] if obj["col-span"] else 1
+        except:
+            row_span = 1
+            col_span = 1
+
+        return {
+            "row-span": row_span,
+            "col-span": col_span
+        }
 
     # treeData = [["Type", "Leaf Color", "Height"], ["Maple", "Red", 549], ["Oak", "Green", 783], ["Pine", "Green", 1204]]
-    def __save_file(self, data: dict[str: str], filepath):
-        result = []
-        result.append(list(data.keys()))
-
-        for row in data.values():
-            result.append(row)
+    def __save_file(self, data, filepath):
 
         wb = Workbook()
         ws = wb.active
 
-        print("\n\n\n", result)
-        
-        for row in result:
-            ws.append(row)
+        settings = data[self.settings]
+        headers = data[self.headers]
+        content = data[self.content]
 
+        # Definir o header
+        ws.append(headers)
+
+        # Measurer col-span
         wb.save(filepath)
+    
+    

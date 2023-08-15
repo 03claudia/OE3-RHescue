@@ -22,15 +22,23 @@ class Layout:
 
     def get_data(self):
         return self.data["layout"]
+    
+    def get_data_as_json(self):
+        print(self.data)
+        return json.dumps(self.data)
 
     def get_filepath(self):
         return self.filepath
     
-    def get_type(self, key: Type) -> list:
+    def get_type(self, key: Type, data = None) -> list:
+        if not data:
+            data = self.get_data()
         result = []
-        for row in self.get_data():
-            if row["type"].lower() == key.name.lower():
+        for row in data:
+            if row["type"] == key.name:
                 result.append(row)
+            elif row["type"] == Type.CONTENT.name:
+                result += self.get_type(key, row["rows"])
             
         return result
     

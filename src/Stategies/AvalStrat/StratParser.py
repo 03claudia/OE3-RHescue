@@ -1,3 +1,60 @@
+"""
+{
+    "layout": [
+        { 
+            "type": "HEADER",
+            "label": "Avaliação Semestral dos Membros de RH"
+            "row-span": 1,
+            "col-span": full,
+        },
+        { 
+            "type": "CONTENT",
+            "rows": [
+                { 
+                    "type": "MEASURER",
+                    "label": "Avaliador",
+                    "row-span": 2,
+                    "rows": [
+                        "Inês Geraldes", "Inês Bastos", "Cláudia Santos"
+                    ]
+                },
+                {
+                    "type": "MEASURED",
+                    "label": "Avaliado",
+                    "row-span": 1,
+                    "rows": [
+                        "Inês Geraldes", "Inês Bastos", "Cláudia Santos"
+                    ]
+                },
+                {
+                    "type": "MEASURE",
+                    "label": "1. O membro conseguiu alcançar os objetivos, estabelecidos a priori, das tarefas pelas quais foi responsável.",
+                    "row-span": 1,
+                    "rows": [
+                        {
+                            "measurer": "Inês Geraldes",
+                            "measured": "Inês Geraldes",
+                            "grade": 6
+                        },
+                        {
+                            "measurer": "Inês Geraldes",
+                            "measured": "Inês Geraldes",
+                            "grade": 6
+                        },
+                        {
+                            "measurer": "Inês Geraldes",
+                            "measured": "Inês Geraldes",
+                            "grade": 6
+                        },
+                    ]
+                }
+                ...
+            ]
+        }
+    ]
+}
+"""
+
 from typing import Union
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Interpretors.WordInterpretor import WordInterpretor
@@ -79,14 +136,14 @@ class StratParser:
         layout = self.output["layout"]
 
         # definir um titulo
-        layout.append({"type": Type.HEADER, "label": title, "row-span": 1, "col-span": "full"})
-        layout.append({"type": Type.CONTENT, "rows": []})
+        layout.append({"type": Type.HEADER.name, "label": title, "row-span": 1, "col-span": "full"})
+        layout.append({"type": Type.CONTENT.name, "rows": []})
 
         measured_names: list[str] = []
         for measured in measured_list:
             measured_names.append(measured.get_name())
 
-        layout[1]["rows"].append({"type": Type.MEASURED, "label": "Avaliado", "row-span": 1, "rows": measured_names})
+        layout[1]["rows"].append({"type": Type.MEASURED.name, "label": "Avaliado", "row-span": 1, "rows": measured_names})
 
         measurer_names: list[str] = []
         measurer_list = measured_list[0].get_measurers()
@@ -94,26 +151,26 @@ class StratParser:
         for measurer in measurer_list:
             measurer_names.append(measurer.get_name())   
 
-        layout[1]["rows"].append({"type": Type.MEASURER, "label": "Avaliador", "row-span": 2, "rows": measurer_names})
+        layout[1]["rows"].append({"type": Type.MEASURER.name, "label": "Avaliador", "row-span": 2, "rows": measurer_names})
 
         # preciso de organizar melhor este codigo
-        question_label_list: list[str] = []
-        for question in self.__get_all_questions(measured_list):
-            if question.get_question_without_name(self.name_divider) not in question_label_list:
-                layout[1]["rows"].append({"type": Type.MEASURE, "label": question.get_question_without_name(self.name_divider), "row-span": 1, "rows": []})
-                question_label_list.append(question.get_question_without_name(self.name_divider))
-            for grade, measurer in question.get_grades():
-                layout[1]["rows"][-1]["rows"].append({"measurer": measurer.get_name(), "measured": measured.get_name(), "grade": grade})
+        mapper = dict[str, list[str]]()
+        for measured in measured_list:
+            for question in measured.get_questions():
+
+                question_label = question.get_question_without_name(self.name_divider)
+                if  question_label not in mapper.keys():
+                    mapper.update({question.get_question_without_name(self.name_divider): []})
+
+                for grade, measurer in question.get_grades():
+                    mapper[question_label].append({"measurer": measurer.get_name(), "measured": measured.get_name(), "grade": str(grade)})
+        
+        for key in mapper.keys():
+            layout[1]["rows"].append({"type": Type.MEASURE.name, "label": key, "row-span": 1, "rows": mapper[key]})
+
 
         layout = Layout(False, "", "")
         layout.set_data_directly(self.output)
         return layout
-
-    def __get_all_questions(self, list: list[Measured]) -> list[Question]:
-        questions: list[Question] = []
-        for measured in list:
-            for question in measured.get_questions():
-                questions.append(question)
-        return questions
                 
         
