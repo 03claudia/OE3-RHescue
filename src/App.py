@@ -18,7 +18,7 @@ if __name__ == "__main__":
     avaliation_measured_list = avaliation_strategies.parse()
 
     # por acaso é o mesmo layout
-    layout_output = avaliation_strategies.get_output_layout("Titulo qualquer", avaliation_measured_list)
+    layout_output = avaliation_strategies.get_output_as_layout("Titulo qualquer", avaliation_measured_list)
 
     excel_printer = ExcelPrinter(layout_output)
     excel_printer.print("./output/Output-Avaliacao-Membro-RH.xlsx")

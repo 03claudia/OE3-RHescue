@@ -131,19 +131,21 @@ class StratParser:
 
         return list(measured_list)
 
-    def get_output_layout(self, title: str, measured_list: list[Measured]) -> Layout:
+    def get_output_as_layout(self, title: str, measured_list: list[Measured]) -> Layout:
+        input_layout: Layout = self.parser.get_layout()
+
         self.output = {"layout": []}
         layout = self.output["layout"]
 
         # definir um titulo
-        layout.append({"type": Type.HEADER.name, "label": title, "row-span": 1, "col-span": "full"})
+        layout.append({"type": Type.HEADER.name, "label": title, "col-span": "full", "row-span": 1})
         layout.append({"type": Type.CONTENT.name, "rows": []})
 
         measured_names: list[str] = []
         for measured in measured_list:
             measured_names.append(measured.get_name())
 
-        layout[1]["rows"].append({"type": Type.MEASURED.name, "label": "Avaliado", "row-span": 1, "rows": measured_names})
+        layout[1]["rows"].append({"type": Type.MEASURED.name, "label": "Avaliado", "row-span": 1, "col-span": 2,"rows": measured_names})
 
         measurer_names: list[str] = []
         measurer_list = measured_list[0].get_measurers()
@@ -151,7 +153,7 @@ class StratParser:
         for measurer in measurer_list:
             measurer_names.append(measurer.get_name())   
 
-        layout[1]["rows"].append({"type": Type.MEASURER.name, "label": "Avaliador", "row-span": 2, "rows": measurer_names})
+        layout[1]["rows"].append({"type": Type.MEASURER.name, "label": "Avaliador", "row-span": 1, "col-span": 2, "rows": measurer_names})
 
         # preciso de organizar melhor este codigo
         mapper = dict[str, list[str]]()

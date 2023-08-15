@@ -6,6 +6,9 @@ from Layout import Layout
 import pandas as pd
 
 class ExcelInterpretor:
+    layout: Layout 
+    target_file: pd.DataFrame
+
     def __init__(self, layout: Layout) -> None:
         self.layout = layout
         self.target_file = self.read_doc()
