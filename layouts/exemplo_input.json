@@ -22,11 +22,8 @@
               {
                   "label": "O membro assume, em regra, objetivos ambiciosos e exigentes, embora realistas, para si e para os seus colegas.",
                   "type": "NUMBER"
-              },
-              {
-                  "label": "O membro compromete-se com os resultados a alcançar de acordo com os objetivos estratégicos do departamento e júnior empresa, e é persistente perante obstáculos e dificuldades.",
-                  "type": "NUMBER"
               }
+              
           ]
       }
     ]

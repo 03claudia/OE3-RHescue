@@ -14,7 +14,6 @@ class ExcelPrinter:
 
     __process_col_pos = 0
     __process_row_pos = 0
-    __tmp_max_row = 1
 
     def __init__(self, layout: Layout):
         self.layout = layout
@@ -115,12 +114,12 @@ class ExcelPrinter:
         # Add headers
         header_row = [headers[0]] * measurer_col_span + [headers[1]] * measured_col_span
 
-        self.__add_style_process(style, "SUBHEADER", measurer_col_span, measured_row_span, True)
-        self.__add_style_process(style, "SUBHEADER", measured_col_span, measured_row_span, True)
+        self.__add_style_process(style, "SUBHEADER", measurer_col_span, 1, True)
+        self.__add_style_process(style, "SUBHEADER", measured_col_span, 1, True)
 
         for header in headers[2:]:
             header_row.extend([header] * measure_col_span)
-            self.__add_style_process(style, "SUBHEADER", measure_col_span, measured_row_span, headers[-1] != header)
+            self.__add_style_process(style, "SUBHEADER", measure_col_span, 1, headers[-1] != header)
         
         final_output.append(header_row)
 
@@ -133,13 +132,16 @@ class ExcelPrinter:
         prev_count_cycles = -1
         count_cycles = 0
         
-        # Add content rows
+        # Esta é definitivamente a pior parte do codigo
+        # peço desculpa 
         for measurer in content.keys():
             self.__add_style_process(style, Type.MEASURER.name, measurer_col_span, measurer_content_row_span, True)
 
             for measured in content[measurer].keys():
                 row = [measurer] * measurer_col_span + [measured] * measured_col_span
 
+                # tecnica para formatar bem avaliadores,
+                # avaliados e avaliações
                 offset_col = measurer_col_span 
                 if prev_count_cycles != count_cycles:
                     offset_col = 0
@@ -155,12 +157,11 @@ class ExcelPrinter:
 
                     self.__add_style_process(style, Type.MEASURE.name, measure_col_span, measure_content_row_span, i != size_of_measures - 1, offset_col)
 
-                final_output.append(row)
+                for _ in range(0, measured_row_span):
+                    final_output.append(row)
 
             count_cycles += 1
                 
-
-            
 
         return final_output, style
 
@@ -175,7 +176,7 @@ class ExcelPrinter:
 
         if not same_row:
             self.__process_col_pos = 0
-            self.__process_row_pos += 1
+            self.__process_row_pos += row_span
         else:
             self.__process_col_pos += col_span
 

@@ -145,7 +145,7 @@ class StratParser:
         for measured in measured_list:
             measured_names.append(measured.get_name())
 
-        layout[1]["rows"].append({"type": Type.MEASURED.name, "label": "Avaliado", "row-span": 1, "col-span": 2,"rows": measured_names})
+        layout[1]["rows"].append({"type": Type.MEASURED.name, "label": "Avaliado", "row-span": 2, "col-span": 2,"rows": measured_names})
 
         measurer_names: list[str] = []
         measurer_list = measured_list[0].get_measurers()
