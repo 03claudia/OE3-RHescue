@@ -106,7 +106,7 @@ class ExcelPrinter:
         measured_row_span = settings[Type.MEASURED.name]["row-span"]
         header_row_span = settings[Type.HEADER.name]["row-span"]
 
-        counter = 0
+        row_size = 0
 
         # main header
         for _ in range(measurer_col_span):
@@ -117,7 +117,14 @@ class ExcelPrinter:
             for _ in range(header_row_span):
                 final_output.append(row)
             
-        style.append()
+        style.append({
+            "type": Type.HEADER.name,
+            "col-start": 0,
+            "col-end": measurer_col_span + measured_col_span + (measure_col_span * len(headers[2:])),
+            "row-start": size,
+            "row-end": size + header_row_span,
+        })
+        size += header_row_span
 
         # headers
         for _ in range(measurer_col_span):
@@ -131,21 +138,78 @@ class ExcelPrinter:
                     row.append(header)
 
             final_output.append(row)
+        
+        col_size = 0
+        style.append({
+            "type": "SUB_HEADER",
+            "col-start": col_size,
+            "col-end": col_size + measurer_col_span,
+            "row-start": size,
+            "row-end": size + measured_row_span,
+        })
+
+        col_size += measurer_col_span
+        style.append({
+            "type": "SUB_HEADER",
+            "col-start": col_size,
+            "col-end": col_size + measure_col_span,
+            "row-start": size,
+            "row-end": size + measured_row_span,
+        })
+
+        col_size += measure_col_span
+        for _ in range(len(headers[2:])):
+            style.append({
+                "type": "SUB_HEADER",
+                "col-start": col_size,
+                "col-end": col_size + measure_col_span,
+                "row-start": size,
+                "row-end": size + measured_row_span,
+            })
+            col_size += measure_col_span
+
+        size += measured_row_span
 
         for measurer in content.keys():
             for measured in content[measurer].keys():
                 row = []
                 for _ in range(measurer_col_span):
                     row.append(measurer)
+
+                style.append({
+                    "type": Type.MEASURER.name,
+                    "col-start": 0,
+                    "col-end": measurer_col_span,
+                    "row-start": size,
+                    "row-end": size + measured_row_span,
+                })
                 
                 for _ in range(measured_col_span):
                     row.append(measured)
 
+                style.append({
+                    "type": Type.MEASURED.name,
+                    "col-start": measurer_col_span,
+                    "col-end": measurer_col_span + measured_col_span,
+                    "row-start": size,
+                    "row-end": size + measured_row_span,
+                })
+
                 for _ in range(measure_col_span):
                     row += content[measurer][measured]
 
+                style.append({
+                    "type": Type.MEASURE.name,
+                    "col-start": measurer_col_span + measured_col_span,
+                    "col-end": measurer_col_span + measured_col_span + (measure_col_span * len(headers[2:])),
+                    "row-start": size,
+                    "row-end": size + measured_row_span,
+                })
+
                 for _ in range(measured_row_span):
                     final_output.append(row)
+            
+            size += measured_row_span
         
         # save the style
         final_output.append(style)
@@ -162,12 +226,14 @@ class ExcelPrinter:
         for row in data:
             ws.append(row)
 
-        self.__apply_style(ws, self.settings)
+        print(data[:-1])
+
+        self.__apply_style(ws, data[:-1])
 
         # Save the workbook
         wb.save(filepath)
     
-    def __apply_style(self, ws, settings):
+    def __apply_style(self, ws, styles):
         from openpyxl.styles import Alignment, PatternFill, Border, Side
 
         line = Side(border_style="thin", color="000000")
