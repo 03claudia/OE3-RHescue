@@ -12,12 +12,16 @@ class ExcelPrinter:
     content = "_content"
     main_headers = "_main_headers"
 
+    __process_col_pos = 0
+    __process_row_pos = 0
+    __tmp_max_row = 1
+
     def __init__(self, layout: Layout):
         self.layout = layout
 
     def print(self, filepath):
-        data: list[list[str]] = self.__process_output_layout(self.layout)
-        self.__save_file(data, filepath)
+        data, style = self.__process_output_layout(self.layout)
+        self.__save_file(data, style, filepath)
         
     def __process_output_layout(self, input_data: Layout) -> dict[str: str]:
         hashmap = dict[str: str]()
@@ -82,15 +86,10 @@ class ExcelPrinter:
         # para depois ser utilizado pelo openpyxl
         return self.__final_processing_stage(hashmap)
     
+    # Parte extremamente confusa e ainda cheia de bugs...
     def __final_processing_stage(self, hashmap: dict) -> list[list[str]]:
         final_output = []
 
-        """ 
-            "col-start": 0,
-            "col-end": 0,
-            "row-start": 0,
-            "row-end": 0, 
-        """
         style = []
 
         settings = hashmap[self.settings]
@@ -98,7 +97,7 @@ class ExcelPrinter:
         content = hashmap[self.content]
         main_header = hashmap[self.main_headers]
 
-        # content
+        # Calculate column and row spans
         measurer_col_span = settings[Type.MEASURER.name]["col-span"]
         measured_col_span = settings[Type.MEASURED.name]["col-span"]
         measure_col_span = settings[Type.MEASURE.name]["col-span"]
@@ -106,117 +105,83 @@ class ExcelPrinter:
         measured_row_span = settings[Type.MEASURED.name]["row-span"]
         header_row_span = settings[Type.HEADER.name]["row-span"]
 
-        row_size = 0
+        # Add main header
+        main_header_row = [main_header[0]] * (measurer_col_span + measured_col_span + measure_col_span * len(headers[2:]))
+        final_output.append(main_header_row)
 
-        # main header
-        for _ in range(measurer_col_span):
-            row = []
-            for _ in range(measurer_col_span + measured_col_span + (measure_col_span * len(headers[2:]))):
-                row.append(main_header[0])
+        # Add main header style
+        self.__add_style_process(style, Type.HEADER.name, measurer_col_span + measured_col_span + measure_col_span * len(headers[2:]), 1, False)
 
-            for _ in range(header_row_span):
-                final_output.append(row)
-            
-        style.append({
-            "type": Type.HEADER.name,
-            "col-start": 0,
-            "col-end": measurer_col_span + measured_col_span + (measure_col_span * len(headers[2:])),
-            "row-start": size,
-            "row-end": size + header_row_span,
-        })
-        size += header_row_span
+        # Add headers
+        header_row = [headers[0]] * measurer_col_span + [headers[1]] * measured_col_span
 
-        # headers
-        for _ in range(measurer_col_span):
-            row = []
-            for _ in range(measurer_col_span):
-                    row.append(headers[0])
-            for _ in range(measured_col_span):
-                    row.append(headers[1])
-            for _ in range(measure_col_span):
-                for header in headers[2:]:
-                    row.append(header)
+        self.__add_style_process(style, "SUBHEADER", measurer_col_span, measured_row_span, True)
+        self.__add_style_process(style, "SUBHEADER", measured_col_span, measured_row_span, True)
 
-            final_output.append(row)
+        for header in headers[2:]:
+            header_row.extend([header] * measure_col_span)
+            self.__add_style_process(style, "SUBHEADER", measure_col_span, measured_row_span, headers[-1] != header)
         
-        col_size = 0
-        style.append({
-            "type": "SUB_HEADER",
-            "col-start": col_size,
-            "col-end": col_size + measurer_col_span,
-            "row-start": size,
-            "row-end": size + measured_row_span,
-        })
+        final_output.append(header_row)
 
-        col_size += measurer_col_span
-        style.append({
-            "type": "SUB_HEADER",
-            "col-start": col_size,
-            "col-end": col_size + measure_col_span,
-            "row-start": size,
-            "row-end": size + measured_row_span,
-        })
+        number_of_measured = len(content[next(iter(content))].keys())
 
-        col_size += measure_col_span
-        for _ in range(len(headers[2:])):
-            style.append({
-                "type": "SUB_HEADER",
-                "col-start": col_size,
-                "col-end": col_size + measure_col_span,
-                "row-start": size,
-                "row-end": size + measured_row_span,
-            })
-            col_size += measure_col_span
+        measurer_content_row_span = number_of_measured * measured_row_span
+        measure_content_row_span = measured_row_span
+        measured_content_row_span = measured_row_span
 
-        size += measured_row_span
-
+        prev_count_cycles = -1
+        count_cycles = 0
+        
+        # Add content rows
         for measurer in content.keys():
+            self.__add_style_process(style, Type.MEASURER.name, measurer_col_span, measurer_content_row_span, True)
+
             for measured in content[measurer].keys():
-                row = []
-                for _ in range(measurer_col_span):
-                    row.append(measurer)
+                row = [measurer] * measurer_col_span + [measured] * measured_col_span
 
-                style.append({
-                    "type": Type.MEASURER.name,
-                    "col-start": 0,
-                    "col-end": measurer_col_span,
-                    "row-start": size,
-                    "row-end": size + measured_row_span,
-                })
+                offset_col = measurer_col_span 
+                if prev_count_cycles != count_cycles:
+                    offset_col = 0
+                    prev_count_cycles = count_cycles
+
+                self.__add_style_process(style, Type.MEASURED.name, measured_col_span, measured_content_row_span, True, offset_col)
+
+                size_of_measures = len(content[measurer][measured])
+       
+                for i in range(0, size_of_measures):
+                    grade = content[measurer][measured][i]
+                    row.extend([grade] * measure_col_span)                    
+
+                    self.__add_style_process(style, Type.MEASURE.name, measure_col_span, measure_content_row_span, i != size_of_measures - 1, offset_col)
+
+                final_output.append(row)
+
+            count_cycles += 1
                 
-                for _ in range(measured_col_span):
-                    row.append(measured)
 
-                style.append({
-                    "type": Type.MEASURED.name,
-                    "col-start": measurer_col_span,
-                    "col-end": measurer_col_span + measured_col_span,
-                    "row-start": size,
-                    "row-end": size + measured_row_span,
-                })
-
-                for _ in range(measure_col_span):
-                    row += content[measurer][measured]
-
-                style.append({
-                    "type": Type.MEASURE.name,
-                    "col-start": measurer_col_span + measured_col_span,
-                    "col-end": measurer_col_span + measured_col_span + (measure_col_span * len(headers[2:])),
-                    "row-start": size,
-                    "row-end": size + measured_row_span,
-                })
-
-                for _ in range(measured_row_span):
-                    final_output.append(row)
             
-            size += measured_row_span
+
+        return final_output, style
+
+    def __add_style_process(self, style: list[dict], type: str, col_span, row_span, same_row: bool = False, offset_col = 0):
+        style.append({
+            "type": type,
+            "col-start": self.__process_col_pos + 1 + offset_col,
+            "col-end": self.__process_col_pos + col_span + offset_col,
+            "row-start": self.__process_row_pos + 1,
+            "row-end": self.__process_row_pos + row_span,
+        })
+
+        if not same_row:
+            self.__process_col_pos = 0
+            self.__process_row_pos += 1
+        else:
+            self.__process_col_pos += col_span
+
         
-        # save the style
-        final_output.append(style)
 
-        return final_output
-
-    def __save_file(self, data, filepath):
+    def __save_file(self, data, style, filepath):
         from openpyxl import Workbook
         from openpyxl.styles import Alignment, PatternFill
 
@@ -226,24 +191,24 @@ class ExcelPrinter:
         for row in data:
             ws.append(row)
 
-        print(data[:-1])
+        print(style)
 
-        self.__apply_style(ws, data[:-1])
+        self.__apply_style(ws, style)
 
         # Save the workbook
         wb.save(filepath)
     
-    def __apply_style(self, ws, styles):
-        from openpyxl.styles import Alignment, PatternFill, Border, Side
-
-        line = Side(border_style="thin", color="000000")
-        borders = Border(left=line, right=line, top=line, bottom=line)
-        self.__apply_style_to_all_cells(ws, "border", borders)
+    def __apply_style(self, ws, styles:list[dict]):
+        for style in styles:
+            ws.merge_cells(start_row=style['row-start'], start_column=style['col-start'],
+                        end_row=style['row-end'], end_column=style['col-end'])
     
     def __apply_style_to_all_cells(self, ws, stylename, style):
         for row in ws.iter_rows():
             for cell in row:
                 setattr(cell, stylename, style)
+
+    
 
         
 
