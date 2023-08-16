@@ -1,4 +1,5 @@
 {
+    "strat": "AVALIATION",
     "layout": [
       {
           "type": "DATE",
@@ -26,5 +27,31 @@
               
           ]
       }
+    ],
+    "output": [
+        {
+            "type": "HEADER",
+            "label": "Avaliação de desempenho"
+        },
+        {
+            "type": "CONTENT",
+            "rows": [
+                {
+                    "type": "MEASURER",
+                    "label": "Avaliador",
+                    "col-span": 2
+                },
+                {
+                    "type": "MEASURED",
+                    "label": "Avaliado",
+                    "col-span": 2,
+                    "row-span": 2
+                },
+                {
+                    "type": "MEASURE",
+                    "col-span": 1
+                }
+            ]
+        }
     ]
   }

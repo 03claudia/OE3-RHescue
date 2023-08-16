@@ -1,5 +1,6 @@
 
 import re
+from typing import Union
 from Stategies.AvalStrat.Measurer import Measurer
 from Stategies.AvalStrat.Question import Question
 
@@ -22,6 +23,13 @@ class Measured:
     def get_questions(self) -> list[Question]:
         return self.__questions
     
+    def get_grade_and_measurer_list(self, question_label: str) ->  list[Union[float, int], Measurer]:
+        # search for the question
+        for question in self.__questions:
+            if question_label in question.get_question():
+                return question.get_grades()
+        return []
+    
     def get_measurers(self) -> list[Measurer]:
         measurers = []
         for question in self.__questions:
@@ -34,5 +42,9 @@ class Measured:
         return self.name
 
     def __str__(self) -> str:
-        return f"Measured: {self.name}\nQuestions: {self.__questions}\n"
+        var = f"Measured: {self.name}\nQuestions: [\n"
+        for question in self.__questions:
+            var += f"{question}\n"
+        var += "]"
+        return var
     

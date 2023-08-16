@@ -17,7 +17,7 @@ class Measurer:
         # cross each question col index with the row index of the measurer
         for question in question_to_evaluate:
             grade = file.iloc[self.row_index, question.get_pos_in_document()]
-            question.set_grade_number(grade, self)
+            question.set_grade(grade, self)
         
         return question_to_evaluate.copy()
     

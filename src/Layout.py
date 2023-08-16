@@ -20,8 +20,8 @@ class Layout:
         self.data = json.loads(content)
         self.filepath = filepath
 
-    def get_data(self):
-        return self.data["layout"]
+    def get_data(self, type_used = "layout"):
+        return self.data[type_used]
     
     def get_data_as_json(self):
         print(self.data)
@@ -56,8 +56,8 @@ class Layout:
             print(e)
             exit(1)
 
-    def process_dimentions_of(self, type: Type) -> { "row-span": int, "col-span": int}:
-        obj = self.get_type(type)
+    def process_dimentions_of(self, type: Type, type_used = "layout") -> { "row-span": int, "col-span": int}:
+        obj = self.get_type(type) if type_used == "layout" else self.get_type(type, self.get_data(type_used))
 
         if not obj:
             return {
@@ -76,6 +76,12 @@ class Layout:
             "row-span": row_span,
             "col-span": col_span
         }
-
     
+    def leaf_iter(self, type_used = "layout"):
+        for row in self.data[type_used]:
+            if row["type"] == Type.CONTENT.name:
+                for leaf in row["rows"]:
+                    yield leaf
+            else:
+                yield row
     

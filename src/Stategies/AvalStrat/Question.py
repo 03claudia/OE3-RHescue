@@ -24,9 +24,8 @@ class Question:
     def is_question_equal(self, question):
         return question.lower() in self.question.lower()
 
-    def set_grade_number(self, grade: Union[float, int], measurer: 'Measurer'):
-        if not grade < 0:
-            self.grade_and_measurer_list.append((grade, measurer))
+    def set_grade(self, grade: Union[float, int], measurer: 'Measurer'):
+        self.grade_and_measurer_list.append((grade, measurer))
 
     def get_grades(self) -> list[Union[float, int], 'Measurer']:
         return list(self.grade_and_measurer_list)
