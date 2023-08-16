@@ -1,0 +1,57 @@
+{
+    "strat": "AVALIATION",
+    "layout": [
+      {
+          "type": "DATE",
+          "label": "Carimbo de data/hora"
+      },
+      {
+          "type": "MEASURER",
+          "label": "Nome do avaliador"
+      },
+      {
+          "type": "MEASURED",
+          "names": ["Catarina Milheiro", "Gonçalo Figueiredo", "Inês Cabral"]
+      },
+      {
+          "type": "QUESTIONS",
+          "questions": [
+              {
+                  "label": "O membro coopera com os seus colegas para alcançar objetivos comuns que tenham sido estabelecidos.",
+                  "type": "NUMBER"
+              },
+              {
+                  "label": "O membro assume, em regra, objetivos ambiciosos e exigentes, embora realistas, para si e para os seus colegas.",
+                  "type": "NUMBER"
+              }
+              
+          ]
+      }
+    ],
+    "output": [
+        {
+            "type": "HEADER",
+            "label": "Avaliação de desempenho"
+        },
+        {
+            "type": "CONTENT",
+            "rows": [
+                {
+                    "type": "MEASURER",
+                    "label": "Avaliador",
+                    "col-span": 2
+                },
+                {
+                    "type": "MEASURED",
+                    "label": "Avaliado",
+                    "col-span": 2,
+                    "row-span": 2
+                },
+                {
+                    "type": "MEASURE",
+                    "col-span": 1
+                }
+            ]
+        }
+    ]
+  }
