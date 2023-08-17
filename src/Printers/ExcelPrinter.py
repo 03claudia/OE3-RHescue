@@ -136,16 +136,21 @@ class ExcelPrinter:
             font = Font(color=style['text-color'])
             fill = PatternFill(patternType='solid', fill_type='solid', fgColor=style['bg-color'])
             border = Border(
-                left=Side(color=style['border-color']),
-                right=Side(color=style['border-color']),
-                top=Side(color=style['border-color']),
-                bottom=Side(color=style['border-color'])
+                left=Side(style=style["border"], color=style["border-color"], border_style=None),   # Black thin border
+                right=Side(style=style["border"], color=style["border-color"], border_style=None),
+                top=Side(style=style["border"], color=style["border-color"], border_style=None),
+                bottom=Side(style=style["border"], color=style["border-color"], border_style=None)
             )
 
             self.__apply_style_to_cell(ws, style['row-start'], style['col-start'], 'alignment', alignment)
             self.__apply_style_to_cell(ws, style['row-start'], style['col-start'], 'fill', fill)
             self.__apply_style_to_cell(ws, style['row-start'], style['col-start'], 'font', font)
-            self.__apply_style_to_cell(ws, style['row-start'], style['col-start'], 'border', border)
+
+            for i in range(style['col-start'], style['col-end'] + 1):
+                self.__apply_style_to_cell(ws, style['row-start'], i, 'border', border)
+            
+            for j in range(style['row-start'], style['row-end'] + 1):
+                self.__apply_style_to_cell(ws, j, style['col-start'], 'border', border)
             
     def __apply_style_to_cell(self, ws, row, col, stylename, style):
         cell = ws.cell(row=row, column=col)

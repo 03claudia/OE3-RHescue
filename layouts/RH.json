@@ -111,7 +111,7 @@
                   "type": "MEASURER",
                   "label": "Avaliador",
                   "col-span": 2,
-                  "row-span": 2,
+                  "row-span": 1,
                   "bg-color": "AAAAAA",
                   "text-color": "000000",
                   "x-alignment": "center",
@@ -121,7 +121,7 @@
                   "type": "MEASURED",
                   "label": "Avaliado",
                   "col-span": 2,
-                  "row-span": 2,
+                  "row-span": 1,
                   "bg-color": "AAAAAA",
                   "text-color": "000000",
                   "x-alignment": "center",
@@ -134,7 +134,9 @@
                   "bg-color": "FFFFFF",
                   "text-color": "000000",
                   "x-alignment": "left",
-                  "y-alignment": "center"
+                  "y-alignment": "center",
+                  "border": "thin",
+                  "border-color": "000000"
               }
           ]
       }
