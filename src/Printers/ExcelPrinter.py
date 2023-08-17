@@ -55,7 +55,7 @@ class ExcelPrinter:
             self.__process_col_pos = 0
             self.__process_row_pos += row_span
         else:
-            self.__process_col_pos += col_span
+            self.__process_col_pos += col_span + offset_col
 
         
 
@@ -141,11 +141,7 @@ class ExcelPrinter:
         print("\n\n", data_ready_to_draw)
 
         return data_ready_to_draw
-            
-
-            
-
-
+    
     def __apply_style(self, ws, data:list[dict]):
         for style in data:
             ws.merge_cells(start_row=style['row-start'], start_column=style['col-start'],
