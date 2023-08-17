@@ -1,4 +1,13 @@
 from enum import Enum
 
-
-Type = Enum("Type", ["DATE", "NUMBER", "TEXT", "MEASURER", "MEASURED", "QUESTIONS", "HEADER", "CONTENT", "MEASURE", "SUBHEADER"])
+class Type(Enum):
+    DATE = "DATE"
+    NUMBER = "NUMBER"
+    TEXT = "TEXT"
+    MEASURER = "MEASURER"
+    MEASURED = "MEASURED"
+    QUESTIONS = "QUESTIONS"
+    HEADER = "HEADER"
+    CONTENT = "CONTENT"
+    MEASURE = "MEASURE"
+    SUBHEADER = "SUBHEADER"

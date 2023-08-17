@@ -3,6 +3,8 @@ from Stategies.AvalStrat.Question import Question
 
 
 class Measurer:
+    __questions = []
+
     def __init__(self, name: str, row_index) -> None:
         self.name = name
         self.row_index = row_index
@@ -17,13 +19,22 @@ class Measurer:
         # cross each question col index with the row index of the measurer
         for question in question_to_evaluate:
             grade = file.iloc[self.row_index, question.get_pos_in_document()]
-            question.set_grade(grade, self)
+            question.set_grade(grade, measured, self)
         
         return question_to_evaluate.copy()
     
     def get_name(self) -> str:
         return self.name
     
+    def get_grades_by_measured(self, measured_name: str, questions: list[Question]) -> list[int]:
+        grades = []
+        for question in questions:
+            for grade, measured, measurer in question.get_grades():
+                if measured.get_name() == measured_name and measurer.get_name() == self.name:
+                    grades.append(grade)
+        return grades
+
+
     def copy(self) -> 'Measurer':
         return Measurer(self.name, self.row_index)
     

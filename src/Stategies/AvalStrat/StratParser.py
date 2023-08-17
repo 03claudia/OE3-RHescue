@@ -70,7 +70,8 @@ class StratParser:
         self.parser = parser
         self.name_divider = name_divider
 
-    def parse(self) -> list[Measured]:
+    # depende bastante de excel para excel e do que queremos fazer com o excel
+    def parse(self) -> list[Question]:
         self.result: list = []
         layout = self.parser.get_layout()
         file = self.parser.get_target_file()
@@ -89,111 +90,14 @@ class StratParser:
 
         # Avalia cada avaliado com cada avaliador
         # e guarda o resultado no próprio avaliado
-        for measured in measured_list:
-            for measurer in measurer_list:
+        for measurer in measurer_list:
+            for measured in measured_list:    
                 measurer.evaluate(measured, file)
 
         # print(self.__debug(measured_list))
+        result = Question.mix_questions(question_list)
+        return Question.mix_questions(question_list)
 
-        return list(measured_list)
-
-    def convert_to_layout(self, measured_list: list[Measured]) -> Layout:
-        initial_layout: Layout = self.parser.get_layout()
-        type_used = "output"
-
-        self.output = {"layout": []}
-        self.output["layout"].append({"type": Type.CONTENT.name, "rows": []})
-        layout = self.output["layout"][0]["rows"]
-        other = self.output["layout"]
-
-        # TODO acabar isto
-        index = 0
-        for element in initial_layout.leaf_iter(type_used=type_used):
-
-            if element["type"] == Type.HEADER.name:
-                title = element["label"]
-                dimentions = initial_layout.process_dimentions_of(Type.HEADER, type_used=type_used)
-                label = self.__get_label(element)
-
-                # append to the beggining
-                other.append({"type": Type.HEADER.name, "label": title, "col-span": dimentions["col-span"], "row-span": dimentions["row-span"]})
-
-                continue
-
-            elif element["type"] == Type.MEASURER.name:
-                dimentions = initial_layout.process_dimentions_of(Type.MEASURER, type_used=type_used)
-                label = self.__get_label(element)
-
-                layout.append({"type": Type.MEASURER.name, "label": label, "col-span": dimentions["col-span"], "row-span": dimentions["row-span"], "rows": []})
-
-                measurer_names: list[str] = self.__get_measurer_names(measured_list)
-                layout[index]["rows"] += measurer_names
-            
-            elif element["type"] == Type.MEASURED.name:
-                dimentions = initial_layout.process_dimentions_of(Type.MEASURED, type_used=type_used)
-                label = self.__get_label(element)
-
-                layout.append({"type": Type.MEASURED.name, "label": label, "col-span": dimentions["col-span"], "row-span": dimentions["row-span"], "rows": []})
-
-                measured_names: list[str] = self.__get_measured_names(measured_list)
-                layout[index]["rows"] += measured_names
-            
-            elif element["type"] == Type.MEASURE.name:
-                dimentions = initial_layout.process_dimentions_of(Type.MEASURE, type_used=type_used)
-
-                tmp_struct = dict[str, list[str]]()
-                for question_name in self.__get_questions_names(measured_list):
-                    tmp_struct.update({question_name: []})
-
-                    for measured in measured_list:
-                        tmp_list = measured.get_grade_and_measurer_list(question_name)
-
-                        for grade, measurer in tmp_list:
-                            tmp_struct[question_name].append({"measurer": measurer.get_name(), "measured": measured.get_name(), "grade": str(grade)})
-
-                internal_index = 0
-                for question_label in tmp_struct.keys():
-                    layout.append({"type": Type.MEASURE.name, "label": question_label, "col-span": dimentions["col-span"], "row-span": dimentions["row-span"], "rows": []})
-
-                    layout[index + internal_index]["rows"] += tmp_struct[question_label]
-                    internal_index += 1
-                index += internal_index - 1
-
-            index += 1
-
-
-        layout = Layout(False, "", "")
-        layout.set_data_directly(self.output)
-        print(self.output)
-        return layout
-    
-    def __get_measurer_names(self, measured_list: list[Measured]) -> list[str]:
-        measurer_names: list[str] = []
-        for measurer in measured_list[0].get_measurers():
-            measurer_names.append(measurer.get_name())
-        return measurer_names
-    
-    def __get_measured_names(self, measured_list: list[Measured]) -> list[str]:
-        measured_names: list[str] = []
-        for measured in measured_list:
-            measured_names.append(measured.get_name())
-        return measured_names
-    
-    def __get_questions_names(self, measured_list: list[Measured]) -> list[str]:
-        questions_names: list[str] = []
-        for measured in measured_list:
-            for question in measured.get_questions():
-                question_label = question.get_question_without_name(self.name_divider)
-                if question_label not in questions_names:
-                    questions_names.append(question_label)
-        return questions_names
-
-    def __get_label(self, element) -> str:
-        try:
-            return element["label"]
-        except:
-            return "Label não definido"
-        
     def __get_questions(self, questions_in_layout) -> list[Question]:
         question_list: list = []
         for question in questions_in_layout:
@@ -216,8 +120,139 @@ class StratParser:
     def __get_measured(self, measured_names_in_layout, question_list: list[Question]) -> list[Measured]:
         measured_list: list[Measured] = []
         for measured_name in measured_names_in_layout:
-            measured_list.append(Measured(measured_name, question_list.copy()))
+            measured_list.append(Measured(measured_name, question_list))
         return measured_list
+
+    """
+    [
+        {
+            "label": "titulo",
+            "row-span": 1,
+            "col-span": 1,
+        },
+        {
+            "label": "titulo",
+            "row-span": 1,
+            "col-span": 1,
+        }
+    ]
+    """
+
+    def convert_to_layout(self, question_list: list[Question]) -> Layout:
+        output = {"layout": []}
+        final_layout = output["layout"]
+
+        config = self.parser.get_layout()
+
+        question_names = self.__get_questions_names(question_list)
+        num_questions = len(question_names)
+        
+        # Isto só configura os headers
+        for leaf in config.leaf_iter("output"):
+            dimentions = config.process_dimentions_of(Type(leaf["type"]), "output")
+            break_line = True if leaf["type"] == Type.HEADER.name else False
+
+            if leaf["type"] == Type.MEASURE.name:
+                internal_index = 0
+                for question_name in question_names:
+                    final_layout.append({
+                        "label": question_name,
+                        "col-span": dimentions["col-span"],
+                        "row-span": dimentions["row-span"],
+                        "break-line": internal_index == (num_questions - 1)
+                    })
+                    internal_index += 1
+                continue
+            
+            final_layout.append({
+                    "label": self.__get_label(leaf),
+                    "col-span": dimentions["col-span"],
+                    "row-span": dimentions["row-span"],
+                    "break-line": break_line
+            })
+
+        dimentions = config.process_dimentions_of(Type.CONTENT, "output")
+
+        # Isto configura o conteúdo
+        measured_list: list[Measured] = self.__get_measured_list(question_list)
+        measurer_list: list[Measurer] = measured_list[0].get_measurers()
+
+        # passo intermediário, os dados estavam muito desorganizados e era dificil colocá-los no estado correto
+        tmp_result = self.__organize_content(measured_list, measurer_list, question_list)
+
+        for measurer in measurer_list:
+            for measured in measured_list:
+                final_layout.append({
+                    "label": measurer.get_name(),
+                    "col-span": dimentions["col-span"],
+                    "row-span": dimentions["row-span"],
+                    "break-line": False
+                })
+                final_layout.append({
+                    "label": measured.get_name(),
+                    "col-span": dimentions["col-span"],
+                    "row-span": dimentions["row-span"],
+                    "break-line": False
+                })
+                internal_index = 0
+                for grade in tmp_result[measurer.get_name()][measured.get_name()]:
+                    final_layout.append({
+                        "label": grade,
+                        "col-span": dimentions["col-span"],
+                        "row-span": dimentions["row-span"],
+                        "break-line": internal_index == (num_questions - 1)
+                    })
+                    internal_index += 1
+            
+        result = Layout(False, "", "")
+        result.set_data_directly(output)
+        return result
+
+    def __organize_content(self, measured_list: list[Measured], measurer_list: list[Measurer], question_list: list[Question]) -> dict[str: dict[str: list[int]]]:
+        # passo intermediario
+        tmp_result = {}
+
+        for measurer in measurer_list:
+            for question in question_list:
+                for grade, measured in question.get_grade_by_measurer(measurer):
+                    if not tmp_result.get(measurer.get_name()):
+                        tmp_result.update({
+                            measurer.get_name(): {
+                                
+                            }
+                        })
+                    if not tmp_result[measurer.get_name()].get(measured.get_name()):
+                        tmp_result[measurer.get_name()].update({
+                            measured.get_name(): []
+                        })
+                    tmp_result[measurer.get_name()][measured.get_name()].append(grade)
+        
+        return tmp_result
+
+
+    def __get_measured_list(self, question_list: list[Measured]) -> list[Measured]:
+        measured_list: list[Measured] = []
+        for question in question_list:
+            for _, measured, _ in question.get_grades():
+                if measured not in measured_list:
+                    measured_list.append(measured)
+        return measured_list
+    
+    def __get_questions_names(self, question_list: list[Question]) -> list[str]:
+        questions_names: list[str] = []
+        for question in question_list:
+            question_label = question.get_question_without_name(self.name_divider)
+            if question_label not in questions_names:
+                questions_names.append(question_label)
+        return questions_names
+
+    def __get_label(self, element) -> str:
+        try:
+            return element["label"]
+        except:
+            return "Label não definido"
+        
+    
 
     def __debug(self, measured_list: list[Measured]) -> str:
         final_str = ""

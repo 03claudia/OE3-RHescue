@@ -9,7 +9,7 @@ class Measured:
 
     def __init__(self, name: str, all_questions: list[Question]) -> None:
         self.name = name
-        self.__questions = list(self.__my_questions(all_questions))
+        self.__questions = self.__my_questions(all_questions)
     
     def __my_questions(self, questions: list[Question]) -> list[Question]:
         result: list[Question] = []
@@ -23,17 +23,19 @@ class Measured:
     def get_questions(self) -> list[Question]:
         return self.__questions
     
-    def get_grade_and_measurer_list(self, question_label: str) ->  list[Union[float, int], Measurer]:
+    def get_grades_by_measurer(self, measurer_name: str) ->  list[Union[float, int]]:
         # search for the question
+        grades = []
         for question in self.__questions:
-            if question_label in question.get_question():
-                return question.get_grades()
-        return []
+            for grade, measured, measurer in question.get_grades():
+                if measured.get_name() == self.name and measurer_name == measurer.get_name():
+                    grades.append(grade)
+        return grades
     
     def get_measurers(self) -> list[Measurer]:
         measurers = []
         for question in self.__questions:
-            for _, measurer in question.get_grades():
+            for _, _, measurer in question.get_grades():
                 if measurer not in measurers:
                     measurers.append(measurer)
         return measurers
