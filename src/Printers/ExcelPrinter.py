@@ -126,9 +126,30 @@ class ExcelPrinter:
         return data_ready_to_draw
     
     def __apply_style(self, ws, data:list[dict]):
+        from openpyxl.styles import Alignment, PatternFill, Font, Border, Side
+
         for style in data:
             ws.merge_cells(start_row=style['row-start'], start_column=style['col-start'],
                         end_row=style['row-end'], end_column=style['col-end'])
+            
+            alignment = Alignment(horizontal=style['x-alignment'], vertical=style["y-alignment"])
+            font = Font(color=style['text-color'])
+            fill = PatternFill(patternType='solid', fill_type='solid', fgColor=style['bg-color'])
+            border = Border(
+                left=Side(color=style['border-color']),
+                right=Side(color=style['border-color']),
+                top=Side(color=style['border-color']),
+                bottom=Side(color=style['border-color'])
+            )
+
+            self.__apply_style_to_cell(ws, style['row-start'], style['col-start'], 'alignment', alignment)
+            self.__apply_style_to_cell(ws, style['row-start'], style['col-start'], 'fill', fill)
+            self.__apply_style_to_cell(ws, style['row-start'], style['col-start'], 'font', font)
+            self.__apply_style_to_cell(ws, style['row-start'], style['col-start'], 'border', border)
+            
+    def __apply_style_to_cell(self, ws, row, col, stylename, style):
+        cell = ws.cell(row=row, column=col)
+        setattr(cell, stylename, style)
     
     def __apply_style_to_all_cells(self, ws, stylename, style):
         for row in ws.iter_rows():

@@ -8,9 +8,8 @@ from Types import Type
 from Layout import Layout
 from Stategies.AvalStrat.StratParser import StratParser
 
-
-if __name__ == "__main__":
-    layout_input = Layout(True, "./layouts/RH.json", "./exemplos/Avaliacao-Membro-RH.xlsx")
+def transform_excel(config_file, input_file, output_filename):
+    layout_input = Layout(True, config_file, input_file)
     
     excel_interpretor = ExcelInterpretor(layout_input)
 
@@ -19,11 +18,7 @@ if __name__ == "__main__":
 
     layout_output = avaliation_strategy.convert_to_layout(question_list)
     excel_printer = ExcelPrinter(layout_output)
-    excel_printer.print("./output/Output-Avaliacao-Membro-RH.xlsx")
+    excel_printer.print(output_filename)
 
-    """ # por acaso é o mesmo layout
-    
-
-    
-     """
-
+if __name__ == "__main__":
+    transform_excel("./layouts/RH.json", "./exemplos/Avaliacao-Membro-RH.xlsx", "./output/Output-Avaliacao-Membro-RH.xlsx")

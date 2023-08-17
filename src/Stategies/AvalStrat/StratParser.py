@@ -2,7 +2,7 @@ from typing import Union
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Interpretors.WordInterpretor import WordInterpretor
 from Layout import Layout
-from Types import Type
+from Types import Style, Type
 from Stategies.AvalStrat.Measured import Measured
 from Stategies.AvalStrat.Measurer import Measurer
 from Stategies.AvalStrat.Question import Question
@@ -98,26 +98,28 @@ class StratParser:
             if leaf["type"] == Type.MEASURE.name:
                 internal_index = 0
                 for question_name in question_names:
-                    final_layout.append({
-                        "label": question_name,
-                        "col-span": dimentions["col-span"],
-                        "row-span": config.process_dimentions_of(Type.MEASURED, "output")["row-span"],
-                        "break-line": internal_index == (num_questions - 1),
-                        "major": False
-                    })
+                    self.__add_item_to_layout(
+                        layout = final_layout, 
+                        item = leaf, 
+                        label=question_name,  
+                        row_span= config.process_dimentions_of(Type.MEASURED, "output")["row-span"], 
+                        col_span= dimentions["col-span"], 
+                        break_line= internal_index == (num_questions - 1),
+                    ) 
                     internal_index += 1
                 continue
 
             if leaf["type"] == Type.HEADER.name:
                 dimentions = config.process_dimentions_of(Type.HEADER, "output", self.__get_max_span(config, num_questions))
             
-            final_layout.append({
-                    "label": self.__get_label(leaf),
-                    "col-span": dimentions["col-span"],
-                    "row-span": dimentions["row-span"],
-                    "break-line": break_line,
-                    "major": False
-            })
+            self.__add_item_to_layout(
+                layout = final_layout, 
+                item = leaf, 
+                label= self.__get_label(leaf),  
+                row_span= dimentions["row-span"], 
+                col_span= dimentions["col-span"], 
+                break_line= break_line,
+            ) 
 
         dimentions = config.process_dimentions_of(Type.MEASURE, "output")
 
@@ -125,39 +127,45 @@ class StratParser:
         measured_list: list[Measured] = self.__get_measured_list(question_list)
         measurer_list: list[Measurer] = measured_list[0].get_measurers()
 
+        measure_leaf = config.get_type(Type.MEASURE, config.get_data("output"))[0]
+
         # passo intermediário, os dados estavam muito desorganizados e era dificil colocá-los no estado correto
         tmp_result = self.__organize_content(measured_list, measurer_list, question_list)
 
         for measurer in measurer_list:
             index = 0
-            final_layout.append({
-                "label": measurer.get_name(),
-                "col-span": config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
-                "row-span": dimentions["row-span"] * len(measured_list),
-                "break-line": False,
-                "major": True,
-                "major-span": num_questions,
-            })
+
+            self.__add_item_to_layout(
+                label= measurer.get_name(),
+                layout = final_layout,
+                item = measure_leaf,
+                row_span= dimentions["row-span"] * len(measured_list),
+                col_span= config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
+                major= True,
+                major_span= num_questions,
+            )
             
             for measured in measured_list:
-                
-                final_layout.append({
-                    "label": measured.get_name(),
-                    "col-span": config.process_dimentions_of(Type.MEASURED, "output")["col-span"],
-                    "row-span": dimentions["row-span"],
-                    "break-line": False,
-                    "offset-col": (index != 0) * config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
-                    "major": False,
-                })
+                self.__add_item_to_layout(
+                    label= measured.get_name(),
+                    col_span= config.process_dimentions_of(Type.MEASURED, "output")["col-span"],
+                    row_span= dimentions["row-span"],
+                    layout = final_layout,
+                    item = measure_leaf,
+                    offset_col= (index != 0) * config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
+                )
+
                 internal_index = 0
                 for grade in tmp_result[measurer.get_name()][measured.get_name()]:
-                    final_layout.append({
-                        "label": grade,
-                        "col-span": dimentions["col-span"],
-                        "row-span": dimentions["row-span"],
-                        "break-line": internal_index == (num_questions - 1),
-                        "major": False
-                    })
+                    self.__add_item_to_layout(
+                        label= grade,
+                        col_span= dimentions["col-span"],
+                        row_span= dimentions["row-span"],
+                        layout = final_layout,
+                        break_line= internal_index == (num_questions - 1),
+                        item = measure_leaf,
+                    )
+
                     internal_index += 1
                 index += 1
         
@@ -216,6 +224,30 @@ class StratParser:
         
         return measured_col_span + measurer_col_span + question_col_span
     
+    def __add_item_to_layout(self, layout, item, label, row_span, col_span, break_line = False, major = False, major_span = 0, offset_col = 0):
+        layout.append({
+            Style.LABEL.value[0]: label,
+            Style.COL_SPAN.value[0]: col_span,
+            Style.ROW_SPAN.value[0]: row_span,
+            Style.MAJOR.value[0]: major,
+            Style.MAJOR_SPAN.value[0]: major_span,
+
+            Style.BG_COLOR.value[0]: self.__get_item_property(item, Style.BG_COLOR, "ffffff"),
+            Style.TEXT_COLOR.value[0]: self.__get_item_property(item, Style.TEXT_COLOR, "000000"),
+            Style.X_ALIGNMENT.value[0]: self.__get_item_property(item, Style.X_ALIGNMENT, "center"),
+            Style.Y_ALIGNMENT.value[0]: self.__get_item_property(item, Style.Y_ALIGNMENT, "center"),
+            Style.BORDER.value[0]: self.__get_item_property(item, Style.BORDER, None),
+            Style.BORDER_COLOR.value[0]: self.__get_item_property(item, Style.BORDER_COLOR, "000000"),
+
+            "offset-col": offset_col,
+            "break-line": break_line,
+        })
+
+    def __get_item_property(self, item, style: Style, default_to = None):
+        try:
+            return item[style.value[0]]
+        except:
+            return default_to
 
     def __debug(self, measured_list: list[Measured]) -> str:
         final_str = ""

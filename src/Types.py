@@ -11,3 +11,17 @@ class Type(Enum):
     CONTENT = "CONTENT"
     MEASURE = "MEASURE"
     SUBHEADER = "SUBHEADER"
+
+class Style(Enum):
+    BG_COLOR = "bg-color",
+    TEXT_COLOR = "text-color",
+    ROW_SPAN = "row-span",
+    COL_SPAN = "col-span",
+    BREAK_LINE = "break-line",
+    MAJOR = "major",
+    MAJOR_SPAN = "major-span",
+    X_ALIGNMENT = "x-alignment",
+    Y_ALIGNMENT = "y-alignment",
+    BORDER = "border",
+    BORDER_COLOR = "border-color",
+    LABEL = "label",

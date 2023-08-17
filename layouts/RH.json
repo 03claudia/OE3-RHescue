@@ -98,7 +98,11 @@
       {
           "type": "HEADER",
           "label": "Avaliação de desempenho",
-          "col-span": "full"
+          "col-span": "full",
+          "bg-color": "FFC000",
+          "text-color": "FFFFFF",
+          "x-alignment": "center",
+          "y-alignment": "center"
       },
       {
           "type": "CONTENT",
@@ -107,18 +111,30 @@
                   "type": "MEASURER",
                   "label": "Avaliador",
                   "col-span": 2,
-                  "row-span": 2
+                  "row-span": 2,
+                  "bg-color": "AAAAAA",
+                  "text-color": "000000",
+                  "x-alignment": "center",
+                  "y-alignment": "center"
               },
               {
                   "type": "MEASURED",
                   "label": "Avaliado",
                   "col-span": 2,
-                  "row-span": 2
+                  "row-span": 2,
+                  "bg-color": "AAAAAA",
+                  "text-color": "000000",
+                  "x-alignment": "center",
+                  "y-alignment": "center"
               },
               {
                   "type": "MEASURE",
                   "col-span": 1,
-                  "row-span": 1
+                  "row-span": 1,
+                  "bg-color": "FFFFFF",
+                  "text-color": "000000",
+                  "x-alignment": "left",
+                  "y-alignment": "center"
               }
           ]
       }
