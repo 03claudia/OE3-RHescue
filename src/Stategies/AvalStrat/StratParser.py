@@ -190,7 +190,7 @@ class StratParser:
             final_layout.append({
                 "label": measurer.get_name(),
                 "col-span": config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
-                "row-span": dimentions["row-span"] * num_questions,
+                "row-span": dimentions["row-span"] * len(measured_list),
                 "break-line": False,
                 "major": True,
                 "major-span": num_questions,
@@ -203,7 +203,7 @@ class StratParser:
                     "col-span": config.process_dimentions_of(Type.MEASURED, "output")["col-span"],
                     "row-span": dimentions["row-span"],
                     "break-line": False,
-                    "offset-col": index != 0,
+                    "offset-col": (index != 0) * config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
                     "major": False,
                 })
                 internal_index = 0

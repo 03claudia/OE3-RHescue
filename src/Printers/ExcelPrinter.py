@@ -32,7 +32,7 @@ class ExcelPrinter:
             break_line = self.__get_property(row, "break-line", False)
             offset_col = self.__get_property(row, "offset-col", 0)
 
-            self.__add_style_process(row, col_span, row_span, break_line, offset_col)
+            self.__add_style_process(row, col_span, row_span, not break_line, offset_col)
 
         return data
 
@@ -42,6 +42,7 @@ class ExcelPrinter:
         except:
             return default_to
 
+    same_row = False
     def __add_style_process(self, row: dict, col_span, row_span, same_row: bool = False, offset_col = 0):
         row.update({
             "col-start": self.__process_col_pos + 1 + offset_col,
@@ -65,7 +66,7 @@ class ExcelPrinter:
         wb = Workbook()
         ws = wb.active
 
-        for row in self.process_data_row(data):
+        for row in self.process_data(data):
             ws.append(row)
             
         self.__apply_style(ws, data)
@@ -88,7 +89,7 @@ class ExcelPrinter:
     ]
     """
 
-    def process_data_row(self, data):
+    def process_data(self, data):
         rows = [[]]
 
         for item in data:
