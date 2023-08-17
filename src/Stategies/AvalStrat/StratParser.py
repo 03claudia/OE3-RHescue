@@ -1,60 +1,3 @@
-"""
-{
-    "layout": [
-        { 
-            "type": "HEADER",
-            "label": "Avaliação Semestral dos Membros de RH"
-            "row-span": 1,
-            "col-span": full,
-        },
-        { 
-            "type": "CONTENT",
-            "rows": [
-                { 
-                    "type": "MEASURER",
-                    "label": "Avaliador",
-                    "row-span": 2,
-                    "rows": [
-                        "Inês Geraldes", "Inês Bastos", "Cláudia Santos"
-                    ]
-                },
-                {
-                    "type": "MEASURED",
-                    "label": "Avaliado",
-                    "row-span": 1,
-                    "rows": [
-                        "Inês Geraldes", "Inês Bastos", "Cláudia Santos"
-                    ]
-                },
-                {
-                    "type": "MEASURE",
-                    "label": "1. O membro conseguiu alcançar os objetivos, estabelecidos a priori, das tarefas pelas quais foi responsável.",
-                    "row-span": 1,
-                    "rows": [
-                        {
-                            "measurer": "Inês Geraldes",
-                            "measured": "Inês Geraldes",
-                            "grade": 6
-                        },
-                        {
-                            "measurer": "Inês Geraldes",
-                            "measured": "Inês Geraldes",
-                            "grade": 6
-                        },
-                        {
-                            "measurer": "Inês Geraldes",
-                            "measured": "Inês Geraldes",
-                            "grade": 6
-                        },
-                    ]
-                }
-                ...
-            ]
-        }
-    ]
-}
-"""
-
 from typing import Union
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Interpretors.WordInterpretor import WordInterpretor
@@ -158,7 +101,7 @@ class StratParser:
                     final_layout.append({
                         "label": question_name,
                         "col-span": dimentions["col-span"],
-                        "row-span": dimentions["row-span"],
+                        "row-span": config.process_dimentions_of(Type.MEASURED, "output")["row-span"],
                         "break-line": internal_index == (num_questions - 1),
                         "major": False
                     })
@@ -218,7 +161,6 @@ class StratParser:
                     internal_index += 1
                 index += 1
         
-        print(output)
         result = Layout(False, "", "")
         result.set_data_directly(output)
         return result

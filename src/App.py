@@ -10,7 +10,7 @@ from Stategies.AvalStrat.StratParser import StratParser
 
 
 if __name__ == "__main__":
-    layout_input = Layout(True, "./layouts/exemplo_input.json", "./exemplos/Avaliacao-Membro-RH.xlsx")
+    layout_input = Layout(True, "./layouts/RH.json", "./exemplos/Avaliacao-Membro-RH.xlsx")
     
     excel_interpretor = ExcelInterpretor(layout_input)
 

@@ -73,21 +73,6 @@ class ExcelPrinter:
 
         # Save the workbook
         wb.save(filepath)
-    
-    def draw(self, data):
-        result = []
-        for row, row_span in self.iter_get_line(data):
-            for _ in range(row_span):
-                result.append(row)
-        return result
-                
-    """
-    [
-        [ "Mariana", "Antonio", "6", "6" ],
-        [ "Mariana", "Sofia", "6", "6" ],
-        [ "Mariana", "Antonieta", "6", "6" ],
-    ]
-    """
 
     def process_data(self, data):
         rows = [[]]
@@ -137,8 +122,6 @@ class ExcelPrinter:
             for item in row:
                 new_row.append(item["label"])
             data_ready_to_draw.append(new_row)
-
-        print("\n\n", data_ready_to_draw)
 
         return data_ready_to_draw
     
