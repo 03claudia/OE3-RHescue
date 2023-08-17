@@ -40,7 +40,8 @@
                 {
                     "type": "MEASURER",
                     "label": "Avaliador",
-                    "col-span": 2
+                    "col-span": 2,
+                    "row-span": 2
                 },
                 {
                     "type": "MEASURED",

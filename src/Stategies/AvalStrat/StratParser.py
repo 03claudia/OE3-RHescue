@@ -159,7 +159,8 @@ class StratParser:
                         "label": question_name,
                         "col-span": dimentions["col-span"],
                         "row-span": dimentions["row-span"],
-                        "break-line": internal_index == (num_questions - 1)
+                        "break-line": internal_index == (num_questions - 1),
+                        "major": False
                     })
                     internal_index += 1
                 continue
@@ -171,10 +172,11 @@ class StratParser:
                     "label": self.__get_label(leaf),
                     "col-span": dimentions["col-span"],
                     "row-span": dimentions["row-span"],
-                    "break-line": break_line
+                    "break-line": break_line,
+                    "major": False
             })
 
-        dimentions = config.process_dimentions_of(Type.CONTENT, "output")
+        dimentions = config.process_dimentions_of(Type.MEASURE, "output")
 
         # Isto configura o conteúdo
         measured_list: list[Measured] = self.__get_measured_list(question_list)
@@ -183,22 +185,26 @@ class StratParser:
         # passo intermediário, os dados estavam muito desorganizados e era dificil colocá-los no estado correto
         tmp_result = self.__organize_content(measured_list, measurer_list, question_list)
 
-        
         for measurer in measurer_list:
             index = 0
+            final_layout.append({
+                "label": measurer.get_name(),
+                "col-span": config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
+                "row-span": dimentions["row-span"] * num_questions,
+                "break-line": False,
+                "major": True,
+                "major-span": num_questions,
+            })
+            
             for measured in measured_list:
-                final_layout.append({
-                    "label": measurer.get_name(),
-                    "col-span": config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
-                    "row-span": dimentions["row-span"],
-                    "break-line": False
-                })
+                
                 final_layout.append({
                     "label": measured.get_name(),
                     "col-span": config.process_dimentions_of(Type.MEASURED, "output")["col-span"],
                     "row-span": dimentions["row-span"],
                     "break-line": False,
-                    "offset-col": index != 0 
+                    "offset-col": index != 0,
+                    "major": False,
                 })
                 internal_index = 0
                 for grade in tmp_result[measurer.get_name()][measured.get_name()]:
@@ -206,11 +212,13 @@ class StratParser:
                         "label": grade,
                         "col-span": dimentions["col-span"],
                         "row-span": dimentions["row-span"],
-                        "break-line": internal_index == (num_questions - 1)
+                        "break-line": internal_index == (num_questions - 1),
+                        "major": False
                     })
                     internal_index += 1
                 index += 1
-            
+        
+        print(output)
         result = Layout(False, "", "")
         result.set_data_directly(output)
         return result

@@ -65,7 +65,7 @@ class ExcelPrinter:
         wb = Workbook()
         ws = wb.active
 
-        for row in self.draw(data):
+        for row in self.process_data_row(data):
             ws.append(row)
             
         self.__apply_style(ws, data)
@@ -80,26 +80,70 @@ class ExcelPrinter:
                 result.append(row)
         return result
                 
+    """
+    [
+        [ "Mariana", "Antonio", "6", "6" ],
+        [ "Mariana", "Sofia", "6", "6" ],
+        [ "Mariana", "Antonieta", "6", "6" ],
+    ]
+    """
 
-    def iter_get_line(self, data):
-        row = []
-        row_span_sizes = []
-        max_row_size = 0
+    def process_data_row(self, data):
+        rows = [[]]
 
         for item in data:
-            col_size = item['col-end'] - item['col-start'] + 1
-            row_size = item['row-end'] - item['row-start'] + 1
+            rows[-1].append(item)
 
-            row_span_sizes.append(row_size)
+            if item["break-line"] == True:
+                rows.append([])
+        rows.pop()
 
-            for _ in range(col_size):
-                row.append(item['label'])
+        result = []
+        major_data = None
+        major_i = 0
+        for row in rows:
+            new_row = []
+            row_spans = []
 
-            if item['break-line']:
-                max_row_size = max(row_span_sizes)
-                yield row, max_row_size
-                row = []
-                row_span_sizes = []
+            if major_i < 0:
+                major_data = None
+                major_i = 0
+        
+            if row[0]["major"] == True:
+                major_data = row[0]
+                major_i = row[0]["major-span"]
+
+            if major_data:
+                for _ in range(major_data["col-span"]):
+                    new_row.append(major_data)
+            
+            for item in row:
+                if major_data != None and item == major_data:
+                    continue
+
+                for _ in range(item["col-span"]):
+                    row_spans.append(item["row-span"])
+                    new_row.append(item)
+                
+            for _ in range(max(row_spans)):
+                result.append(new_row)
+
+            major_i -= 1
+
+        data_ready_to_draw = []
+        for row in result:
+            new_row = []
+            for item in row:
+                new_row.append(item["label"])
+            data_ready_to_draw.append(new_row)
+
+        print("\n\n", data_ready_to_draw)
+
+        return data_ready_to_draw
+            
+
+            
+
 
     def __apply_style(self, ws, data:list[dict]):
         for style in data:
