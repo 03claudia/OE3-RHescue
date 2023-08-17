@@ -99,6 +99,7 @@
           "type": "HEADER",
           "label": "Avaliação de desempenho",
           "col-span": "full",
+          "row-span": 2,
           "bg-color": "FFC000",
           "text-color": "FFFFFF",
           "x-alignment": "center",

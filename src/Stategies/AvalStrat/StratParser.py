@@ -126,6 +126,7 @@ class StratParser:
             if leaf["type"] == Type.MEASURE.name:
                 internal_index = 0
                 for question_name in question_names:
+                    self.__apply_interlaced(leaf, list(question_name)[0], self.__bind_bg_color, self.__unbind_bg_color, "CCCCCC", "FFFFFF")
                     self.__add_item_to_layout(
                         layout = final_layout, 
                         item = leaf, 
@@ -135,6 +136,8 @@ class StratParser:
                         break_line= internal_index == (num_questions - 1),
                     ) 
                     internal_index += 1
+
+                self.__end_interlaced(leaf)
                 continue
 
             if leaf["type"] == Type.HEADER.name:
@@ -186,12 +189,6 @@ class StratParser:
                     offset_col= (index != 0) * config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
                 )
 
-                old_border_color = measure_leaf[Style.BORDER_COLOR.value[0]]
-                old_bg_color = measure_leaf[Style.BG_COLOR.value[0]]
-
-                old_question_number = "1"
-                apply_secondary_color = True
-
                 internal_index = 0
                 for grade in tmp_result[measurer.get_name()][measured.get_name()]:
                     
@@ -215,15 +212,14 @@ class StratParser:
 
                     internal_index += 1
 
-                measure_leaf[Style.BORDER_COLOR.value[0]] = old_border_color
-                measure_leaf[Style.BG_COLOR.value[0]] = old_bg_color
+                self.__end_interlaced(measure_leaf)
 
                 index += 1
 
     prev_border_style = None
     
     def __bind_border_style(self, item, value):
-        self.prev_border_style = item[Style.BORDER.value[0]]
+        self.prev_border_style = item[Style.BORDER.value[0]] if item[Style.BORDER.value[0]] else "thin"
         item[Style.BORDER.value[0]] = value
 
     def __unbind_border_style(self, item):
@@ -234,7 +230,7 @@ class StratParser:
     prev_border_color = None
 
     def __bind_border_color(self, item, value):
-        self.prev_border_color = item[Style.BORDER_COLOR.value[0]]
+        self.prev_border_color = item[Style.BORDER_COLOR.value[0]] if item[Style.BORDER_COLOR.value[0]] else "000000"
         item[Style.BORDER_COLOR.value[0]] = value
 
     def __unbind_border_color(self, item):
@@ -244,7 +240,7 @@ class StratParser:
     prev_bg_color = None
 
     def __bind_bg_color(self, item, value):
-        self.prev_bg_color = item[Style.BG_COLOR.value[0]]
+        self.prev_bg_color = item[Style.BG_COLOR.value[0]] if item[Style.BG_COLOR.value[0]] else "ffffff"
         item[Style.BG_COLOR.value[0]] = value
     
     def __unbind_bg_color(self, item):
@@ -270,6 +266,12 @@ class StratParser:
             binder(item = item, value = value2)
         else:
             binder(item = item, value = value1)
+    
+    def __end_interlaced(self, item):
+        self.unbinder(item = item) if self.unbinder else None
+        self.first_content = None
+        self.use_second_pattern = False
+        self.unbinder = None
         
 
     def __get_measured_list(self, question_list: list[Measured]) -> list[Measured]:

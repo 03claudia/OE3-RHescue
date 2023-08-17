@@ -52,7 +52,8 @@
                 {
                     "type": "MEASURE",
                     "col-span": 1,
-                    "row-span": 2
+                    "row-span": 2,
+                    "bg-color": "FFFFFF"
                 }
             ]
         }
