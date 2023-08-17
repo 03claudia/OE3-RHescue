@@ -2,6 +2,7 @@ from typing import Union
 
 class Question:
     grade_and_measurer_list: list[Union[float, int], 'Measured', 'Measurer']
+    question: str
 
     def __init__(self, pos_in_document, question: str) -> None:
         self.question = question
@@ -78,3 +79,6 @@ class Question:
                 mixed_questions.append(q)
             
         return mixed_questions
+    
+    def get_question_letter(self, index):
+        return list(self.question)[index].strip()
