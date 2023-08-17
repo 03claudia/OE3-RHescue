@@ -56,7 +56,7 @@ class Layout:
             print(e)
             exit(1)
 
-    def process_dimentions_of(self, type: Type, type_used = "layout") -> { "row-span": int, "col-span": int}:
+    def process_dimentions_of(self, type: Type, type_used = "layout", max_span = 0) -> { "row-span": int, "col-span": int}:
         obj = self.get_type(type) if type_used == "layout" else self.get_type(type, self.get_data(type_used))
 
         if not obj:
@@ -67,10 +67,18 @@ class Layout:
 
         try:
             row_span = obj[0]["row-span"] if obj[0]["row-span"] else 1
-            col_span = obj[0]["col-span"] if obj[0]["col-span"] else 1
         except:
             row_span = 1
+
+        try:
+            col_span = obj[0]["col-span"] if obj[0]["col-span"] else 1
+        except:
             col_span = 1
+        
+        if row_span == "full":
+            row_span = max_span
+        if col_span == "full":
+            col_span = max_span
 
         return {
             "row-span": row_span,

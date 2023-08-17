@@ -163,6 +163,9 @@ class StratParser:
                     })
                     internal_index += 1
                 continue
+
+            if leaf["type"] == Type.HEADER.name:
+                dimentions = config.process_dimentions_of(Type.HEADER, "output", self.__get_max_span(config, num_questions))
             
             final_layout.append({
                     "label": self.__get_label(leaf),
@@ -180,19 +183,22 @@ class StratParser:
         # passo intermediário, os dados estavam muito desorganizados e era dificil colocá-los no estado correto
         tmp_result = self.__organize_content(measured_list, measurer_list, question_list)
 
+        
         for measurer in measurer_list:
+            index = 0
             for measured in measured_list:
                 final_layout.append({
                     "label": measurer.get_name(),
-                    "col-span": dimentions["col-span"],
+                    "col-span": config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
                     "row-span": dimentions["row-span"],
                     "break-line": False
                 })
                 final_layout.append({
                     "label": measured.get_name(),
-                    "col-span": dimentions["col-span"],
+                    "col-span": config.process_dimentions_of(Type.MEASURED, "output")["col-span"],
                     "row-span": dimentions["row-span"],
-                    "break-line": False
+                    "break-line": False,
+                    "offset-col": index != 0 
                 })
                 internal_index = 0
                 for grade in tmp_result[measurer.get_name()][measured.get_name()]:
@@ -203,6 +209,7 @@ class StratParser:
                         "break-line": internal_index == (num_questions - 1)
                     })
                     internal_index += 1
+                index += 1
             
         result = Layout(False, "", "")
         result.set_data_directly(output)
@@ -252,6 +259,12 @@ class StratParser:
         except:
             return "Label não definido"
         
+    def __get_max_span(self, config, n_questions, property = "col-span") -> int:
+        measured_col_span = config.process_dimentions_of(Type.MEASURED, "output")[property]
+        measurer_col_span = config.process_dimentions_of(Type.MEASURER, "output")[property]
+        question_col_span = config.process_dimentions_of(Type.MEASURE, "output")[property] * n_questions
+        
+        return measured_col_span + measurer_col_span + question_col_span
     
 
     def __debug(self, measured_list: list[Measured]) -> str:

@@ -17,14 +17,13 @@ if __name__ == "__main__":
     avaliation_strategy = StratParser(excel_interpretor)
     question_list = avaliation_strategy.parse()
 
-    for aval in question_list:
-        print(aval)
-
     layout_output = avaliation_strategy.convert_to_layout(question_list)
+    excel_printer = ExcelPrinter(layout_output)
+    excel_printer.print("./output/Output-Avaliacao-Membro-RH.xlsx")
 
     """ # por acaso é o mesmo layout
     
 
-    excel_printer = ExcelPrinter(layout_output)
-    excel_printer.print("./output/Output-Avaliacao-Membro-RH.xlsx") """
+    
+     """
 

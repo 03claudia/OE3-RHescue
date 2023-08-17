@@ -31,7 +31,8 @@
     "output": [
         {
             "type": "HEADER",
-            "label": "Avaliação de desempenho"
+            "label": "Avaliação de desempenho",
+            "col-span": "full"
         },
         {
             "type": "CONTENT",
