@@ -4,16 +4,17 @@
 from enum import Enum
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Printers.ExcelPrinter import ExcelPrinter
+from Stategies.AvalStrat.Question import Question
 from Types import Type
-from Layout import Layout
-from Stategies.AvalStrat.StratParser import StratParser
+from Config import Config
+from Stategies.AvalStrat.AvaliationStrategy import AvaliationStrategy
 
 def transform_excel(config_file, input_file, output_filename):
-    layout_input = Layout(True, config_file, input_file)
-    excel_interpretor = ExcelInterpretor(layout_input)
+    layout_input = Config(read_layout_from_file=True, layout=config_file)
+    excel_interpretor = ExcelInterpretor(layout_input, input_file)
 
-    avaliation_strategy = StratParser(excel_interpretor)
-    question_list = avaliation_strategy.parse()
+    avaliation_strategy = AvaliationStrategy(excel_interpretor)
+    question_list: list[Question] = avaliation_strategy.parse()
     layout_output = avaliation_strategy.convert_to_layout(question_list)
 
     excel_printer = ExcelPrinter(layout_output)

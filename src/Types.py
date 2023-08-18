@@ -25,3 +25,5 @@ class Style(Enum):
     BORDER = "border",
     BORDER_COLOR = "border-color",
     LABEL = "label",
+    INTERLACED_BG = "interlaced-bg",
+    INTERLACED_BG_COLOR = "interlaced-bg-color",

@@ -2,7 +2,7 @@ import json
 
 from Types import Type
 
-class Layout:
+class Config:
     data = {}
 
     """
@@ -10,15 +10,15 @@ class Layout:
         Daí, o layout passa a especificar o caminho para o ficheiro a ser lido, assumindo que é
         um ficheiro JSON.
     """
-    def __init__(self, read_layout_from_file: bool, layout: str, filepath: str) -> None:
-        if not filepath and not layout:
-            self.filepath = ""
-            self.data = {}
-            return
+    def __init__(self, read_layout_from_file: bool, layout: str) -> None:
         self.layout = layout
-        content = self.__read_layout_from_file() if read_layout_from_file else layout
-        self.data = json.loads(content)
-        self.filepath = filepath
+        
+        content = None
+        if read_layout_from_file:
+            content = json.loads(self.__read_layout_from_file())
+        else:
+            content = layout
+        self.data = content
 
     def get_data(self, type_used = "layout"):
         return self.data[type_used]
@@ -26,9 +26,6 @@ class Layout:
     def get_data_as_json(self):
         print(self.data)
         return json.dumps(self.data)
-
-    def get_filepath(self):
-        return self.filepath
     
     def get_type(self, key: Type, data = None) -> list:
         if not data:

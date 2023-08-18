@@ -2,20 +2,20 @@
 
 from typing import Union
 from Types import Type
-from Layout import Layout
+from Config import Config
 import pandas as pd
 
 class ExcelInterpretor:
-    layout: Layout 
+    config: Config 
     target_file: pd.DataFrame
 
-    def __init__(self, layout: Layout) -> None:
-        self.layout = layout
-        self.target_file = self.read_doc()
+    def __init__(self, config: Config, input_file: str) -> None:
+        self.config = config
+        self.target_file = self.read_doc(input_file)
     
-    def read_doc(self) -> pd.DataFrame:
+    def read_doc(self, input_file) -> pd.DataFrame:
         try:
-            file = pd.read_excel(self.layout.get_filepath())
+            file = pd.read_excel(input_file)
             return file
         except FileNotFoundError:
             print("File not found.")
@@ -48,8 +48,8 @@ class ExcelInterpretor:
         indexes = [i for i in range(len(values))]
         return list(zip(indexes, values))    
     
-    def get_layout(self) -> Layout:
-        return self.layout
+    def get_config(self) -> Config:
+        return self.config
     
     def get_target_file(self) -> pd.DataFrame:
         return self.target_file

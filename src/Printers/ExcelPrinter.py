@@ -2,7 +2,7 @@ from typing import Union
 from openpyxl import Workbook
 
 import pandas as pd
-from Layout import Layout
+from Config import Config
 from Types import Type
 
 
@@ -15,14 +15,14 @@ class ExcelPrinter:
     __process_col_pos = 0
     __process_row_pos = 0
 
-    def __init__(self, layout: Layout):
+    def __init__(self, layout: Config):
         self.layout = layout
 
     def print(self, filepath):
         data = self.__process_output_layout(self.layout)
         self.__save_file(data, filepath)
         
-    def __process_output_layout(self, input_data: Layout) -> dict[str: str]:
+    def __process_output_layout(self, input_data: Config) -> dict[str: str]:
         data = input_data.get_data()
         result = []
 
