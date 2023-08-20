@@ -3,7 +3,7 @@ from enum import Enum
 class Type(Enum):
     DATE = "DATE"
     NUMBER = "NUMBER"
-    TEXT = "TEXT"
+    OBSERVATION = "OBSERVATION"
     MEASURER = "MEASURER"
     MEASURED = "MEASURED"
     QUESTIONS = "QUESTIONS"

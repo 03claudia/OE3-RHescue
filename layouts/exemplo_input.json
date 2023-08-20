@@ -15,9 +15,14 @@
       {
           "type": "QUESTIONS",
           "questions": [
+            
             {
                 "label": "4. Em tarefas de grupo, o membro é capaz de comunicar com os seus colegas de forma clara e concisa, conseguindo defender a sua opinião mas respeitando a opinião dos outros, mantendo uma boa relação interpessoal.",
                 "type": "NUMBER"
+            },
+            {
+                "label": "Observações",
+                "type": "OBSERVATION"
             }
             
           ]

@@ -84,28 +84,30 @@ class ExcelPrinter:
                 rows.append([])
         rows.pop()
 
+        # TODO voltar a pensar numa maneira de lidar com os major
         result = []
-        major_data = None
-        major_i = 0
+        major_data: list[dict] = []
+
         for row in rows:
             new_row = []
             row_spans = []
+            
+            for data in major_data:
+                if data["index"] <= 0:
+                    major_data.remove(data)
 
-            if major_i < 0:
-                major_data = None
-                major_i = 0
-        
-            if row[0]["major"] == True:
-                major_data = row[0]
-                major_i = row[0]["major-span"]
-
-            if major_data:
-                for _ in range(major_data["col-span"]):
-                    new_row.append(major_data)
+            for item in row:
+                if item["major"] == True:
+                    major_data.append({"data": item, "index": item["major-span"]})
+            
+            for data in major_data:
+                for _ in range(data["data"]["col-span"]):
+                    new_row.append(data["data"])
             
             for item in row:
-                if major_data != None and item == major_data:
-                    continue
+                for data in major_data:
+                    if data["data"] != None and item == data["data"]:
+                        continue
 
                 for _ in range(item["col-span"]):
                     row_spans.append(item["row-span"])
@@ -114,7 +116,9 @@ class ExcelPrinter:
             for _ in range(max(row_spans)):
                 result.append(new_row)
 
-            major_i -= 1
+            for data in major_data:
+                data["index"] -= 1
+
 
         data_ready_to_draw = []
         for row in result:
@@ -123,6 +127,7 @@ class ExcelPrinter:
                 new_row.append(item["label"])
             data_ready_to_draw.append(new_row)
 
+        print(data_ready_to_draw)
         return data_ready_to_draw
     
     def __apply_style(self, ws, data:list[dict]):

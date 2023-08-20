@@ -3,6 +3,7 @@ import re
 from typing import Union
 from Stategies.AvalStrat.Measurer import Measurer
 from Stategies.AvalStrat.Question import Question
+from Types import Type
 
 class Measured:
     __questions = []
@@ -14,10 +15,15 @@ class Measured:
     def __my_questions(self, questions: list[Question]) -> list[Question]:
         result: list[Question] = []
         for question in questions:
+
+            if question.get_question_type() == Type.OBSERVATION:
+                result.append(question)
+            
             cleaned_name = re.sub(r'\W+', '', self.name.strip().lower())
             cleaned_question = re.sub(r'\W+', '', question.get_question().lower())
             if cleaned_name in cleaned_question:
                 result.append(question)
+                
         return result
 
     def get_questions(self) -> list[Question]:

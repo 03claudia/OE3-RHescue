@@ -1,14 +1,18 @@
 from typing import Union
 
+from Types import Type
+
 class Question:
     grade_and_measurer_list: list[Union[float, int], 'Measured', 'Measurer']
     question: str
+    question_type: Type
 
-    def __init__(self, pos_in_document, question: str) -> None:
+    def __init__(self, pos_in_document, question: str, question_type: str) -> None:
         self.question = question
         self.pos_in_document = pos_in_document
         self.grades = []
         self.grade_and_measurer_list = []
+        self.question_type = Type(question_type)
 
     def __str__(self):
         question = f"\nQuestion: {self.question}"
@@ -38,8 +42,9 @@ class Question:
     def is_question_equal(self, question):
         return question.lower() in self.question.lower()
 
-    def set_grade(self, grade: Union[float, int], measured: 'Measured', measurer: 'Measurer'):
+    def set_grade(self, grade: Union[float, int], measurer: 'Measurer', measured: 'Measured' = None):
         self.grade_and_measurer_list.append((grade, measured, measurer))
+
 
     def get_grades(self) -> list[Union[float, int], 'Measured', 'Measurer']:
         return list(self.grade_and_measurer_list)
@@ -65,15 +70,18 @@ class Question:
             if measured_h.get_name() == measured.get_name() and measurer_h.get_name() == measurer.get_name():
                 yield grade
 
+    def get_question_type(self) -> Type:
+        return self.question_type
+
     def mix_questions(question_list) -> list["Question"]:
         mixed_questions = []
 
         for question in question_list:
-            q: Question = Question(0, question.get_question_without_name("["))
+            q: Question = Question(0, question.get_question_without_name("["), question.get_question_type())
             for question in question_list:
                 if q.is_question_equal(question.get_question_without_name("[")):
                     for grade, measured, measurer in question.get_grades():
-                        q.set_grade(grade, measured, measurer)
+                        q.set_grade(grade, measured=measured, measurer=measurer)
 
             if q not in mixed_questions:
                 mixed_questions.append(q)

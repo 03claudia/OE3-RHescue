@@ -1,4 +1,5 @@
 from typing import Union
+import math
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Interpretors.WordInterpretor import WordInterpretor
 from Config import Config
@@ -39,7 +40,7 @@ class AvaliationStrategy:
                 measurer.evaluate(measured, file)
 
         return Question.mix_questions(question_list)
-    
+
     # Parte mais complexa do código todo
     def convert_to_layout(self, question_list: list[Question]) -> Config:
         output = {"layout": []}
@@ -112,6 +113,7 @@ class AvaliationStrategy:
         measured_list: list[Measured] = self.__get_measured_list(question_list)
         measurer_list: list[Measurer] = measured_list[0].get_measurers()
 
+
         # Contém todas as informações configuradas nos arquivos json
         measure_leaf = config.get_type(Type.MEASURE, config.get_data("output"))[0]
 
@@ -138,7 +140,9 @@ class AvaliationStrategy:
                 major= True,
                 major_span= len(measured_list),
             )
-            
+
+            observations_already_added: list[Question] = []
+
             for measured in measured_list:
                 self.__add_item_to_layout(
                     label= measured.get_name(),
@@ -152,9 +156,19 @@ class AvaliationStrategy:
                 bg_color_interlaced_binder.prep(item=measure_leaf)
 
                 internal_index = 0
+
                 for grade in organized_content[measurer.get_name()][measured.get_name()]:
                     
-                    question_number: str = grade["question"].get_question_letter(0)
+                    question: Question = grade["question"]
+                    note = grade["grade"]
+
+                    question_number: str = question.get_question_letter(0)
+                    is_observation = question.get_question_type() == Type.OBSERVATION
+                    
+                    if is_observation and (note in observations_already_added):
+                        continue
+                    elif is_observation:
+                        observations_already_added.append(note)
 
                     bg_color_interlaced_binder.iter_bind(item=measure_leaf, current_content=question_number)
 
@@ -163,13 +177,15 @@ class AvaliationStrategy:
                     border_color_binder = StyleBinder(Style.BORDER_COLOR, self.__get_item_property(measure_leaf, Style.BORDER_COLOR, "000000"))
                     
                     self.__add_item_to_layout(
-                        label= grade["grade"],
+                        label= note,
                         col_span= dimentions["col-span"],
-                        row_span= dimentions["row-span"],
+                        row_span= dimentions["row-span"] if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
                         end_result = final_layout,
                         break_line= internal_index == (num_questions - 1),
                         item = measure_leaf,
-                        style_list=[border_style_binder, border_color_binder]
+                        style_list=[border_style_binder, border_color_binder],
+                        major = is_observation,
+                        major_span= len(measured_list),
                     )
 
                     internal_index += 1
@@ -179,7 +195,6 @@ class AvaliationStrategy:
                 
 
                 index += 1
-        print(final_layout)
 
     # passo intermediario necessário para organizar os dados
     # extremamente ineficiente...
@@ -202,7 +217,7 @@ class AvaliationStrategy:
         
         return tmp_result
         
-    def __get_measured_list(self, question_list: list[Measured]) -> list[Measured]:
+    def __get_measured_list(self, question_list: list[Question]) -> list[Measured]:
         measured_list: list[Measured] = []
         for question in question_list:
             for _, measured, _ in question.get_grades():
@@ -271,11 +286,11 @@ class AvaliationStrategy:
             columns: list[tuple] = self.parser.find_index_and_value_of_column(question["label"])
 
             if type(columns[0]) == int:
-                question_list.append(Question(columns[0], columns[1]))
+                question_list.append(Question(columns[0], columns[1], question["type"]))
                 continue
 
             for column in columns:
-                question_list.append(Question(column[0], column[1]))
+                question_list.append(Question(column[0], column[1], question["type"]))
         
         return question_list
 
