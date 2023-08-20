@@ -22,7 +22,7 @@ def transform_excel(config_file, input_file, output_filename):
 
 if __name__ == "__main__":
     transform_excel(
-        config_file="./layouts/RH.json", 
+        config_file="./layouts/exemplo_input.json", 
         input_file="./exemplos/Avaliacao-Membro-RH.xlsx", 
         output_filename="./output/Output-Avaliacao-Membro-RH.xlsx"
     )

@@ -90,6 +90,10 @@
               {
                 "label": "5. O membro é capaz de executar a sua tarefa de forma eficaz e com qualidade, apresentando espírito crítico, ou seja, questionando e analisando-a de forma racional.",
                 "type": "NUMBER"
+              },
+              {
+                "label": "Observações",
+                "type": "TEXT"
               }
           ]
       }

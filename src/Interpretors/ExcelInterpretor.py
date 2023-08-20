@@ -40,7 +40,6 @@ class ExcelInterpretor:
         
         if len(result) == 1:
             return result[0]
-        
         return result
 
     def get_column_values(self, index: int) -> list:

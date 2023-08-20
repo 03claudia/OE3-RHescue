@@ -136,7 +136,7 @@ class AvaliationStrategy:
                 row_span= dimentions["row-span"] * len(measured_list),
                 col_span= config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
                 major= True,
-                major_span= num_questions,
+                major_span= len(measured_list),
             )
             
             for measured in measured_list:
@@ -179,6 +179,7 @@ class AvaliationStrategy:
                 
 
                 index += 1
+        print(final_layout)
 
     # passo intermediario necessário para organizar os dados
     # extremamente ineficiente...
@@ -268,6 +269,11 @@ class AvaliationStrategy:
         question_list: list = []
         for question in questions_in_layout:
             columns: list[tuple] = self.parser.find_index_and_value_of_column(question["label"])
+
+            if type(columns[0]) == int:
+                question_list.append(Question(columns[0], columns[1]))
+                continue
+
             for column in columns:
                 question_list.append(Question(column[0], column[1]))
         
