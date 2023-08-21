@@ -3,7 +3,8 @@ from openpyxl import Workbook
 
 import pandas as pd
 from Config import Config
-from Types import Type
+from Stategies.AvalStrat.StyleBinder import StyleBinder
+from Types import Style, Type
 
 
 class ExcelPrinter:
@@ -19,20 +20,19 @@ class ExcelPrinter:
         self.layout = layout
 
     def print(self, filepath):
-        data = self.__process_output_layout(self.layout)
+        data = self.layout.get_data()
         self.__save_file(data, filepath)
         
-    def __process_output_layout(self, input_data: Config) -> dict[str: str]:
-        data = input_data.get_data()
-        result = []
-
+    def __process_output_style(self, data: []) -> dict[str: str]:
+ 
         for row in data:
-            col_span = self.__get_property(row, "col-span", 1)
-            row_span = self.__get_property(row, "row-span", 1)
-            break_line = self.__get_property(row, "break-line", False)
-            offset_col = self.__get_property(row, "offset-col", 0)
+            col_span = row[Style.COL_SPAN.value[0]]
+            row_span = row[Style.ROW_SPAN.value[0]]
+            break_line = row[Style.BREAK_LINE.value[0]]
+            offset_col = row["offset-col"] 
+            major = row[Style.MAJOR.value[0]]
 
-            self.__add_style_process(row, col_span, row_span, not break_line, offset_col)
+            self.__add_style_process(row, col_span, row_span, not break_line, offset_col, major)
 
         return data
 
@@ -43,7 +43,7 @@ class ExcelPrinter:
             return default_to
 
     same_row = False
-    def __add_style_process(self, row: dict, col_span, row_span, same_row: bool = False, offset_col = 0):
+    def __add_style_process(self, row: dict, col_span, row_span, same_row: bool = False, offset_col = 0, major = False):
         row.update({
             "col-start": self.__process_col_pos + 1 + offset_col,
             "col-end": self.__process_col_pos + col_span + offset_col,
@@ -53,87 +53,107 @@ class ExcelPrinter:
 
         if not same_row:
             self.__process_col_pos = 0
-            self.__process_row_pos += row_span
+            self.__process_row_pos += row_span if not major else 1
         else:
             self.__process_col_pos += col_span + offset_col
 
         
 
     def __save_file(self, data, filepath):
-        from openpyxl import Workbook
+        from openpyxl import Workbook, load_workbook
         from openpyxl.styles import Alignment, PatternFill
 
-        wb = Workbook()
+        # Primeira parte responsável por colocar e criar os dados
+        # no arquivo excel
+        writer = pd.ExcelWriter(filepath)
+        
+        num_cols = data[-1]["num-columns"]
+        data_processed = self.process_data(data, num_cols)
+        
+        dict_data = {}
+
+        random = 0
+        for col in data_processed:
+            try:
+                dict_data.update({random: col})
+                random += 1
+            except:
+                continue
+        
+        pdDataframe = pd.DataFrame(dict_data)
+        pdDataframe.to_excel(writer, index=False, header=False, sheet_name="Sheet1")
+        writer.close()
+
+        # Segundo passo, voltar a abrir o arquivo e aplicar os estilos
+        wb = load_workbook(filepath)
         ws = wb.active
 
-        for row in self.process_data(data):
-            ws.append(row)
-            
-        self.__apply_style(ws, data)
+        self.__apply_style(ws, data[:-1])
 
         # Save the workbook
         wb.save(filepath)
 
-    def process_data(self, data):
-        rows = [[]]
+    def process_data(self, data, num_cols):
+        cols = []
 
+        # limite de colunas de 400, não sei pq
+        for i in range(num_cols):
+            cols.append([])
+        
+        index = 0
         for item in data:
-            rows[-1].append(item)
-
-            if item["break-line"] == True:
-                rows.append([])
-        rows.pop()
-
-        # TODO voltar a pensar numa maneira de lidar com os major
-        result = []
-        major_data: list[dict] = []
-
-        for row in rows:
-            new_row = []
-            row_spans = []
+            if index == num_cols:
+                index = 0
             
-            for data in major_data:
-                if data["index"] <= 0:
-                    major_data.remove(data)
-
-            for item in row:
-                if item["major"] == True:
-                    major_data.append({"data": item, "index": item["major-span"]})
+            try:
+                col_span = item["col-span"]
+                row_span = item["row-span"]
+            except:
+                continue
             
-            for data in major_data:
-                for _ in range(data["data"]["col-span"]):
-                    new_row.append(data["data"])
-            
-            for item in row:
-                for data in major_data:
-                    if data["data"] != None and item == data["data"]:
-                        continue
+            for i in range(col_span):
+                for _ in range(row_span):
+                    cols[index + i].append(item["label"])
 
-                for _ in range(item["col-span"]):
-                    row_spans.append(item["row-span"])
-                    new_row.append(item)
+            index += col_span
                 
-            for _ in range(max(row_spans)):
-                result.append(new_row)
-
-            for data in major_data:
-                data["index"] -= 1
-
-
-        data_ready_to_draw = []
-        for row in result:
-            new_row = []
-            for item in row:
-                new_row.append(item["label"])
-            data_ready_to_draw.append(new_row)
-
-        print(data_ready_to_draw)
-        return data_ready_to_draw
+        return cols
     
     def __apply_style(self, ws, data:list[dict]):
         from openpyxl.styles import Alignment, PatternFill, Font, Border, Side
 
+        major_data: dict[str: int] = {}
+        style_list = []
+
+        prev_item = None
         for style in data:
+
+            if style[Style.MAJOR.value[0]] and style[Style.ID.value[0]] in major_data:
+                item = major_data[style[Style.ID.value[0]]]
+
+                if style[Style.BREAK_LINE.value[0]]:
+                    if prev_item:
+                        prev_item[Style.BREAK_LINE.value[0]] = True
+
+                if item == 0:
+                    del item
+
+                item -= 1
+                continue
+
+            elif style[Style.MAJOR.value[0]]:
+                major_data.update({
+                    style[Style.ID.value[0]]: style[Style.MAJOR_SPAN.value[0]]
+                })
+                style["row-span"] = style[Style.MAJOR_SPAN.value[0]]
+
+            style_list.append(style)
+            prev_item = style
+
+        self.__process_output_style(style_list)
+
+        print(style_list)
+        for style in style_list:
             ws.merge_cells(start_row=style['row-start'], start_column=style['col-start'],
                         end_row=style['row-end'], end_column=style['col-end'])
             
@@ -166,8 +186,5 @@ class ExcelPrinter:
             for cell in row:
                 setattr(cell, stylename, style)
 
-    
-
-        
 
     

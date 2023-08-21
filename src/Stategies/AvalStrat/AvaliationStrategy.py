@@ -1,3 +1,4 @@
+import random
 from typing import Union
 import math
 from Interpretors.ExcelInterpretor import ExcelInterpretor
@@ -52,7 +53,10 @@ class AvaliationStrategy:
         num_questions = len(question_names)
         
         self.__header_conversion(config, final_layout, question_names, num_questions)
-        self.__content_conversion(config, final_layout, question_list, num_questions)        
+        self.__content_conversion(config, final_layout, question_list, num_questions)  
+
+        # Isto é necessário para utilizar o Print, depois temos de aperfeiçoar isto
+        final_layout.append({"num-columns": self.__get_max_span(config, num_questions, "col-span")})      
         
         result = Config(read_layout_from_file=False, layout=output)
         return result
@@ -66,6 +70,7 @@ class AvaliationStrategy:
             initial_content=list(question_names[0])[0]
         )
 
+        id = 0
         for leaf in config.leaf_iter("output"):
             dimentions = config.process_dimentions_of(Type(leaf["type"]), "output")
             break_line = True if leaf["type"] == Type.HEADER.name else False
@@ -105,6 +110,8 @@ class AvaliationStrategy:
                 break_line= break_line,
             ) 
         
+        id += 1
+        
     def __content_conversion(self, config: Config, final_layout: list, question_list: list[Question], num_questions: int):
 
         dimentions = config.process_dimentions_of(Type.MEASURE, "output")
@@ -128,26 +135,28 @@ class AvaliationStrategy:
         )
         
         # measurer -> measured -> grade
+        measurer_id = 0
         for measurer in measurer_list:
+            measurer_id += 1
             index = 0
 
-            self.__add_item_to_layout(
-                label= measurer.get_name(),
-                end_result = final_layout,
-                item = measure_leaf,
-                row_span= dimentions["row-span"] * len(measured_list),
-                col_span= config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
-                major= True,
-                major_span= len(measured_list),
-            )
-
-            observations_already_added: list[Question] = []
-
             for measured in measured_list:
+
+                self.__add_item_to_layout(
+                    id = measurer_id,
+                    label= measurer.get_name(),
+                    end_result = final_layout,
+                    item = measure_leaf,
+                    row_span= dimentions[Style.ROW_SPAN.value[0]], # * len(measured_list),
+                    col_span= config.process_dimentions_of(Type.MEASURER, "output")[Style.COL_SPAN.value[0]],
+                    major= True,
+                    major_span= len(measured_list),
+                )
+            
                 self.__add_item_to_layout(
                     label= measured.get_name(),
-                    col_span= config.process_dimentions_of(Type.MEASURED, "output")["col-span"],
-                    row_span= dimentions["row-span"],
+                    col_span= config.process_dimentions_of(Type.MEASURED, "output")[Style.COL_SPAN.value[0]],
+                    row_span= dimentions[Style.ROW_SPAN.value[0]],
                     end_result = final_layout,
                     item = measure_leaf,
                     offset_col= (index != 0) * config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
@@ -156,19 +165,13 @@ class AvaliationStrategy:
                 bg_color_interlaced_binder.prep(item=measure_leaf)
 
                 internal_index = 0
-
+                
                 for grade in organized_content[measurer.get_name()][measured.get_name()]:
-                    
                     question: Question = grade["question"]
                     note = grade["grade"]
 
                     question_number: str = question.get_question_letter(0)
                     is_observation = question.get_question_type() == Type.OBSERVATION
-                    
-                    if is_observation and (note in observations_already_added):
-                        continue
-                    elif is_observation:
-                        observations_already_added.append(note)
 
                     bg_color_interlaced_binder.iter_bind(item=measure_leaf, current_content=question_number)
 
@@ -177,9 +180,10 @@ class AvaliationStrategy:
                     border_color_binder = StyleBinder(Style.BORDER_COLOR, self.__get_item_property(measure_leaf, Style.BORDER_COLOR, "000000"))
                     
                     self.__add_item_to_layout(
+                        id = measurer_id + len(measurer_list) if is_observation else measurer_id,
                         label= note,
-                        col_span= dimentions["col-span"],
-                        row_span= dimentions["row-span"] if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
+                        col_span= dimentions[Style.COL_SPAN.value[0]],
+                        row_span= dimentions[Style.ROW_SPAN.value[0]], # if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
                         end_result = final_layout,
                         break_line= internal_index == (num_questions - 1),
                         item = measure_leaf,
@@ -192,8 +196,6 @@ class AvaliationStrategy:
 
                 bg_color_interlaced_binder.unbind(measure_leaf)
                 
-                
-
                 index += 1
 
     # passo intermediario necessário para organizar os dados
@@ -235,7 +237,7 @@ class AvaliationStrategy:
 
     def __get_label(self, element) -> str:
         try:
-            return element["label"]
+            return element[Style.LABEL.value[0]]
         except:
             return "Label não definido"
         
@@ -246,13 +248,14 @@ class AvaliationStrategy:
         
         return measured_col_span + measurer_col_span + question_col_span
     
-    def __add_item_to_layout(self, end_result: list, item: dict, label: str, row_span: int, col_span: int, break_line: bool = False, major: bool = False, major_span: int = 0, offset_col: int = 0, style_list: list[StyleBinder] = []):
+    def __add_item_to_layout(self, end_result: list, item: dict, label: str, row_span: int, col_span: int, break_line: bool = False, major: bool = False, major_span: int = 0, offset_col: int = 0, style_list: list[StyleBinder] = [], id: int = random.randrange(0x666666, 0xFFFFFF)):
 
         if len(style_list) > 0:
             for style in style_list:
                 style.bind(item)
             
         end_result.append({
+            Style.ID.value[0]: id,
             Style.LABEL.value[0]: label,
             Style.COL_SPAN.value[0]: col_span,
             Style.ROW_SPAN.value[0]: row_span,

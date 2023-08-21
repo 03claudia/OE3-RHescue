@@ -13,6 +13,7 @@ class Type(Enum):
     SUBHEADER = "SUBHEADER"
 
 class Style(Enum):
+    ID = "id",
     BG_COLOR = "bg-color",
     TEXT_COLOR = "text-color",
     ROW_SPAN = "row-span",
