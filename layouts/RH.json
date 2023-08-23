@@ -93,7 +93,7 @@
               },
               {
                 "label": "Observações",
-                "type": "TEXT"
+                "type": "OBSERVATION"
               }
           ]
       }

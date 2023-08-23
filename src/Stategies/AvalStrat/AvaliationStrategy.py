@@ -1,4 +1,5 @@
 import random
+from threading import Thread
 from typing import Union
 import math
 from Interpretors.ExcelInterpretor import ExcelInterpretor
@@ -40,7 +41,16 @@ class AvaliationStrategy:
             for measured in measured_list:    
                 measurer.evaluate(measured, file)
 
-        return Question.mix_questions(question_list)
+        question_list = Question.mix_questions(question_list, self.name_divider)
+        
+        # Isto serve apenas para prevenir erros de configuração
+        num_questions = len(self.__get_questions_names(question_list))
+        for measured in measured_list:
+            if measured.get_number_of_question() != num_questions:
+                print(f"\n{measured.get_name()} tem {measured.get_number_of_question()} perguntas, mas deveria ter {num_questions}.")
+                exit(1)
+
+        return question_list
 
     # Parte mais complexa do código todo
     def convert_to_layout(self, question_list: list[Question]) -> Config:
@@ -286,7 +296,15 @@ class AvaliationStrategy:
     def __get_questions(self, questions_in_layout) -> list[Question]:
         question_list: list = []
         for question in questions_in_layout:
+            if self.name_divider in question["label"]:
+                print(f"\nQuestion malformed in {self.parser.get_config().get_filename()}:\n{question['label']}")
+                exit(1)
+
             columns: list[tuple] = self.parser.find_index_and_value_of_column(question["label"])
+
+            if columns == [] or columns == None:
+                print(f"\nNo column matching label '{question['label']}' found.")
+                continue
 
             if type(columns[0]) == int:
                 question_list.append(Question(columns[0], columns[1], question["type"]))

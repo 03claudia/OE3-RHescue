@@ -20,6 +20,9 @@ class Config:
             content = layout
         self.data = content
 
+    def get_filename(self) -> str:
+        return self.layout
+
     def get_data(self, type_used = "layout"):
         return self.data[type_used]
     

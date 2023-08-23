@@ -11,6 +11,7 @@ class ExcelInterpretor:
 
     def __init__(self, config: Config, input_file: str) -> None:
         self.config = config
+        self.target_file_name = input_file
         self.target_file = self.read_doc(input_file)
     
     def read_doc(self, input_file) -> pd.DataFrame:
@@ -52,3 +53,6 @@ class ExcelInterpretor:
     
     def get_target_file(self) -> pd.DataFrame:
         return self.target_file
+    
+    def get_target_file_name(self) -> str:
+        return self.target_file_name

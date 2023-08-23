@@ -14,17 +14,24 @@ class Measured:
     
     def __my_questions(self, questions: list[Question]) -> list[Question]:
         result: list[Question] = []
+        num_obs = 0
         for question in questions:
 
             if question.get_question_type() == Type.OBSERVATION:
+                num_obs += 1
                 result.append(question)
             
-            cleaned_name = re.sub(r'\W+', '', self.name.strip().lower())
-            cleaned_question = re.sub(r'\W+', '', question.get_question().lower())
-            if cleaned_name in cleaned_question:
+            cleaned_name = self.name.lower()
+            if cleaned_name in question.get_question().lower():
                 result.append(question)
-                
+        
+        if len(result) <= num_obs:
+            print(f"{self.name} não tem perguntas para ser avaliada.")
+            exit(1)
         return result
+    
+    def get_number_of_question(self):
+        return len(self.__questions)
 
     def get_questions(self) -> list[Question]:
         return self.__questions

@@ -94,29 +94,30 @@ class ExcelPrinter:
         wb.save(filepath)
 
     def process_data(self, data, num_cols):
-        cols = []
-
-        # limite de colunas de 400, não sei pq
-        for i in range(num_cols):
-            cols.append([])
-        
+        cols = [[] for _ in range(num_cols)]
         index = 0
+
         for item in data:
-            if index == num_cols:
-                index = 0
-            
             try:
                 col_span = item["col-span"]
                 row_span = item["row-span"]
-            except:
+                label = item["label"]
+            except KeyError:
                 continue
-            
+
             for i in range(col_span):
                 for _ in range(row_span):
-                    cols[index + i].append(item["label"])
+                    try:
+                        cols[index + i].append(label)
+                    except:
+                        print(f"Erro: {index + i}, provavelmente existe algo de errado com o layout ou com o excel de input.\
+                              De qualquer das formas peço já desculpa por não ter detetado este erro antes.")
 
             index += col_span
-                
+
+            if index >= num_cols:
+                index = 0
+
         return cols
     
     def __apply_style(self, ws, data:list[dict]):
@@ -152,7 +153,6 @@ class ExcelPrinter:
 
         self.__process_output_style(style_list)
 
-        print(style_list)
         for style in style_list:
             ws.merge_cells(start_row=style['row-start'], start_column=style['col-start'],
                         end_row=style['row-end'], end_column=style['col-end'])

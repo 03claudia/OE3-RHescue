@@ -14,7 +14,7 @@ class Measurer:
         question_to_evaluate: list[Question] = measured.get_questions()
 
         if len(question_to_evaluate) == 0:
-            print(f"No questions to evaluate with {measured.get_name()}")
+            print(f"{measured.get_name()} não tem perguntas para ser avaliada/o.")
             exit(1)
 
         # cross each question col index with the row index of the measurer
@@ -22,7 +22,7 @@ class Measurer:
             grade = file.iloc[self.row_index, question.get_pos_in_document()]
 
             if question.get_question_type() == Type.OBSERVATION:
-                grade = grade if grade == grade else "Nada a apontar"
+                grade = grade if grade == grade and grade != "" else "Nada a apontar"
 
             question.set_grade(grade = grade, measurer = self, measured=measured)
         

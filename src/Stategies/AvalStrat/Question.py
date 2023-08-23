@@ -73,13 +73,13 @@ class Question:
     def get_question_type(self) -> Type:
         return self.question_type
 
-    def mix_questions(question_list) -> list["Question"]:
+    def mix_questions(question_list, name_divider) -> list["Question"]:
         mixed_questions = []
 
         for question in question_list:
-            q: Question = Question(0, question.get_question_without_name("["), question.get_question_type())
+            q: Question = Question(0, question.get_question_without_name(name_divider), question.get_question_type())
             for question in question_list:
-                if q.is_question_equal(question.get_question_without_name("[")):
+                if q.is_question_equal(question.get_question_without_name(name_divider)):
                     for grade, measured, measurer in question.get_grades():
                         q.set_grade(grade, measured=measured, measurer=measurer)
 
