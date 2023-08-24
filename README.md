@@ -30,7 +30,6 @@ Vamos ver o método parse com as suas entranhas desprotegidas, tirem algum tempo
 def parse(self) -> list[Question]:
 
         # 1º passo
-        self.result: list = []
         config_layout: Config = self.parser.get_config()
         file = self.parser.get_target_file()
 
@@ -72,12 +71,11 @@ def parse(self) -> list[Question]:
 ##### 1º Passo
 
 ```py
-self.result: list = []
 config_layout: Config = self.parser.get_config()
 file = self.parser.get_target_file()
 ```
 
-Ora, indo direto ao assunto temos então o 1ºpasso que trata de criar o array com os resultados finais, ler um config_layout e ler um file... mas que chinesada que praqui vai podem estar-se a dizer para vocês mesmos mas não é complicado o que isto faz. O config_layout está apenas a buscar as configurações que o utilizador escolheu, num arquivo deste estilo:
+Ora, indo direto ao assunto temos então o 1ºpasso que trata de ler um config_layout e ler um file... mas que chinesada que praqui vai podem estar-se a dizer para vocês mesmos mas não é complicado o que isto faz. O config_layout está apenas a buscar as configurações que o utilizador escolheu, num arquivo deste estilo:
 
 (sim, isto está a ser lido como se fosse um dicionário ou como se fosse uma hashmap para as pessoas que não estejam habituadas a Python, facilitando a sua manipulação dentro do código)
 
