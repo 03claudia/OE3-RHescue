@@ -18,35 +18,40 @@ class Measurer:
             exit(1)
 
         # cross each question col index with the row index of the measurer
-        for question in question_to_evaluate:    
+        for question in question_to_evaluate:
             grade = file.iloc[self.row_index, question.get_pos_in_document()]
 
             if question.get_question_type() == Type.OBSERVATION:
                 grade = grade if grade == grade and grade != "" else "Nada a apontar"
 
-            question.set_grade(grade = grade, measurer = self, measured=measured)
-        
+            question.add_grade(grade=grade, measurer=self, measured=measured)
+
         return question_to_evaluate.copy()
-    
+
     def get_name(self) -> str:
         return self.name
-    
-    def get_grades_by_measured(self, measured_name: str, questions: list[Question]) -> list[int]:
+
+    def get_grades_by_measured(
+        self, measured_name: str, questions: list[Question]
+    ) -> list[int]:
         grades = []
         for question in questions:
             for grade, measured, measurer in question.get_grades():
-                if measured.get_name() == measured_name and measurer.get_name() == self.name:
+                if (
+                    measured.get_name() == measured_name
+                    and measurer.get_name() == self.name
+                ):
                     grades.append(grade)
         return grades
-    
+
     def get_row_index(self) -> int:
         return self.row_index
 
-    def copy(self) -> 'Measurer':
+    def copy(self) -> "Measurer":
         return Measurer(self.name, self.row_index)
-    
+
     def __str__(self) -> str:
         return f"Measurer: {self.name}"
-    
+
     def __eq__(self, other: "Measurer") -> bool:
         return self.name.lower() == other.name.lower()

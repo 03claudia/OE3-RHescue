@@ -312,6 +312,8 @@ Já se está a ver que vamos ter de explorar o que o evaluate faz em concreto en
 def evaluate(self, measured: "Measured", file: DataFrame) -> list[Question]:
         questions_to_evaluate: list[Question] = measured.get_questions()
 
+        # Apenas verifica erros
+        # Podemos ignorar
         if len(question_to_evaluate) == 0:
             print(f"{measured.get_name()} não tem perguntas para ser avaliada/o.")
             exit(1)
@@ -323,7 +325,37 @@ def evaluate(self, measured: "Measured", file: DataFrame) -> list[Question]:
             if question.get_question_type() == Type.OBSERVATION:
                 grade = grade if grade == grade and grade != "" else "Nada a apontar"
 
-            question.set_grade(grade = grade, measurer = self, measured=measured)
+            question.add_grade(grade = grade, measurer = self, measured=measured)
         
         return question_to_evaluate.copy()
 ```
+
+O mais importante a tirar deste método é o ```file.iloc[self.row_index, question.get_pos_in_document()]``` que vai ao excel com o número da linha do avaliador e com o número da coluna da pergunta para buscar a avaliação em si, dai que guardamos o resultado numa variável chamada "grade".
+
+Em seguida, temos alguns cheques meio manhosos (não vou mentir), mas apenas se aplica a perguntas do tipo "Observação" e faz com que, caso o avaliador não tenha colocado nenhum texto, seja capaz de substituir isso com "Nada a apontar".
+
+(Para quem estiver curioso com o ```grade == grade```, fizemos isto porque muitas vezes quando a celula do excel estava fazia a grade retornava como "nan" e a única maneira de sabermos se o valor da celula está a "nan" ou não, é se compararmos com ela mesma... super confuso, eu sei, mas leiam isto: <https://stackoverflow.com/questions/944700/how-to-check-for-nan-values>)
+
+Depois disto feito, guardamos na própria pergunta uma tuple com a "nota", com o avaliador e com o avaliado.
+
+```return question_to_evaluate.copy()``` neste caso não interessa.
+
+```py
+question_list = Question.mix_questions(question_list, self.name_divider)
+```
+
+O mix questions faz algo que pode parecer estranho caso não haja contexto mas que depois de explicado creio que vá fazer mais sentido.
+
+Então, mencionando algo que nunca disse antes, é que as perguntas até este momento tinham todas este formato:
+
+"1. O membro coopera com os seus colegas para alcançar objetivos comuns que tenham sido estabelecidos. **[Gonçalo Figueiredo]**"
+
+O que significa que a este ponto do programa se houver 5 avaliados e 5 perguntas, a nossa ```question_list``` teria 25 perguntas dentro.
+
+Então agora precisamos de juntar as supostas 25 perguntas em 5 do estilo:
+
+"1. O membro coopera com os seus colegas para alcançar objetivos comuns que tenham sido estabelecidos."
+
+Sem o "**[Gonçalo Figueiredo]**" especificado e é precisamente isso que esta função faz.
+
+Isto é tudo que o parse faz, a partir daqui vamos explorar a fundo como funciona o método ```convert_to_layout```.
