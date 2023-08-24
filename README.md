@@ -79,6 +79,7 @@ Ora, indo direto ao assunto temos então o 1ºpasso que trata de ler um config_l
 
 (sim, isto está a ser lido como se fosse um dicionário ou como se fosse uma hashmap para as pessoas que não estejam habituadas a Python, facilitando a sua manipulação dentro do código)
 
+Arquivo de configuração:
 ```json
 {
     "layout": [
