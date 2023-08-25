@@ -24,7 +24,9 @@ class ExcelInterpretor:
             print(e)
             exit(1)
 
-    def find_index_and_value_of_column(self, label: str) -> Union[list, int]:
+    def find_index_and_value_of_column(
+        self, label: str
+    ) -> Union[list[tuple[int, str]], tuple[int, str]]:
         label_to_find = label
 
         matching_columns = [
@@ -43,6 +45,10 @@ class ExcelInterpretor:
 
         if len(result) == 1:
             return result[0]
+
+        if len(result) == 0:
+            return None
+
         return result
 
     def get_column_values(self, index: int) -> list:
