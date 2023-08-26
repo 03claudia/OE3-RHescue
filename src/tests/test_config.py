@@ -22,3 +22,4 @@ def test_config():
 
     output_data = config.get_data("output")
     assert len(config.get_type(Type.MEASURER, output_data)) > 2
+
