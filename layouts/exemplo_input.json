@@ -1,5 +1,4 @@
 {
-    "strat": "AVALIATION",
     "layout": [
       {
           "type": "DATE",
@@ -11,47 +10,72 @@
       },
       {
           "type": "MEASURED",
-          "names": ["Catarina Milheiro", "Gonçalo Figueiredo", "Inês Cabral"]
+          "names": ["Catarina Milheiro", "Gonçalo Figueiredo", "Inês Cabral", "Mariana Arezes", "Mariana Oliveira", "Paula Ferreira", "Paulo Vieira", "Rafaela Carvalho"]
       },
       {
           "type": "QUESTIONS",
           "questions": [
-              {
-                  "label": "O membro coopera com os seus colegas para alcançar objetivos comuns que tenham sido estabelecidos.",
-                  "type": "NUMBER"
-              },
-              {
-                  "label": "O membro assume, em regra, objetivos ambiciosos e exigentes, embora realistas, para si e para os seus colegas.",
-                  "type": "NUMBER"
-              }
-              
+            
+            {
+                "label": "4. Em tarefas de grupo, o membro é capaz de comunicar com os seus colegas de forma clara e concisa, conseguindo defender a sua opinião mas respeitando a opinião dos outros, mantendo uma boa relação interpessoal.",
+                "type": "NUMBER"
+            },
+            {
+                "label": "Observações",
+                "type": "OBSERVATION"
+            }
+            
           ]
       }
     ],
     "output": [
-        {
-            "type": "HEADER",
-            "label": "Avaliação de desempenho"
-        },
-        {
-            "type": "CONTENT",
-            "rows": [
-                {
-                    "type": "MEASURER",
-                    "label": "Avaliador",
-                    "col-span": 2
-                },
-                {
-                    "type": "MEASURED",
-                    "label": "Avaliado",
-                    "col-span": 2,
-                    "row-span": 2
-                },
-                {
-                    "type": "MEASURE",
-                    "col-span": 1
-                }
-            ]
-        }
-    ]
+      {
+          "type": "HEADER",
+          "label": "Avaliação de desempenho",
+          "col-span": "full",
+          "row-span": 1,
+          "bg-color": "FFC000",
+          "text-color": "FFFFFF",
+          "x-alignment": "center",
+          "y-alignment": "center",
+          "border": "thin",
+          "border-color": "000000"
+      },
+      {
+          "type": "CONTENT",
+          "rows": [
+              {
+                  "type": "MEASURER",
+                  "label": "Avaliador",
+                  "col-span": 2,
+                  "row-span": 1,
+                  "bg-color": "AAAAAA",
+                  "text-color": "000000",
+                  "x-alignment": "center",
+                  "y-alignment": "center"
+              },
+              {
+                  "type": "MEASURED",
+                  "label": "Avaliado",
+                  "col-span": 2,
+                  "row-span": 1,
+                  "bg-color": "AAAAAA",
+                  "text-color": "000000",
+                  "x-alignment": "center",
+                  "y-alignment": "center"
+              },
+              {
+                  "type": "MEASURE",
+                  "col-span": 1,
+                  "row-span": 1,
+                  "bg-color": "FFFFFF",
+                  "text-color": "000000",
+                  "x-alignment": "left",
+                  "y-alignment": "center",
+                  "border": "thin",
+                  "border-color": "CCCCCC"
+              }
+          ]
+      }
+  ]
   }

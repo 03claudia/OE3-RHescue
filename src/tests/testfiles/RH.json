@@ -125,6 +125,26 @@
                   "y-alignment": "center"
               },
               {
+                "type": "MEASURER",
+                "label": "Avaliador",
+                "col-span": 2,
+                "row-span": 1,
+                "bg-color": "AAAAAA",
+                "text-color": "000000",
+                "x-alignment": "center",
+                "y-alignment": "center"
+              },
+              {
+                "type": "MEASURER",
+                "label": "Avaliador",
+                "col-span": 2,
+                "row-span": 1,
+                "bg-color": "AAAAAA",
+                "text-color": "000000",
+                "x-alignment": "center",
+                "y-alignment": "center"
+              },
+              {
                   "type": "MEASURED",
                   "label": "Avaliado",
                   "col-span": 2,
