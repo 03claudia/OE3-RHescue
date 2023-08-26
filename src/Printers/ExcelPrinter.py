@@ -15,7 +15,7 @@ class ExcelPrinter:
 
     __process_col_pos = 0
     __process_row_pos = 0
-
+    
     def __init__(self, layout: Config):
         self.layout = layout
 
