@@ -20,8 +20,8 @@ class ExcelInterpretor:
         except FileNotFoundError:
             print("File not found.")
             exit(1)
-        except Exception as e:
-            print(e)
+        except Exception:
+            print("The selected file is not an Excel")
             exit(1)
 
     def find_index_and_value_of_column(
