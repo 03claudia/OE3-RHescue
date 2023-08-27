@@ -1,5 +1,4 @@
 
-import re
 from typing import Union
 from Stategies.AvalStrat.Measurer import Measurer
 from Stategies.AvalStrat.Question import Question

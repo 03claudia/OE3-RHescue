@@ -1,10 +1,8 @@
 # Entry point do programa
-from enum import Enum
 from threading import Thread
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Printers.ExcelPrinter import ExcelPrinter
 from Stategies.AvalStrat.Question import Question
-from Types import Type
 from Config import Config
 from Stategies.AvalStrat.AvaliationStrategy import AvaliationStrategy
 

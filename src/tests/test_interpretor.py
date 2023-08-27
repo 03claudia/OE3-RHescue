@@ -8,6 +8,10 @@ def test_reading_document():
         config=config, input_file="src/tests/testfiles/Avaliacao-Membro-RH.xlsx"
     )
 
+    assert (
+        interpretor.read_doc("src/tests/testfiles/Avaliacao-Membro-RH.xlsx") is not None
+    )
+
     assert interpretor.find_index_and_value_of_column("Nome do avaliador")[0] == 1
 
     assert interpretor.find_index_and_value_of_column("Não existe") == None

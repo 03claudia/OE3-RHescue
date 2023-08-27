@@ -9,7 +9,6 @@ def test_avaliation_stategy():
 
     stategy:AvaliationStrategy = AvaliationStrategy(excel_interpretor, "[")
     
-                                        
+    # TODO: Adicionar mais testes de jeito                                   
     assert stategy.name_divider == "["
     
-    stategy.__get_measured(None, [])
