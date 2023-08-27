@@ -1,6 +1,7 @@
 # Entry point do programa
 from enum import Enum
 from threading import Thread
+from Interface.Interface import interface
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Printers.ExcelPrinter import ExcelPrinter
 from Stategies.AvalStrat.Question import Question
@@ -29,6 +30,7 @@ def async_transform_excel(config_file, input_file, output_filename):
 
 
 if __name__ == "__main__":
+    interface()
     rh = async_transform_excel(
         config_file="./layouts/RH.json",
         input_file="./exemplos/Avaliacao-Membro-RH.xlsx",
@@ -43,6 +45,7 @@ if __name__ == "__main__":
         config_file="./layouts/MK.json",
         input_file="./exemplos/Avaliacao-Membros-MKT.xlsx",
         output_filename="./output/Output-Avaliacao-Membro-MK.xlsx",
+     
     )
     rh.join()
     vpe.join()
