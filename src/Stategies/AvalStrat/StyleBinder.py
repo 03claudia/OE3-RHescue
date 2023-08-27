@@ -38,6 +38,9 @@ class StyleBinder:
     def get_type(self) -> Style:
         return self.type
 
+"""
+This only works with numbers
+"""
 class InterlacedStyleBinder:
 
     style1 = None,
@@ -70,8 +73,13 @@ class InterlacedStyleBinder:
         self.prev_style = item[self.type.value[0]]
         self.toggle = False
 
-    def iter_bind(self, item: dict, current_content) -> dict:
-        if current_content == self.initial_content:
+
+    def iter_bind(self, item: dict, current_content:str) -> dict:
+        
+        # Isto significa que não é um numero, e por isso podemos 
+        # saltar
+
+        if current_content == self.initial_content or not current_content.isdigit():
             self.toggle = not self.toggle
 
         binder = StyleBinder(self.type, self.style1, self.active) if self.toggle else StyleBinder(self.type, self.style2, self.active)
