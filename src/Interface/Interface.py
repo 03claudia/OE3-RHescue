@@ -4,28 +4,36 @@ import streamlit as st
 
 def interface():
     
-    st.markdown("<center><h1>Avaliação de Desempenho</h1></center>", unsafe_allow_html=True)
+    st.sidebar.title('Escola a opção:')
 
-    st.write("\n\n")
+    st.sidebar.button('Layout Marketing')
+    if st.sidebar.button('Layout Recursos Humanos'):
+        st.write('Teste')
 
-    st.write("Faça o upload dos arquivos para a avaliação de desempenho.")
+    if st.sidebar.button('Exceis de Input'):
 
-    files_list=[]
+        st.markdown("<center><h1>Avaliação de Desempenho</h1></center>", unsafe_allow_html=True)
 
-    num_files = st.slider("Quantidade de Arquivos", min_value=1, max_value=10, value=1)
+        st.text_input('Escreva algo',value='Teste')
 
-    for i in range (num_files):
-        file = st.file_uploader(f"Upload do Arquivo {i+1}", type=["xlsx"])
-        if file is not None:
-            files_list.append(file)
+        st.write("\n\n")
 
-    
-    if st.button("Processar Arquivos"):
-       st.write('Ficheiros processados:')
-       for file in files_list:
-           st.write(file.name)
-       return files_list
-    
+        files_list=[]
+
+        num_files = st.slider("Quantidade de Arquivos", min_value=1, max_value=10, value=1)
+
+        for i in range (num_files):
+            file = st.file_uploader(f"Upload do Arquivo {i+1}", type=["xlsx"])
+            if file is not None:
+                files_list.append(file)
+
+        
+        if st.button("Processar Arquivos"):
+            st.write('Ficheiros processados:')
+            for file in files_list:
+                st.write(file.name)
+            return files_list
+        
 
 
  
