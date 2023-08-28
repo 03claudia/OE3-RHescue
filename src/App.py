@@ -20,7 +20,6 @@ def transform_excel(config_file, input_file, output_filename):
     excel_printer.print(output_filename)
     print(f"{output_filename} criado com sucesso.")
 
-
 def async_transform_excel(config_file, input_file, output_filename):
     t1 = Thread(target=transform_excel, args=(config_file, input_file, output_filename))
     t1.start()

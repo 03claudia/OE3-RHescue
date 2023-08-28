@@ -18,6 +18,6 @@ class WordInterpretor:
     def find_index_and_value_of_column(self, label: str) -> Union[list, int]:
         pass
 
-    def get_column_values(self, index: int) -> list:
+    def get_column_values(self, _: int) -> list:
         pass
     

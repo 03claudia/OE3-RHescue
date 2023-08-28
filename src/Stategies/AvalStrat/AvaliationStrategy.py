@@ -1,7 +1,5 @@
 import random
-from threading import Thread
 from typing import Union
-import math
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Interpretors.WordInterpretor import WordInterpretor
 from Config import Config
@@ -108,7 +106,7 @@ class AvaliationStrategy:
 
                 continue
 
-            if leaf["type"] == Type.HEADER.name:
+            if self.__get_item_property(leaf, Style.COL_SPAN, "1") == Style.COL_SPAN_FULL.value[0]:
                 dimentions = config.process_dimentions_of(Type.HEADER, "output", self.__get_max_span(config, num_questions))
             
             self.__add_item_to_layout(
