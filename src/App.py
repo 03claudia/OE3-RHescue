@@ -30,7 +30,7 @@ def async_transform_excel(config_file, input_file, output_filename):
 
 
 if __name__ == "__main__":
-    interface()
+    input=interface()
     rh = async_transform_excel(
         config_file="./layouts/RH.json",
         input_file="./exemplos/Avaliacao-Membro-RH.xlsx",
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     )
     vpe = async_transform_excel(
         config_file="./layouts/VicePresidenteExterno.json",
-        input_file="./exemplos/Avaliacao-Vice-Presidente-Externo.xlsx",
+        input_file=input[2],
         output_filename="./output/Output-Avaliacao-VPE.xlsx",
     )
     mkt = async_transform_excel(

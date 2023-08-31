@@ -1,25 +1,22 @@
 import streamlit as st
 import json
 
+options=['Excel de Input','Marketing','Recursos Humanos','VPE']
 
 def interface():
-
-
-    num=int(2)
-    options=['Excel de Input','Configurações Marketing',]
+    ficheiros=None
+    
     st.title("Avaliação de Desempenho") 
     selected_page=st.sidebar.selectbox('Escolha um página',options)
-    st.sidebar.write('\n\n\n\n\n\n')
-    st.sidebar.progress(num/4)
-   
+
     if selected_page=='Excel de Input':
-        input()
+        ficheiros=input()
         
-
-    if selected_page=='Configurações Marketing':
+    if selected_page=='Marketing':
         layout_MK() 
-        
 
+    if ficheiros is not None: 
+        return ficheiros    
 
  
         
@@ -30,19 +27,22 @@ def input():
 
     files_list=[]
 
-    num_files = st.slider("Quantidade de Arquivos", min_value=1, max_value=10, value=1)
+    num_files = len(options)-1
 
     for i in range (num_files):
-        file = st.file_uploader(f"Upload do Arquivo {i+1}", type=["xlsx"])
+        file = st.file_uploader(f"Upload do Arquivo {options[i+1]}", type=["xlsx"])
         if file is not None:
             files_list.append(file)
 
     
     if st.button("Processar Arquivos"):
-       st.write('Ficheiros processados:')
-       for file in files_list:
-           st.write(file.name)
-       return files_list
+       if len(files_list)==num_files:
+            st.write('Ficheiros processados:')
+            for file in files_list:
+             st.write(file.name)
+            return files_list
+       else:
+           st.write('Dê upload a todos os ficheiros')
     
 
 def layout_MK():
@@ -85,6 +85,9 @@ def layout_MK():
 
 
     st.button('Concluido')   
+
+
+
   
         
 
