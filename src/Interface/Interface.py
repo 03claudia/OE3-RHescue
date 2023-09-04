@@ -13,7 +13,10 @@ def interface():
         ficheiros=input()
         
     if selected_page=='Marketing':
-        layout_MK() 
+        layout_MK()
+
+    if selected_page=='Recursos Humanos':
+        layout_RH()      
 
     if ficheiros is not None: 
         return ficheiros    
@@ -50,23 +53,30 @@ def layout_MK():
     file= open("./layouts/MK.json", 'r',encoding="UTF-8")
     data=json.loads(file.read())
 
-    questions=[]
+    
     st.write("\n\n")
     st.title('Marketing')
 
     for i in data['layout']:
         if 'MEASURED'== i['type']:
             names=(i['names'])
+            nome_avaliados=st.text_input('Nomes dos avaliados:',value=names)
+            i['names']=nome_avaliados
 
-    _=st.text_input('Nomes dos avaliados:',value=names)
+    
     st.write("\n\n")
 
     for i in data['layout']:
         if 'MEASURER'== i['type']:
             name=(i['label'])
+            nome_avaliador=st.text_input('Nome da coluna do avaliador:',value=name)
+            i['label']=nome_avaliador
 
-    _=st.text_input('Nome da coluna do avaliador:',value=name)
+
+    #PARA REMOVER UMA QUESTÃO É SO DEIXAR O ESPAÇO EM BRANCO.
+
     st.write("\n\n")
+    questions=[]
     num_question=1
     for i in data['layout']:
         if 'QUESTIONS'== i['type']:
@@ -79,14 +89,80 @@ def layout_MK():
                     tipo=st.selectbox(f'Escolha a opção {num_question}',['Observação','Número'])
 
                 if question != '':
-                    questions.append((question,tipo))
+                    questions.append((question,tipo))  
                 num_question+=1
-                   
+
+      
+
+            i['questions']=questions   
+              
 
 
-    st.button('Concluido')   
 
 
+    if st.button('Concluido'):
+        st.write(data['layout'])
+      
+      
+
+      
+
+  
+    
+def layout_RH():
+
+    file= open("./layouts/RH.json", 'r',encoding="UTF-8")
+    data=json.loads(file.read())
+
+    
+    st.write("\n\n")
+    st.title('Recursos Humanos')
+
+    for i in data['layout']:
+        if 'MEASURED'== i['type']:
+            names=(i['names'])
+            nome_avaliados=st.text_input('Nomes dos avaliados:',value=names)
+            i['names']=nome_avaliados
+
+    
+    st.write("\n\n")
+
+    for i in data['layout']:
+        if 'MEASURER'== i['type']:
+            name=(i['label'])
+            nome_avaliador=st.text_input('Nome da coluna do avaliador:',value=name)
+            i['label']=nome_avaliador
+
+
+    #PARA REMOVER UMA QUESTÃO É SO DEIXAR O ESPAÇO EM BRANCO.
+
+    st.write("\n\n")
+    questions=[]
+    num_question=1
+    for i in data['layout']:
+        if 'QUESTIONS'== i['type']:
+            questoes=(i['questions'])
+            for j in questoes:
+                question=st.text_input(f'Questao {num_question}:',value=j['label'])
+                if j['type']=='NUMBER':
+                    tipo=st.selectbox(f'Escolha a opção da pergunta {num_question}:',['Número','Observação'])
+                elif j['type']=='OBSERVATION':
+                    tipo=st.selectbox(f'Escolha a opção {num_question}',['Observação','Número'])
+
+                if question != '':
+                    questions.append((question,tipo))  
+                num_question+=1
+
+      
+
+            i['questions']=questions   
+              
+
+
+
+
+    if st.button('Concluido'):
+        st.write(data['layout'])
 
   
         
