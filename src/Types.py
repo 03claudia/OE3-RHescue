@@ -18,6 +18,7 @@ class Style(Enum):
     TEXT_COLOR = "text-color",
     ROW_SPAN = "row-span",
     COL_SPAN = "col-span",
+    COL_SPAN_FULL = "full",
     BREAK_LINE = "break-line",
     MAJOR = "major",
     MAJOR_SPAN = "major-span",
@@ -28,3 +29,4 @@ class Style(Enum):
     LABEL = "label",
     INTERLACED_BG = "interlaced-bg",
     INTERLACED_BG_COLOR = "interlaced-bg-color",
+

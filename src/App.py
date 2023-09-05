@@ -1,11 +1,9 @@
 # Entry point do programa
-from enum import Enum
 from threading import Thread
 from Interface.Interface import interface
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Printers.ExcelPrinter import ExcelPrinter
 from Stategies.AvalStrat.Question import Question
-from Types import Type
 from Config import Config
 from Stategies.AvalStrat.AvaliationStrategy import AvaliationStrategy
 
@@ -21,7 +19,6 @@ def transform_excel(config_file, input_file, output_filename):
     excel_printer = ExcelPrinter(layout_output)
     excel_printer.print(output_filename)
     print(f"{output_filename} criado com sucesso.")
-
 
 def async_transform_excel(config_file, input_file, output_filename):
     t1 = Thread(target=transform_excel, args=(config_file, input_file, output_filename))
