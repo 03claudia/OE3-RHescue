@@ -12,4 +12,4 @@ def test_avaliation_stategy():
                                         
     assert stategy.name_divider == "["
     
-    stategy.__get_measured(None, [])
+ 

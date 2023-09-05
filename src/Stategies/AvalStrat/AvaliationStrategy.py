@@ -1,7 +1,5 @@
 import random
-from threading import Thread
 from typing import Union
-import math
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Interpretors.WordInterpretor import WordInterpretor
 from Config import Config
@@ -331,11 +329,11 @@ class AvaliationStrategy:
             measured_list.append(Measured(measured_name, question_list))
         return measured_list
     
-    # Pode ser util
+    """ # Pode ser util
     def __debug(self, measured_list: list[Measured]) -> str:
         final_str = ""
         for measured in measured_list:
             for question in measured.get_questions():
                 for grade, measurer in question.get_grades():
                     final_str += f"\n\nAvaliado [{measured.get_name()}]\nAvaliador [{measurer.get_name()}]\n{question.get_question()}\nNota {grade}"
-        return final_str
+        return final_str """
