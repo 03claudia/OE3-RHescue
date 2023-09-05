@@ -31,9 +31,10 @@ def async_transform_excel(config_file, input_file, output_filename):
 
 if __name__ == "__main__":
     input=interface()
+    print(input)
     rh = async_transform_excel(
         config_file="./layouts/RH.json",
-        input_file="./exemplos/Avaliacao-Membro-RH.xlsx",
+        input_file=input[0],
         output_filename="./output/Output-Avaliacao-Membro-RH.xlsx",
     )
     vpe = async_transform_excel(
@@ -43,10 +44,10 @@ if __name__ == "__main__":
     )
     mkt = async_transform_excel(
         config_file="./layouts/MK.json",
-        input_file="./exemplos/Avaliacao-Membros-MKT.xlsx",
+        input_file=input[1],
         output_filename="./output/Output-Avaliacao-Membro-MK.xlsx",
      
     )
     rh.join()
     vpe.join()
-    mkt.join()
+    mkt.join() 

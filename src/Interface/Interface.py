@@ -50,7 +50,7 @@ def input():
 
 def layout_MK():
 
-    file= open("./layouts/MK.json", 'r',encoding="UTF-8")
+    file= open("./layouts/MK.json", 'r', encoding="UTF-8")
     data=json.loads(file.read())
 
     
