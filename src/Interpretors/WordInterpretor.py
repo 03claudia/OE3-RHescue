@@ -3,7 +3,6 @@
 
 from typing import Union
 from Config import Config
-from Stategies.AvalStrat.Measured import Measured
 import pandas as pd
 
 

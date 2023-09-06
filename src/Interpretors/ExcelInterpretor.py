@@ -15,7 +15,8 @@ class ExcelInterpretor:
 
     def read_doc(self, input_file) -> pd.DataFrame:
         try:
-            file = pd.read_excel(input_file, encoding='utf8')
+            file = None
+            file = pd.read_excel(input_file)
             return file
         except FileNotFoundError:
             print("File not found.")
