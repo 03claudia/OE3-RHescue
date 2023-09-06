@@ -38,6 +38,19 @@ def async_transform_excel(process_name, config_file, input_file, output_filename
 if __name__ == "__main__":
     Logger.set_log_type(sys.argv)
 
+    # check if user wants to check some "mini-instructions"
+    help = [arg for arg in sys.argv if arg in ["-h", "--help"]]
+    if help:
+        print(
+        """
+        Usage:
+        -v, --verbose   - Display every info possible
+        -d, --debug     - Used to display usefull debug information
+        -i, --interface - Activate the GUI
+        """
+        )
+        exit(0)
+
     # check if user wants to run interface
     i_active = [arg for arg in sys.argv if arg in ["-i", "--interface"]]
     input=None

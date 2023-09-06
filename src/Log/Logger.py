@@ -27,7 +27,6 @@ class Logger:
     @staticmethod
     def set_log_type(args: list[str]):
         args = [arg for arg in args if arg in Logger.argv_keywords]
-        print(args)
         if not args:
             return
         logger_arg = args[0]
