@@ -1,7 +1,7 @@
 from typing import Union
-from Types import Type
 from Config import Config
 import pandas as pd
+import openpyxl as xlrd
 
 
 class ExcelInterpretor:
@@ -15,7 +15,6 @@ class ExcelInterpretor:
 
     def read_doc(self, input_file) -> pd.DataFrame:
         try:
-            file = None
             file = pd.read_excel(input_file)
             return file
         except FileNotFoundError:
