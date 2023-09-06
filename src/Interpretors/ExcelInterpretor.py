@@ -1,13 +1,15 @@
 from typing import Union
+from Log.Logger import Logger
 from Config import Config
 import pandas as pd
-
 
 class ExcelInterpretor:
     config: Config
     target_file: pd.DataFrame
+    logger: Logger
 
-    def __init__(self, config: Config, input_file: str) -> None:
+    def __init__(self, config: Config, input_file: str, logger: Logger = Logger("")) -> None:
+        self.logger = logger
         self.config = config
         self.target_file_name = input_file
         self.target_file = self.read_doc(input_file)
@@ -17,10 +19,10 @@ class ExcelInterpretor:
             file = pd.read_excel(input_file)
             return file
         except FileNotFoundError:
-            print("File not found.")
+            self.logger.print_critical_error(f"File not found: {input_file}")
             exit(1)
         except Exception:
-            print("The selected file is not an Excel")
+            self.logger.print_critical_error(f"File {input_file} is not an excel")
             exit(1)
 
     def find_index_and_value_of_column(
@@ -40,7 +42,7 @@ class ExcelInterpretor:
                 col_index = self.target_file.columns.get_loc(col_name)
                 result.append((col_index, col_name))
         else:
-            print(f"\nNo column matching label '{label_to_find}' found.")
+            self.logger.print_critical_error(f"\nNo column matching label '{label_to_find}' found.")
 
         if len(result) == 1:
             return result[0]

@@ -1,5 +1,6 @@
 from Config import Config
 from Interpretors.ExcelInterpretor import ExcelInterpretor
+from Log.Logger import Logger
 from Stategies.AvalStrat.AvaliationStrategy import AvaliationStrategy
 
 def test_avaliation_stategy():

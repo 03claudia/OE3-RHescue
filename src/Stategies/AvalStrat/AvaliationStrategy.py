@@ -3,6 +3,7 @@ from typing import Union
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Interpretors.WordInterpretor import WordInterpretor
 from Config import Config
+from Log.Logger import Logger
 from Stategies.AvalStrat.StyleBinder import InterlacedStyleBinder, StyleBinder
 from Types import Style, Type
 from Stategies.AvalStrat.Measured import Measured
@@ -11,7 +12,9 @@ from Stategies.AvalStrat.Question import Question
 
 
 class AvaliationStrategy:
-    def __init__(self, parser: Union[ExcelInterpretor, WordInterpretor], name_divider: str = "[") -> None:
+    logger: Logger
+    def __init__(self, parser: Union[ExcelInterpretor, WordInterpretor], name_divider: str = "[", logger: Logger = Logger("")) -> None:
+        self.logger = logger
         self.parser = parser
         self.name_divider = name_divider
 
@@ -45,7 +48,7 @@ class AvaliationStrategy:
         num_questions = len(self.__get_questions_names(question_list))
         for measured in measured_list:
             if measured.get_number_of_question() != num_questions:
-                print(f"\n{measured.get_name()} tem {measured.get_number_of_question()} perguntas, mas deveria ter {num_questions}.")
+                self.logger.print_critical_error(f"\n{measured.get_name()} tem {measured.get_number_of_question()} perguntas, mas deveria ter {num_questions}.")
                 exit(1)
 
         return question_list
@@ -66,7 +69,7 @@ class AvaliationStrategy:
         # Isto é necessário para utilizar o Print, depois temos de aperfeiçoar isto
         final_layout.append({"num-columns": self.__get_max_span(config, num_questions, "col-span")})      
         
-        result = Config(read_layout_from_file=False, layout=output)
+        result = Config(logger = self.logger, read_layout_from_file=False, layout=output)
         return result
 
     def __header_conversion(self, config: Config, final_layout: list, question_names: list[str], num_questions: int):
@@ -295,13 +298,13 @@ class AvaliationStrategy:
         question_list: list = []
         for question in questions_in_layout:
             if self.name_divider in question["label"]:
-                print(f"\nQuestion malformed in {self.parser.get_config().get_filename()}:\n{question['label']}")
+                self.logger.print_error(f"\nQuestion malformed in {self.parser.get_config().get_filename()}:\n{question['label']}")
                 exit(1)
 
             columns: list[tuple] = self.parser.find_index_and_value_of_column(question["label"])
 
             if columns == [] or columns == None:
-                print(f"\nNo column matching label '{question['label']}' found.")
+                self.logger.print_error(f"\nNo column matching label '{question['label']}' found.")
                 continue
 
             if type(columns[0]) == int:
