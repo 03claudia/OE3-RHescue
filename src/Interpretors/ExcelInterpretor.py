@@ -1,7 +1,6 @@
 from typing import Union
 from Config import Config
 import pandas as pd
-import openpyxl as xlrd
 
 
 class ExcelInterpretor:
