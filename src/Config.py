@@ -50,7 +50,7 @@ class Config:
 
     def __read_layout_from_file(self):
         try:
-            with open(self.layout, "r") as file:
+            with open(self.layout, "r", encoding='UTF-8') as file:
                 return file.read()
         except FileNotFoundError:
             print("File not found.")

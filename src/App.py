@@ -1,5 +1,6 @@
 # Entry point do programa
 from threading import Thread
+
 from Interface.Interface import interface
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Printers.ExcelPrinter import ExcelPrinter
@@ -7,6 +8,7 @@ from Stategies.AvalStrat.Question import Question
 from Config import Config
 from Stategies.AvalStrat.AvaliationStrategy import AvaliationStrategy
 
+USING_STREAM_LIT = False 
 
 def transform_excel(config_file, input_file, output_filename):
     layout_input = Config(read_layout_from_file=True, layout=config_file)
@@ -25,23 +27,28 @@ def async_transform_excel(config_file, input_file, output_filename):
     t1.start()
     return t1
 
+def use_streamlit():
+    return USING_STREAM_LIT
 
 if __name__ == "__main__":
-    input=interface()
+    input=None
+    if use_streamlit():
+        input = interface()
+    
     print(input)
     rh = async_transform_excel(
         config_file="./layouts/RH.json",
-        input_file=input[0],
+        input_file=input[1] if input is not None else "./exemplos/Avaliacao-Membro-RH.xlsx",
         output_filename="./output/Output-Avaliacao-Membro-RH.xlsx",
     )
     vpe = async_transform_excel(
         config_file="./layouts/VicePresidenteExterno.json",
-        input_file=input[2],
+        input_file=input[2] if input is not None else "./exemplos/Avaliacao-Vice-Presidente-Externo.xlsx",
         output_filename="./output/Output-Avaliacao-VPE.xlsx",
     )
     mkt = async_transform_excel(
         config_file="./layouts/MK.json",
-        input_file=input[1],
+        input_file=input[0] if input is not None else "./exemplos/Avaliacao-Membros-MKT.xlsx",
         output_filename="./output/Output-Avaliacao-Membro-MK.xlsx",
      
     )
