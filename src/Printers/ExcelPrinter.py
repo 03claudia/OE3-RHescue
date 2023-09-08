@@ -45,7 +45,15 @@ class ExcelPrinter:
         return data
     
     def set_lock(self, lock: threading.Lock):
+        self.lock_changed = True
         self.lock = lock
+
+    def execute_locked_process(self, callback) -> None:
+        with self.lock:
+            if not self.lock_changed or self.lock is None:
+                self.logger.print_error("Lock not changed or not set. Please set it before calling this function.")
+                return
+            callback()
 
     def __get_property(self, row: dict, property: str, default_to):
         try:
@@ -71,7 +79,7 @@ class ExcelPrinter:
         
 
     def __save_file(self, data, filepath):
-        with self.lock:
+        def __save():
             from openpyxl import load_workbook
 
             # Primeira parte responsável por colocar e criar os dados
@@ -120,6 +128,8 @@ class ExcelPrinter:
             # Save and close the workbook
             wb.save(filepath)
             wb.close()
+        
+        self.execute_locked_process(callback= __save)
 
 
     def process_data(self, data, num_cols):
