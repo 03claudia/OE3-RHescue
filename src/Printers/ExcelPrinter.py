@@ -4,11 +4,13 @@ from os.path import exists
 import threading
 
 from pandas.core.arrays.base import mode
-from pandas.io.common import Path
+from pandas.io.common import Path, os
 from Config import Config
 from Log.Logger import Logger
 from Types import Style 
 from openpyxl import Workbook
+
+exec_in_threads = False
 
 class ExcelPrinter:
     settings = "_settings"
@@ -28,7 +30,11 @@ class ExcelPrinter:
         self.page_name = page_name
 
     def print(self, filepath):
-        data = self.layout.get_data()
+        try:
+            data = self.layout.get_data()
+        except:
+            self.logger.print_critical_error(f"{filepath} does not contain usefull information")
+            exit(1)
         self.__save_file(data, filepath)
         
     def __process_output_style(self, data: []) -> dict[str: str]:
@@ -81,9 +87,20 @@ class ExcelPrinter:
     # função à prova de multi-threading
     # já implementa locks
     def __save_file(self, data, filepath):
-
         # esta função é executada mais abaixo com locks
         def __save():
+            global exec_in_threads
+            
+            if not exec_in_threads:
+                # verifica que o output ainda não existe
+                # senão apaga o ficheiro
+                if exists(filepath):
+                    self.logger.print_info(f"{filepath} already exists, removing file...")
+                    os.unlink(filepath)
+                
+                exec_in_threads = True
+
+
             from openpyxl import load_workbook
 
             # Primeira parte responsável por colocar e criar os dados

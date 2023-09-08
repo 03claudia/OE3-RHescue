@@ -59,7 +59,7 @@ class Config:
             with open(self.layout, "r", encoding='UTF-8') as file:
                 return file.read()
         except FileNotFoundError:
-            self.logger.print_error("File not found.")
+            self.logger.print_error(f"Config file not found, reading: {self.layout}")
             exit(1)
         except Exception as e:
             self.logger.print_error(e)

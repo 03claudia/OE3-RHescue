@@ -1,4 +1,5 @@
 from enum import Enum
+import traceback
 
 class LogType(Enum):
     VERBOSE = "VERBOSE",
@@ -18,7 +19,7 @@ class Colors:
 
 class Logger:
     log_type: LogType = LogType.NORMAL
-    argv_keywords = ["-v", "--verbose", "-d", "--debug"]
+    argv_keywords = ["-v", "-vi", "-iv", "--verbose", "-d", "--debug"]
     custom_descriptor = ""
 
     def __init__(self, custom_descriptor: str) -> None:
@@ -34,6 +35,10 @@ class Logger:
         match logger_arg:
             case "-v":
                 Logger.log_type = LogType.VERBOSE
+            case "-vi":
+                Logger.log_type = LogType.VERBOSE
+            case "-iv":
+                Logger.log_type = LogType.VERBOSE
             case "--verbose":
                 Logger.log_type = LogType.VERBOSE
             case "-d":
@@ -45,18 +50,26 @@ class Logger:
     def get_log_type() -> LogType:
         return Logger.log_type
 
+    def get_debug_info(self) -> str: 
+        dbg = ""
+        if Logger.log_type == LogType.DEBUG or Logger.log_type == LogType.VERBOSE:
+            dbg = "\n" + traceback.extract_stack()[-3].filename\
+                    + "\nLine: " + str(traceback.extract_stack()[-3].lineno) + "\n"
+        return dbg    
+
     def print_critical_error(self, log: str):
-        print(f"{Colors.FAIL}[CRITICAL ERROR] ({self.custom_descriptor}) -> {log}{Colors.ENDC}")
+        print(f"{Colors.FAIL}[CRITICAL ERROR] ({self.custom_descriptor})-> {log}{Colors.ENDC} {self.get_debug_info()}")
 
     def print_success(self, log: str):
-        print(f"{Colors.OKGREEN}[SUCCESS] ({self.custom_descriptor}) -> {log}{Colors.ENDC}")
+        print(f"{Colors.OKGREEN}[SUCCESS] ({self.custom_descriptor})-> {log}{Colors.ENDC} {self.get_debug_info()}")
 
     def print_error(self,log: str):
         if(Logger.log_type != LogType.DEBUG and Logger.log_type != LogType.VERBOSE):
             return
-        print(f"[{Colors.WARNING}ERROR] ({self.custom_descriptor})-> {log}{Colors.ENDC}")
+
+        print(f"[{Colors.WARNING}ERROR] ({self.custom_descriptor})-> {log}{Colors.ENDC} {self.get_debug_info()}")
 
     def print_info(self, log: str):
         if(Logger.log_type != LogType.DEBUG and Logger.log_type != LogType.VERBOSE):
             return
-        print(f"{Colors.OKBLUE}[INFO] ({self.custom_descriptor}) -> {log}{Colors.ENDC}")
+        print(f"{Colors.OKBLUE}[INFO] ({self.custom_descriptor})-> {log}{Colors.ENDC}") 

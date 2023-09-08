@@ -69,7 +69,7 @@ class AvaliationStrategy:
         # Isto é necessário para utilizar o Print, depois temos de aperfeiçoar isto
         final_layout.append({"num-columns": self.__get_max_span(config, num_questions, "col-span")})      
         
-        result = Config(logger = self.logger, read_layout_from_file=False, layout=output)
+        result = Config(logger=self.logger, read_layout_from_file=False, layout=output)
         return result
 
     def __header_conversion(self, config: Config, final_layout: list, question_names: list[str], num_questions: int):
@@ -136,7 +136,7 @@ class AvaliationStrategy:
         measure_leaf = config.get_type(Type.MEASURE, config.get_data("output"))[0]
 
         # passo intermediário, os dados estavam muito desorganizados e era dificil colocá-los no estado correto
-        organized_content = self.__organize_content(measurer_list, question_list)
+        organized_content = AvaliationStrategy.__organize_content(measurer_list, question_list)
 
         bg_color_interlaced_binder = InterlacedStyleBinder(
             type=Style.BG_COLOR,
@@ -211,7 +211,7 @@ class AvaliationStrategy:
 
     # passo intermediario necessário para organizar os dados
     # extremamente ineficiente...
-    def __organize_content(self, measurer_list: list[Measurer], question_list: list[Question]) -> dict[str: dict[str: list[int]]]:
+    def __organize_content(measurer_list: list[Measurer], question_list: list[Question]) -> dict[str: dict[str: list[int]]]:
         
         tmp_result = {}
 

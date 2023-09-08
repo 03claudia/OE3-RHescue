@@ -1,6 +1,10 @@
 # Entry point do programa
+import ntpath
 import sys
 from threading import Thread
+from pandas.io.common import os
+
+from streamlit import logger
 from Log.Logger import Logger
 from Interface.Interface import interface
 from Interpretors.ExcelInterpretor import ExcelInterpretor
@@ -10,10 +14,20 @@ from Config import Config
 from Stategies.AvalStrat.AvaliationStrategy import AvaliationStrategy
 import threading
 
+from Stategies.ResultStrategy.Results import Results
+
 # var global usada para bloquear threads,
 # convém ser uma var global
 lock = threading.Lock()
-global_result: list[Config] = []
+
+class Group:
+    group_name: str
+    questions: list[Question]
+    def __init__(self, questions, group_name) -> None:
+        self.questions = questions
+        self.group_name = group_name
+
+global_result: list[Group] = []
 
 def transform_excel(process_name, config_file, input_file, output_sheet):
     global lock
@@ -40,7 +54,7 @@ def transform_excel(process_name, config_file, input_file, output_sheet):
     logger.print_success(f"{output_sheet} criado com sucesso.")
     with lock:
         global global_result 
-        global_result.append(question_list)
+        global_result.append(Group(questions=question_list, group_name=output_sheet))
 
 def async_transform_excel(process_name, config_file, input_file, output_sheet):
     t1 = Thread(target=transform_excel, args=(process_name, config_file, input_file, output_sheet))
@@ -64,7 +78,7 @@ if help:
     exit(0)
 
 # check if user wants to run interface
-i_active = [arg for arg in sys.argv if arg in ["-i", "--interface"]]
+i_active = [arg for arg in sys.argv if arg in ["-i", "-iv", "-vi", "-id", "-di", "--interface"]]
 input=None
 
 if i_active:
@@ -72,29 +86,34 @@ if i_active:
 else:
     input = interface()
 
-rh = async_transform_excel(
-    process_name="RH",
-    config_file="./layouts/RH.json",
-    input_file=input[1] if input is not None else "./exemplos/Avaliacao-Membro-RH.xlsx",
-    output_sheet="RH"
-)
+# lê todos os ficheiros dentro da pasta /exemplos
+xlsxfiles = [os.path.join(root,name) 
+             for root, _, files in os.walk("exemplos")
+             for name in files
+             if name.endswith((".xlsx", ".xls"))]
 
-vpe = async_transform_excel(
-    process_name="VPE",
-    config_file="./layouts/VicePresidenteExterno.json",
-    input_file=input[2] if input is not None else "./exemplos/Avaliacao-Vice-Presidente-Externo.xlsx",
-    output_sheet="VPE"
-)
-mkt = async_transform_excel(
-    process_name="MK",
-    config_file="./layouts/MK.json",
-    input_file=input[0] if input is not None else "./exemplos/Avaliacao-Membros-MKT.xlsx",
-    output_sheet="MK"
-)
-rh.join()
-vpe.join()
-mkt.join() 
+threads_used: [] = []
+for excel in xlsxfiles:
+    if excel == "result.xlsx":
+        continue
+    filename = ntpath.basename(excel).split('.')[0]
+    th = async_transform_excel(
+        process_name=filename,
+        config_file=f"./layouts/{filename}.json",
+        input_file=excel,
+        output_sheet=filename
+    )
+    threads_used.append(th)
+
+for thread in threads_used:
+    thread.join()
 
 # Depois de se ter analisado todos
 # os exceis, podemos criar o ralatório final
 # com tudo organizado
+logger = Logger("MAIN THREAD")
+logger.print_info("Loading results... into result.xlsx")
+final_output: Config = Results.parse(global_result)
+excel_printer = ExcelPrinter(final_output, "Resultados")
+excel_printer.print("./output/result.xlsx")
+
