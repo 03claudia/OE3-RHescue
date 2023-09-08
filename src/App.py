@@ -63,7 +63,7 @@ if __name__ == "__main__":
     i_active = [arg for arg in sys.argv if arg in ["-i", "--interface"]]
     input=None
 
-    if not i_active:
+    if i_active:
         input = None
     else:
         input = interface()

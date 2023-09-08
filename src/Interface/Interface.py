@@ -38,6 +38,7 @@ def input():
     files_list=[]
 
     num_files = len(options)-1
+    
 
     for i in range (num_files):
         file = st.file_uploader(f"Upload do Arquivo {options[i+1]}", type=["xlsx"])
