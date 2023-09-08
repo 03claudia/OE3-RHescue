@@ -3,17 +3,24 @@ import json
 
 options=['Excel de Input','Marketing','Recursos Humanos','VPE']
 
+
+
 def interface():
+
     ficheiros=None
     
+    data_mk=None
     st.title("Avaliação de Desempenho") 
+   
+        
     selected_page=st.sidebar.selectbox('Escolha um página',options)
 
     if selected_page=='Excel de Input':
         ficheiros=input()
         
     if selected_page=='Marketing':
-        layout_MK()
+        data_mk=layout_MK(data_mk)
+        
 
     if selected_page=='Recursos Humanos':
         layout_RH()      
@@ -46,13 +53,19 @@ def input():
             return files_list
        else:
            st.write('Dê upload a todos os ficheiros')
+
+cond_MK=False
+
+def layout_MK(data_MK):
+
+    data=None
+    if not cond_MK:
+        file= open("./layouts/MK.json", 'r', encoding="UTF-8")
+        data=json.loads(file.read()) 
+    else:
+        data=data_MK
+   
     
-
-def layout_MK():
-
-    file= open("./layouts/MK.json", 'r', encoding="UTF-8")
-    data=json.loads(file.read())
-
     
     st.write("\n\n")
     st.title('Marketing')
@@ -101,7 +114,11 @@ def layout_MK():
 
 
     if st.button('Concluido'):
+        cond_MK=True
         st.write(data['layout'])
+        return data
+
+        
       
       
 

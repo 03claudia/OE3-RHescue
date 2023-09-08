@@ -22,6 +22,7 @@ class Config:
         else:
             content = layout
         self.data = content
+    
 
     def get_filename(self) -> str:
         return self.layout
@@ -31,7 +32,7 @@ class Config:
 
     def get_data_as_json(self):
         print(self.data)
-        return json.dumps(self.data)
+        return self.data
 
     def get_type(self, key: Type, data=None) -> list:
         if not data:

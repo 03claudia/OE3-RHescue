@@ -8,7 +8,7 @@ from Stategies.AvalStrat.Question import Question
 from Config import Config
 from Stategies.AvalStrat.AvaliationStrategy import AvaliationStrategy
 
-USING_STREAM_LIT = False 
+USING_STREAM_LIT = True 
 
 def transform_excel(config_file, input_file, output_filename):
     layout_input = Config(read_layout_from_file=True, layout=config_file)
