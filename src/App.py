@@ -13,8 +13,10 @@ import threading
 # var global usada para bloquear threads,
 # convém ser uma var global
 lock = threading.Lock()
+global_result: list[Config] = []
 
 def transform_excel(process_name, config_file, input_file, output_sheet):
+    global lock
     logger = Logger(process_name)
 
     layout_input = Config(logger=logger, read_layout_from_file=True, layout=config_file)
@@ -36,57 +38,63 @@ def transform_excel(process_name, config_file, input_file, output_sheet):
     excel_printer.print("./output/result.xlsx")
 
     logger.print_success(f"{output_sheet} criado com sucesso.")
+    with lock:
+        global global_result 
+        global_result.append(question_list)
 
 def async_transform_excel(process_name, config_file, input_file, output_sheet):
     t1 = Thread(target=transform_excel, args=(process_name, config_file, input_file, output_sheet))
     t1.start()
     return t1
 
+# main
+Logger.set_log_type(sys.argv)
 
-if __name__ == "__main__":
-    Logger.set_log_type(sys.argv)
-
-    # check if user wants to check some "mini-instructions"
-    help = [arg for arg in sys.argv if arg in ["-h", "--help"]]
-    if help:
-        print(
-        """
-        Usage:
-        -v, --verbose   - Display every info possible
-        -d, --debug     - Used to display usefull debug information
-        -i, --interface - Disable the GUI
-        """
-        )
-        exit(0)
-
-    # check if user wants to run interface
-    i_active = [arg for arg in sys.argv if arg in ["-i", "--interface"]]
-    input=None
-
-    if i_active:
-        input = None
-    else:
-        input = interface()
-    
-    rh = async_transform_excel(
-        process_name="RH",
-        config_file="./layouts/RH.json",
-        input_file=input[1] if input is not None else "./exemplos/Avaliacao-Membro-RH.xlsx",
-        output_sheet="RH"
+# check if user wants to check some "mini-instructions"
+help = [arg for arg in sys.argv if arg in ["-h", "--help"]]
+if help:
+    print(
+    """
+    Usage:
+    -v, --verbose   - Display every info possible
+    -d, --debug     - Used to display usefull debug information
+    -i, --interface - Disable the GUI
+    """
     )
+    exit(0)
 
-    vpe = async_transform_excel(
-        process_name="VPE",
-        config_file="./layouts/VicePresidenteExterno.json",
-        input_file=input[2] if input is not None else "./exemplos/Avaliacao-Vice-Presidente-Externo.xlsx",
-        output_sheet="VPE"
-    )
-    mkt = async_transform_excel(
-        process_name="MK",
-        config_file="./layouts/MK.json",
-        input_file=input[0] if input is not None else "./exemplos/Avaliacao-Membros-MKT.xlsx",
-        output_sheet="MK"
-    )
-    rh.join()
-    vpe.join()
-    mkt.join() 
+# check if user wants to run interface
+i_active = [arg for arg in sys.argv if arg in ["-i", "--interface"]]
+input=None
+
+if i_active:
+    input = None
+else:
+    input = interface()
+
+rh = async_transform_excel(
+    process_name="RH",
+    config_file="./layouts/RH.json",
+    input_file=input[1] if input is not None else "./exemplos/Avaliacao-Membro-RH.xlsx",
+    output_sheet="RH"
+)
+
+vpe = async_transform_excel(
+    process_name="VPE",
+    config_file="./layouts/VicePresidenteExterno.json",
+    input_file=input[2] if input is not None else "./exemplos/Avaliacao-Vice-Presidente-Externo.xlsx",
+    output_sheet="VPE"
+)
+mkt = async_transform_excel(
+    process_name="MK",
+    config_file="./layouts/MK.json",
+    input_file=input[0] if input is not None else "./exemplos/Avaliacao-Membros-MKT.xlsx",
+    output_sheet="MK"
+)
+rh.join()
+vpe.join()
+mkt.join() 
+
+# Depois de se ter analisado todos
+# os exceis, podemos criar o ralatório final
+# com tudo organizado

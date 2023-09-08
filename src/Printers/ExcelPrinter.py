@@ -78,7 +78,11 @@ class ExcelPrinter:
 
         
 
+    # função à prova de multi-threading
+    # já implementa locks
     def __save_file(self, data, filepath):
+
+        # esta função é executada mais abaixo com locks
         def __save():
             from openpyxl import load_workbook
 
@@ -129,7 +133,9 @@ class ExcelPrinter:
             wb.save(filepath)
             wb.close()
         
+
         self.execute_locked_process(callback= __save)
+
 
 
     def process_data(self, data, num_cols):
