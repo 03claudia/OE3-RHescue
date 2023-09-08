@@ -1,4 +1,5 @@
 import json
+from Log.Logger import Logger
 
 from Types import Type
 
@@ -6,6 +7,7 @@ from Types import Type
 class Config:
     data = {}
     layout = ""
+    logger: Logger 
 
     """
         Caso, read_from_file seja True, o layout será lido do arquivo especificado em filepath.
@@ -13,8 +15,9 @@ class Config:
         um ficheiro JSON.
     """
 
-    def __init__(self, read_layout_from_file: bool, layout: str) -> None:
+    def __init__(self, read_layout_from_file: bool, layout: str, logger: Logger = Logger("")) -> None:
         self.layout = layout
+        self.logger = logger
 
         content = None
         if read_layout_from_file:
@@ -33,6 +36,8 @@ class Config:
     def get_data_as_json(self):
         print(self.data)
         return self.data
+        self.logger.print_info(self.data)
+        return json.dumps(self.data)
 
     def get_type(self, key: Type, data=None) -> list:
         if not data:
@@ -54,10 +59,10 @@ class Config:
             with open(self.layout, "r", encoding='UTF-8') as file:
                 return file.read()
         except FileNotFoundError:
-            print("File not found.")
+            self.logger.print_error("File not found.")
             exit(1)
         except Exception as e:
-            print(e)
+            self.logger.print_error(e)
             exit(1)
 
     def process_dimentions_of(

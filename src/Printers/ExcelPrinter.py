@@ -1,10 +1,7 @@
-from typing import Union
-from openpyxl import Workbook
-
 import pandas as pd
 from Config import Config
-from Stategies.AvalStrat.StyleBinder import StyleBinder
-from Types import Style, Type
+from Log.Logger import Logger
+from Types import Style 
 
 
 class ExcelPrinter:
@@ -12,11 +9,13 @@ class ExcelPrinter:
     headers = "_headers"
     content = "_content"
     main_headers = "_main_headers"
+    logger: Logger
 
     __process_col_pos = 0
     __process_row_pos = 0
     
-    def __init__(self, layout: Config):
+    def __init__(self, layout: Config, logger: Logger = Logger("")):
+        self.logger = logger
         self.layout = layout
 
     def print(self, filepath):
@@ -60,8 +59,7 @@ class ExcelPrinter:
         
 
     def __save_file(self, data, filepath):
-        from openpyxl import Workbook, load_workbook
-        from openpyxl.styles import Alignment, PatternFill
+        from openpyxl import load_workbook
 
         # Primeira parte responsável por colocar e criar os dados
         # no arquivo excel
@@ -110,7 +108,7 @@ class ExcelPrinter:
                     try:
                         cols[index + i].append(label)
                     except:
-                        print(f"Erro: {index + i}, provavelmente existe algo de errado com o layout ou com o excel de input.\
+                        self.logger.print_critical_error(f"Erro: {index + i}, provavelmente existe algo de errado com o layout ou com o excel de input.\
                               De qualquer das formas peço já desculpa por não ter detetado este erro antes.")
 
             index += col_span
