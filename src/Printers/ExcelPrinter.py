@@ -1,9 +1,7 @@
-from numpy import append
 import pandas as pd
 from os.path import exists
 import threading
 
-from pandas.core.arrays.base import mode
 from pandas.io.common import Path, os
 from Config import Config
 from Log.Logger import Logger

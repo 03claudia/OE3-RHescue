@@ -1,5 +1,7 @@
 import random
+from Utils.ToAscii import to_ascii
 from typing import Union
+import unidecode
 from Interpretors.ExcelInterpretor import ExcelInterpretor
 from Interpretors.WordInterpretor import WordInterpretor
 from Config import Config
@@ -329,7 +331,7 @@ class AvaliationStrategy:
     def __get_measured(self, measured_names_in_layout, question_list: list[Question]) -> list[Measured]:
         measured_list: list[Measured] = []
         for measured_name in measured_names_in_layout:
-            measured_list.append(Measured(measured_name, question_list))
+            measured_list.append(Measured(to_ascii(measured_name), question_list))
         return measured_list
     
     """ # Pode ser util

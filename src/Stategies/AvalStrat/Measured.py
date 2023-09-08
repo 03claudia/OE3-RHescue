@@ -1,4 +1,4 @@
-
+from Utils.ToAscii import to_ascii
 from typing import Union
 from Stategies.AvalStrat.Measurer import Measurer
 from Stategies.AvalStrat.Question import Question
@@ -20,8 +20,8 @@ class Measured:
                 num_obs += 1
                 result.append(question)
             
-            cleaned_name = self.name.lower()
-            if cleaned_name in question.get_question().lower():
+            cleaned_name = to_ascii(self.name.lower())
+            if cleaned_name in to_ascii(question.get_question().lower()):
                 result.append(question)
         
         if len(result) <= num_obs:

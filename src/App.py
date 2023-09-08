@@ -32,6 +32,7 @@ global_result: list[Group] = []
 def transform_excel(process_name, config_file, input_file, output_sheet):
     global lock
     logger = Logger(process_name)
+    logger.set_lock(lock)
 
     layout_input = Config(logger=logger, read_layout_from_file=True, layout=config_file)
     excel_interpretor = ExcelInterpretor(logger = logger, config=layout_input, input_file=input_file)
