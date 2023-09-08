@@ -4,6 +4,7 @@ from os.path import exists
 import threading
 
 from pandas.core.arrays.base import mode
+from pandas.io.common import Path
 from Config import Config
 from Log.Logger import Logger
 from Types import Style 
@@ -91,6 +92,8 @@ class ExcelPrinter:
 
             # check if filepath exists
             if not exists(filepath):
+                self.logger.print_info(f"Creating {filepath}...")
+                Path(filepath).parent.mkdir(parents=True, exist_ok=True)
                 wb = Workbook()
                 wb.create_sheet(self.page_name)
                 wb.save(filepath)

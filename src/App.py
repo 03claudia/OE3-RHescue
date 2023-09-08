@@ -54,7 +54,7 @@ if __name__ == "__main__":
         Usage:
         -v, --verbose   - Display every info possible
         -d, --debug     - Used to display usefull debug information
-        -i, --interface - Desactivate the GUI
+        -i, --interface - Disable the GUI
         """
         )
         exit(0)
