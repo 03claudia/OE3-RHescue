@@ -1,8 +1,13 @@
+from numpy import append
 import pandas as pd
+from os.path import exists
+import threading
+
+from pandas.core.arrays.base import mode
 from Config import Config
 from Log.Logger import Logger
 from Types import Style 
-
+from openpyxl import Workbook
 
 class ExcelPrinter:
     settings = "_settings"
@@ -10,13 +15,16 @@ class ExcelPrinter:
     content = "_content"
     main_headers = "_main_headers"
     logger: Logger
+    page_name: str
+    lock: threading.Lock = threading.Lock()
 
     __process_col_pos = 0
     __process_row_pos = 0
     
-    def __init__(self, layout: Config, logger: Logger = Logger("")):
+    def __init__(self, layout: Config, page_name: str,logger: Logger = Logger("")):
         self.logger = logger
         self.layout = layout
+        self.page_name = page_name
 
     def print(self, filepath):
         data = self.layout.get_data()
@@ -34,6 +42,9 @@ class ExcelPrinter:
             self.__add_style_process(row, col_span, row_span, not break_line, offset_col, major)
 
         return data
+    
+    def set_lock(self, lock: threading.Lock):
+        self.lock = lock
 
     def __get_property(self, row: dict, property: str, default_to):
         try:
@@ -59,37 +70,54 @@ class ExcelPrinter:
         
 
     def __save_file(self, data, filepath):
-        from openpyxl import load_workbook
+        with self.lock:
+            from openpyxl import load_workbook
 
-        # Primeira parte responsável por colocar e criar os dados
-        # no arquivo excel
-        writer = pd.ExcelWriter(filepath)
-        
-        num_cols = data[-1]["num-columns"]
-        data_processed = self.process_data(data, num_cols)
-        
-        dict_data = {}
+            # Primeira parte responsável por colocar e criar os dados
+            # no arquivo excel
+            
+            num_cols = data[-1]["num-columns"]
+            data_processed = self.process_data(data, num_cols)
+            
+            dict_data = {}
 
-        random = 0
-        for col in data_processed:
+            random = 0
+            for col in data_processed:
+                try:
+                    dict_data.update({random: col})
+                    random += 1
+                except:
+                    continue
+
+            # check if filepath exists
+            if not exists(filepath):
+                wb = Workbook()
+                wb.create_sheet(self.page_name)
+                wb.save(filepath)
+                wb.close()
+
+            # Use 'with' statement for proper file handling
+
+            #check if file is already open
             try:
-                dict_data.update({random: col})
-                random += 1
-            except:
-                continue
-        
-        pdDataframe = pd.DataFrame(dict_data)
-        pdDataframe.to_excel(writer, index=False, header=False, sheet_name="Sheet1")
-        writer.close()
+               with open(filepath, "r") as _: # or just open
+                   self.logger.print_info(f"{filepath} not open, all good")
+            except IOError:
+                self.logger.print_error(f"{filepath} is already open")
 
-        # Segundo passo, voltar a abrir o arquivo e aplicar os estilos
-        wb = load_workbook(filepath)
-        ws = wb.active
+            with pd.ExcelWriter(filepath, mode='a', if_sheet_exists="replace", engine="openpyxl") as writer:
+                pdDataframe = pd.DataFrame(dict_data)
+                pdDataframe.to_excel(writer, index=False, header=False, sheet_name=self.page_name)
 
-        self.__apply_style(ws, data[:-1])
+            # Reopen the workbook to apply styles
+            wb = load_workbook(filename=filepath) 
+            ws = wb[self.page_name]
+            self.__apply_style(ws, data[:-1])
 
-        # Save the workbook
-        wb.save(filepath)
+            # Save and close the workbook
+            wb.save(filepath)
+            wb.close()
+
 
     def process_data(self, data, num_cols):
         cols = [[] for _ in range(num_cols)]
