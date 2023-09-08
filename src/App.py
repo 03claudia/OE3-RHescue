@@ -8,10 +8,13 @@ from Printers.ExcelPrinter import ExcelPrinter
 from Stategies.AvalStrat.Question import Question
 from Config import Config
 from Stategies.AvalStrat.AvaliationStrategy import AvaliationStrategy
+import threading
 
-USING_STREAM_LIT = True 
+# var global usada para bloquear threads,
+# convém ser uma var global
+lock = threading.Lock()
 
-def transform_excel(process_name, config_file, input_file, output_filename):
+def transform_excel(process_name, config_file, input_file, output_sheet):
     logger = Logger(process_name)
 
     layout_input = Config(logger=logger, read_layout_from_file=True, layout=config_file)
@@ -25,13 +28,17 @@ def transform_excel(process_name, config_file, input_file, output_filename):
     logger.print_info(f"Parsing {process_name}'s excel file...")
 
     layout_output = avaliation_strategy.convert_to_layout(question_list)
-    excel_printer = ExcelPrinter(layout = layout_output, logger = logger)
-    excel_printer.print(output_filename)
+    excel_printer = ExcelPrinter(layout = layout_output, logger = logger, page_name=output_sheet)
 
-    logger.print_success(f"{output_filename} criado com sucesso.")
+    # extremamente importante para quando estivermos a utilizar
+    # threads
+    excel_printer.set_lock(lock)
+    excel_printer.print("./output/result.xlsx")
 
-def async_transform_excel(process_name, config_file, input_file, output_filename):
-    t1 = Thread(target=transform_excel, args=(process_name, config_file, input_file, output_filename))
+    logger.print_success(f"{output_sheet} criado com sucesso.")
+
+def async_transform_excel(process_name, config_file, input_file, output_sheet):
+    t1 = Thread(target=transform_excel, args=(process_name, config_file, input_file, output_sheet))
     t1.start()
     return t1
 
@@ -65,20 +72,20 @@ if __name__ == "__main__":
         process_name="RH",
         config_file="./layouts/RH.json",
         input_file=input[1] if input is not None else "./exemplos/Avaliacao-Membro-RH.xlsx",
-        output_filename="./output/Output-Avaliacao-Membro-RH.xlsx",
+        output_sheet="RH"
     )
+
     vpe = async_transform_excel(
         process_name="VPE",
         config_file="./layouts/VicePresidenteExterno.json",
         input_file=input[2] if input is not None else "./exemplos/Avaliacao-Vice-Presidente-Externo.xlsx",
-        output_filename="./output/Output-Avaliacao-VPE.xlsx",
+        output_sheet="VPE"
     )
     mkt = async_transform_excel(
         process_name="MK",
         config_file="./layouts/MK.json",
         input_file=input[0] if input is not None else "./exemplos/Avaliacao-Membros-MKT.xlsx",
-        output_filename="./output/Output-Avaliacao-Membro-MK.xlsx",
-     
+        output_sheet="MK"
     )
     rh.join()
     vpe.join()
