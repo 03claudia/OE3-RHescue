@@ -134,4 +134,10 @@ logger.print_info("Loading results... into result.xlsx")
 
 result = Results(global_result)
 result.process_av_des_mensal()
+config = result.get_config()
+printer: ExcelPrinter = ExcelPrinter(config, "resultado", logger)
+
+result.draw_dropdown()
+result.draw_results(printer, "./output/result.xlsx")
+
 

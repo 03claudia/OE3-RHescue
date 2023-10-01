@@ -1,6 +1,7 @@
 import random
 from Config import Config
 from Log.Logger import Logger
+from Printers.ExcelPrinter import ExcelPrinter
 from Stategies.AvalStrat.Measured import Measured
 from Stategies.AvalStrat.StyleBinder import StyleBinder
 from Stategies.ResultStrategy.Dropdown import Dropdown
@@ -15,7 +16,6 @@ class Results:
     dropdown: Dropdown
     logger: Logger
     final_layout: [str] 
-    all_people: list[Measured]
 
     def __init__(self, data: list['Group'], logger = Logger("")) -> Config:
         # todo
@@ -30,7 +30,6 @@ class Results:
                 for _, measured, _ in question.get_grades():
                     if measured not in all_people_names:
                         all_people_names.append(measured.get_name())
-                        self.all_people.append(measured)
 
         self.dropdown = Dropdown(workbook, all_people_names, "A1")
         self.final_layout = []
@@ -42,28 +41,34 @@ class Results:
     # nome do excel tem de comecar com "gen_m"
     def process_av_des_mensal(self):
         
+        av_mensal_groups = []
         for group in self.data:
             filename = group.group_name
             if "gen_m" not in filename:
                 continue
 
+            av_mensal_groups.append(group)
+
+        for group in av_mensal_groups:
+            index = len(group.questions)
             for question in group.questions:
                 for grade, measured, measurer in question.get_grades():
-                    self.dropdown.add_condition_to(measured.get_name(), grade, ) 
-                    pass
-
-                # self.__add_item_to_layout(
-                #     id = 0,
-                #     label= note,
-                #     col_span= 1,
-                #     row_span= , # if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
-                #     end_result = self.final_layout,
-                #     break_line= internal_index == (num_questions - 1),
-                #     item = measure_leaf,
-                #     style_list=[border_style_binder, border_color_binder],
-                #     major = is_observation,
-                #     major_span= len(measured_list),
-                # )
+                    self.logger.print_info(f"{measured.get_name()} - {measurer.get_name()} - {grade}")
+                    self.dropdown.if_(dropdown_option=measured.get_name(), set_cell_to=grade)   
+                self.__add_item_to_layout(
+                    id = 0,
+                    label= self.dropdown.get_options(),
+                    col_span= 1,
+                    row_span= 2, # if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
+                    end_result = self.final_layout,
+                    break_line= index == 0,
+                    item = {},
+                    style_list=[],
+                    major = False,
+                    major_span= False,
+                )
+                self.dropdown.reset()
+                index -= 1
 
 
     # nome do excel tem de comecar com "gen_s"
@@ -81,6 +86,17 @@ class Results:
     # nome do excel tem de comecar com "coord_proj_<nome do projeto>"
     def process_av_sem_coord_proj(self):
         pass
+
+    def draw_dropdown(self):
+        self.dropdown.draw_dropdown(1, 1)
+
+    def draw_results(self, excel_printer: ExcelPrinter, filepath: str):
+        excel_printer.print(filepath)
+
+    def get_config(self) -> Config:
+        config: Config = Config(False, self.layout)
+        return config
+        
 
     def __get_max_span(self, config: Config, n_questions: int, property: str = "col-span") -> int:
         measured_col_span = config.process_dimentions_of(Type.MEASURED, "output")[property]

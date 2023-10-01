@@ -1,39 +1,35 @@
+from xlsxwriter.workbook import Worksheet
 from Log.Logger import Logger
 import xlsxwriter
 
 class Dropdown:
-    workbook = None
-    options: dict[str, str] = {}
-    dropdown_cell: str = ''
-    logger: Logger = None
+    options: str 
+    people: list[str]
 
-    # usado para saber que opção está ativa e assim
-    # colocar nas celulas o valor associado a essa opção
-    # ex: Se o Pedro estiver selecionado, mostramos a nota
-    # atribuida ao Pedro
-    formulas: dict[str, str] = {}
+    def __init__(self, people: list[str], dropdown_pos: str):
+        self.people = people
+        self.options = ""
+        self.dropdown_pos = dropdown_pos
 
-    def __init__(self, workbook: xlsxwriter.Workbook, options: list[str], dropdown_cell: str, logger: Logger = Logger("")):
-        self.workbook = workbook
-        for option in options:
-            # usado para saber que opção está ativa e assim
-            self.formulas[option] = ''
-            # usado para guardar a localização da célula
-            self.options[option] = ''
-        self.dropdown_cell = dropdown_cell
-        self.logger = logger
+    def if_(self, dropdown_option: str, set_cell_to: str):
+        if not self.options[dropdown_option]:
+            self.logger.print_error("A opção " + dropdown_option + " não foi adicionada ao dropdown")
 
-    def add_condition_to(self, option_name: str, value: str):
-        if not self.formulas[option_name]:
-            self.logger.print_error("A opção " + option_name + " não foi adicionada ao dropdown")
+        option = f"=IF({self.dropdown_pos}=\"{dropdown_option}\", {set_cell_to}, \"\")" 
+        prev_option = self.options
 
-        option = f"=IF({self.dropdown_cell}=\"{option_name}\", {value}, \"\")" 
-        prev_option = self.formulas[option_name];
-
-        if prev_option:
-            self.formulas[option_name] = f"{prev_option} & {option}"
+        if prev_option != "":
+            self.options = f"{prev_option} & {option}"
             return
 
-        self.formulas[option_name] = option
+        self.options = option
 
+    def get_options(self) -> str:
+        return self.options
 
+    def draw_dropdown(self, row, col):
+        worksheet: xlsxwriter.Worksheet = Worksheet.get_worksheet_by_name(self.page_name)
+        worksheet.data_validation(row, col, row, col, {"validate": "list", "source": list(self.options.keys())})
+
+    def reset(self):
+        self.options = ""
