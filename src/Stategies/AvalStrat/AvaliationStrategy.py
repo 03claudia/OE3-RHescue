@@ -334,7 +334,7 @@ class AvaliationStrategy:
             measured_list.append(Measured(to_ascii(measured_name), question_list))
         return measured_list
 
-    def process_results()
+    # def process_results():
     
     """ # Pode ser util
     def __debug(self, measured_list: list[Measured]) -> str:
