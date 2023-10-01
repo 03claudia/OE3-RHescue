@@ -16,7 +16,10 @@ class Dropdown:
     def __init__(self, workbook: xlsxwriter.Workbook, options: list[str], dropdown_cell: str, logger: Logger = Logger("")):
         self.workbook = workbook
         for option in options:
+            # usado para saber que opção está ativa e assim
             self.formulas[option] = ''
+            # usado para guardar a localização da célula
+            self.options[option] = ''
         self.dropdown_cell = dropdown_cell
         self.logger = logger
 
@@ -26,6 +29,8 @@ class Dropdown:
 
         option = f"=IF({self.dropdown_cell}=\"{option_name}\", {value}, \"\")" 
         prev_option = self.formulas[option_name];
+
+        self.options[option_name] = pos;
 
         if prev_option:
             self.formulas[option_name] = f"{prev_option} & {option}"
@@ -47,5 +52,4 @@ class Dropdown:
             # self.options[option] dá me a posição da célula
             worksheet.write_formula(self.options[option], self.formulas[option])
 
-        # Save the workbook
         workbook.close()
