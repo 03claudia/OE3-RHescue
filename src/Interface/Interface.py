@@ -4,12 +4,19 @@ import json
 options=['Excel de Input','Marketing','Recursos Humanos','VPE']
 
 
+data_mk=None
+
 
 def interface():
 
+    global data_mk
+
+    file= open("./layouts/Avaliacao-Membros-MKT.json", 'r', encoding="UTF-8")
+    data_mk=json.loads(file.read()) 
+
     ficheiros=None
     
-    data_mk=None
+    
     st.title("Avaliação de Desempenho") 
    
         
@@ -26,9 +33,10 @@ def interface():
         layout_RH()      
 
     if ficheiros is not None: 
-        return ficheiros    
+        return ficheiros  
+      
 
- 
+   
         
 def input():
     st.write("\n\n")
@@ -55,19 +63,11 @@ def input():
        else:
            st.write('Dê upload a todos os ficheiros')
 
-cond_MK=False
 
-def layout_MK(data_MK):
 
-    data=None
-    if not cond_MK:
-        file= open("./layouts/MK.json", 'r', encoding="UTF-8")
-        data=json.loads(file.read()) 
-    else:
-        data=data_MK
-   
-    
-    
+def layout_MK(data):
+
+
     st.write("\n\n")
     st.title('Marketing')
 
@@ -98,12 +98,12 @@ def layout_MK(data_MK):
             for j in questoes:
                 question=st.text_input(f'Questao {num_question}:',value=j['label'])
                 if j['type']=='NUMBER':
-                    tipo=st.selectbox(f'Escolha a opção da pergunta {num_question}:',['Número','Observação'])
+                    tipo=st.selectbox(f'Escolha a opção da pergunta {num_question}:',['NUMBER','OBSERVATION'])
                 elif j['type']=='OBSERVATION':
-                    tipo=st.selectbox(f'Escolha a opção {num_question}',['Observação','Número'])
-
-                if question != '':
-                    questions.append((question,tipo))  
+                    tipo=st.selectbox(f'Escolha a opção {num_question}',['OBSERVATION','NUMBER'])
+                
+                if question != '' and tipo != '':
+                    questions.append({'label':question,'type':tipo})
                 num_question+=1
 
       
@@ -115,8 +115,9 @@ def layout_MK(data_MK):
 
 
     if st.button('Concluido'):
-        cond_MK=True
         st.write(data['layout'])
+        with open("./layouts/Avaliacao-Membros-MKT.json", 'w', encoding="UTF-8") as file:
+            file.write(json.dumps(data_mk, indent=2))
         return data
 
         

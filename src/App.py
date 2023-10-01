@@ -82,22 +82,28 @@ if help:
 i_active = [arg for arg in sys.argv if arg in ["-i", "-iv", "-vi", "-id", "-di", "--interface"]]
 input=None
 
+xlsxfiles= None
 if i_active:
     input = None
+    # lê todos os ficheiros dentro da pasta /exemplos
+    xlsxfiles = [os.path.join(root,name) 
+                for root, _, files in os.walk("exemplos")
+                for name in files
+                if name.endswith((".xlsx", ".xls"))]
+        
 else:
-    input = interface()
+    xlsxfiles = interface()
 
-# lê todos os ficheiros dentro da pasta /exemplos
-xlsxfiles = [os.path.join(root,name) 
-             for root, _, files in os.walk("exemplos")
-             for name in files
-             if name.endswith((".xlsx", ".xls"))]
+
 
 threads_used: [] = []
+
 for excel in xlsxfiles:
+
     if excel == "result.xlsx":
         continue
-    filename = ntpath.basename(excel).split('.')[0]
+    
+    filename = ntpath.basename(excel).split('.')[0] if i_active else excel.name.split('.')[0]
     th = async_transform_excel(
         process_name=filename,
         config_file=f"./layouts/{filename}.json",
