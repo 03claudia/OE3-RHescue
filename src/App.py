@@ -15,6 +15,7 @@ from Stategies.AvalStrat.AvaliationStrategy import AvaliationStrategy
 import threading
 
 from Stategies.ResultStrategy.Results import Results
+from Types import Type
 
 # var global usada para bloquear threads,
 # convém ser uma var global
@@ -35,6 +36,8 @@ def transform_excel(process_name, config_file, input_file, output_sheet):
     logger.set_lock(lock)
 
     layout_input = Config(logger=logger, read_layout_from_file=True, layout=config_file)
+
+
     excel_interpretor = ExcelInterpretor(logger = logger, config=layout_input, input_file=input_file)
 
     logger.print_info(f"Reading {process_name}'s excel file...")
@@ -53,9 +56,17 @@ def transform_excel(process_name, config_file, input_file, output_sheet):
     excel_printer.print("./output/result.xlsx")
 
     logger.print_success(f"{output_sheet} criado com sucesso.")
+        # preciso de saber o tipo de ficheiro que estamos a ler, se é av mensal, anual, etc...
+
+    group_name: str = ""
+    try:
+        group_name= layout_input.get_type(Type.AVALTYPE)[0]['label']
+    except:
+        logger.print_critical_error(f"No avaliation type provided for {process_name}.json, use \"type\":\"AVALTYPE\"")
+
     with lock:
         global global_result 
-        global_result.append(Group(questions=question_list, group_name=output_sheet))
+        global_result.append(Group(questions=question_list, group_name=group_name))
 
 def async_transform_excel(process_name, config_file, input_file, output_sheet):
     t1 = Thread(target=transform_excel, args=(process_name, config_file, input_file, output_sheet))
@@ -120,7 +131,7 @@ for thread in threads_used:
 # com tudo organizado
 logger = Logger("MAIN THREAD")
 logger.print_info("Loading results... into result.xlsx")
-final_output: Config = Results.parse(global_result)
-excel_printer = ExcelPrinter(final_output, "Resultados")
-excel_printer.print("./output/result.xlsx")
+
+result = Results(global_result)
+result.process_av_des_mensal()
 

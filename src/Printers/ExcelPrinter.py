@@ -240,6 +240,7 @@ class ExcelPrinter:
     def __apply_style_to_cell(self, ws, row, col, stylename, style):
         cell = ws.cell(row=row, column=col)
         setattr(cell, stylename, style)
+
     
     def __apply_style_to_all_cells(self, ws, stylename, style):
         for row in ws.iter_rows():

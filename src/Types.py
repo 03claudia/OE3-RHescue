@@ -11,6 +11,7 @@ class Type(Enum):
     CONTENT = "CONTENT"
     MEASURE = "MEASURE"
     SUBHEADER = "SUBHEADER"
+    AVALTYPE = "AVALTYPE"
 
 class Style(Enum):
     ID = "id",
