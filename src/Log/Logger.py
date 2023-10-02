@@ -74,7 +74,9 @@ class Logger:
                 self.lock.release()
 
     def execute_locked_process(self, callback) -> None:
-        with self.lock_timeout(1):
+        # uncomment this to get perfect logs
+        # but have in mind the performance impact
+        # with self.lock_timeout(1):
             callback()
 
 

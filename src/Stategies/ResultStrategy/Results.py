@@ -28,10 +28,10 @@ class Results:
         for group in self.data:
             for question in group.questions:
                 for _, measured, _ in question.get_grades():
-                    if measured not in all_people_names:
+                    if measured.get_name() not in all_people_names:
                         all_people_names.append(measured.get_name())
 
-        self.dropdown = Dropdown(workbook, all_people_names, "A1")
+        self.dropdown = Dropdown(all_people_names, "A1")
         self.final_layout = []
 
 
@@ -52,9 +52,9 @@ class Results:
         for group in av_mensal_groups:
             index = len(group.questions)
             for question in group.questions:
-                for grade, measured, measurer in question.get_grades():
-                    self.logger.print_info(f"{measured.get_name()} - {measurer.get_name()} - {grade}")
+                for grade, measured, _ in question.get_grades():
                     self.dropdown.if_(dropdown_option=measured.get_name(), set_cell_to=grade)   
+
                 self.__add_item_to_layout(
                     id = 0,
                     label= self.dropdown.get_options(),
@@ -87,16 +87,15 @@ class Results:
     def process_av_sem_coord_proj(self):
         pass
 
-    def draw_dropdown(self):
-        self.dropdown.draw_dropdown(1, 1)
+    def draw_dropdown(self, filepath: str):
+        self.dropdown.draw_dropdown(filepath)
 
     def draw_results(self, excel_printer: ExcelPrinter, filepath: str):
         excel_printer.print(filepath)
 
     def get_config(self) -> Config:
-        config: Config = Config(False, self.layout)
+        config: Config = Config(False, self.final_layout)
         return config
-        
 
     def __get_max_span(self, config: Config, n_questions: int, property: str = "col-span") -> int:
         measured_col_span = config.process_dimentions_of(Type.MEASURED, "output")[property]
@@ -133,4 +132,10 @@ class Results:
         if len(style_list) > 0:
             for style in style_list:
                 style.unbind(item)
+
+    def __get_item_property(self, item, style: Style, default_to = None):
+        try:
+            return item[style.value[0]]
+        except:
+            return default_to
 

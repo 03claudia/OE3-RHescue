@@ -344,3 +344,4 @@ class AvaliationStrategy:
                 for grade, measurer in question.get_grades():
                     final_str += f"\n\nAvaliado [{measured.get_name()}]\nAvaliador [{measurer.get_name()}]\n{question.get_question()}\nNota {grade}"
         return final_str """
+
