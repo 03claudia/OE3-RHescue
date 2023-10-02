@@ -3,6 +3,7 @@ from Config import Config
 from Log.Logger import Logger
 from Printers.ExcelPrinter import ExcelPrinter
 from Stategies.AvalStrat.Measured import Measured
+from Stategies.AvalStrat.Question import Question
 from Stategies.AvalStrat.StyleBinder import StyleBinder
 from Stategies.ResultStrategy.Dropdown import Dropdown
 import xlsxwriter
@@ -52,8 +53,21 @@ class Results:
         for group in av_mensal_groups:
             index = len(group.questions)
             for question in group.questions:
+
+                median_dict: dict[str, float] = {}
+                for person in self.dropdown.people:
+                    median_dict[person] = {"median": 0, "n_aval": 1}
+
                 for grade, measured, _ in question.get_grades():
-                    self.dropdown.if_(dropdown_option=measured.get_name(), set_cell_to=grade)   
+                    if type(grade) == str:
+                        continue
+                    median_dict[measured.get_name()]["median"] += grade
+                    median_dict[measured.get_name()]["n_aval"] += 1
+
+                for person in median_dict.keys():
+                    median = median_dict[person]["median"] / median_dict[person]["n_aval"]
+
+                    self.dropdown.if_(dropdown_option=person, set_cell_to=(median))   
 
                 print("index", index, "index == 1?", index == 1)
                 self.__add_item_to_layout(

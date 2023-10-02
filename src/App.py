@@ -138,7 +138,6 @@ config = result.get_config()
 printer: ExcelPrinter = ExcelPrinter(config, "resultado", logger)
 printer.set_lock(lock)
 
-print(config.get_data())
 
 result.draw_dropdown("./output/result.xlsx")
 result.draw_results(printer, "./output/result.xlsx")
