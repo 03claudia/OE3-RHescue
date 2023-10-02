@@ -69,6 +69,7 @@ class AvaliationStrategy:
         self.__content_conversion(config, final_layout, question_list, num_questions)  
 
         # Isto é necessário para utilizar o Print, depois temos de aperfeiçoar isto
+        # não me lembro ao certo porque (???)
         final_layout.append({"num-columns": self.__get_max_span(config, num_questions, "col-span")})      
         
         result = Config(logger=self.logger, read_layout_from_file=False, layout=output)

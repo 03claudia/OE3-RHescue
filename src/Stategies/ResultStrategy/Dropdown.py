@@ -6,47 +6,50 @@ import xlsxwriter
 class Dropdown:
     options: str 
     people: list[str]
+    worksheet_name: str = "Avaliacao"
 
     def __init__(self, people: list[str], dropdown_pos: str):
         self.people = people
-        self.options = ""
+        self.options = "=CONCATENAR("
         self.dropdown_pos = dropdown_pos
 
+    # objetivo
+    # =CONCATENAR(
+    #     SE(Avaliacao!A1="Catarina Milheiro", "6", ""),
+    #     SE(Avaliacao!A1="Gonçalo Figueiredo", "5", ""),
+    #     SE(Avaliacao!A1="Inês Cabral", "4", ""),
+    #     SE(Avaliacao!A1="Mariana Arezes", "3", ""),
+    #     SE(Avaliacao!A1="Mariana Oliveira", "2", ""),
+    #     SE(Avaliacao!A1="Paula Ferreira", "1", ""),
+    #     SE(Avaliacao!A1="Paulo Vieira", "7", ""),
+    #     SE(Avaliacao!A1="Rafaela Carvalho", "8", "")
+    # )
     def if_(self, dropdown_option: str, set_cell_to: str):
+        self.options += f'SE({self.worksheet_name}!{self.dropdown_pos}="{dropdown_option}", {set_cell_to}, ""),'
 
-        option = f"=IF({self.dropdown_pos}=\"{dropdown_option}\", {set_cell_to}, \"\")" 
-        prev_option = self.options
-
-        if prev_option != "":
-            self.options = f"{prev_option} & {option}"
-            return
-
-        self.options = option
 
     def get_options(self) -> str:
-        return self.options
-
+        # o codigo por aqui está demasiado feio
+        return self.options + ')'
 
     def draw_dropdown(self, filepath):
         from openpyxl import load_workbook
 
-    # Load the existing Excel workbook
+        # Load the existing Excel workbook
         existing_workbook = load_workbook(filepath)
     
         # Get the worksheet you want to modify or create a new one if it doesn't exist
-        worksheet_name = "Avaliacao"
+        worksheet_name = self.worksheet_name
         if worksheet_name not in existing_workbook.sheetnames:
             worksheet = existing_workbook.create_sheet(worksheet_name)
         else:
             worksheet = existing_workbook[worksheet_name]
-    
-        # Define your list of people
-        people = ["John", "Alice", "Bob", "Eve"]
+   
     
         # Write the list of people to a column in the worksheet
         for i, person in enumerate(self.people):
             worksheet.cell(row=i+1, column=2, value=person)
-    
+   
         # Create a dropdown in cell A1 that references the list of people
         data_validation = DataValidation(
             type="list",
@@ -54,9 +57,9 @@ class Dropdown:
         )
         worksheet.add_data_validation(data_validation)
         data_validation.add(worksheet["A1"])
-    
+
         # Save the changes to the existing workbook
         existing_workbook.save(filepath)
 
     def reset(self):
-        self.options = ""
+        self.options = "=CONCATENAR("

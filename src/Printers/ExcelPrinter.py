@@ -18,6 +18,7 @@ class ExcelPrinter:
     logger: Logger
     page_name: str
     lock: threading.Lock = threading.Lock()
+    lock_changed = False
 
     __process_col_pos = 0
     __process_row_pos = 0
@@ -27,9 +28,9 @@ class ExcelPrinter:
         self.layout = layout
         self.page_name = page_name
 
-    def print(self, filepath):
+    def print(self, filepath, d_type: str ="layout"):
         try:
-            data = self.layout.get_data()
+            data = self.layout.get_data(d_type)
         except:
             self.logger.print_critical_error(f"{filepath} does not contain usefull information")
             exit(1)
@@ -136,12 +137,37 @@ class ExcelPrinter:
                 self.logger.print_error(f"{filepath} is already open")
 
             with pd.ExcelWriter(filepath, mode='a', if_sheet_exists="replace", engine="openpyxl") as writer:
-                pdDataframe = pd.DataFrame(dict_data)
-                pdDataframe.to_excel(writer, index=False, header=False, sheet_name=self.page_name)
+
+                # remove arrays from the dict_data with len == 0
+                keys_to_remove = []
+
+                # Identify keys with empty arrays
+                for key in dict_data:
+                    if len(dict_data[key]) == 0:
+                        keys_to_remove.append(key)
+
+                # Remove keys with empty arrays
+                for key in keys_to_remove:
+                    del dict_data[key]
+
+                try:
+                    for key in dict_data:
+                        self.logger.print_info("Column size: " + len(dict_data[key]).__str__())
+                    pdDataframe = pd.DataFrame(dict_data)
+                    pdDataframe.to_excel(writer, index=False, header=False, sheet_name=self.page_name)
+                except Exception as e:
+                    self.logger.print_critical_error(f"Error while writing to {filepath}: {e}")
+
 
             # Reopen the workbook to apply styles
             wb = load_workbook(filename=filepath) 
-            ws = wb[self.page_name]
+            try:
+                ws = wb[self.page_name]
+            except:
+                # significa que a pagina não existe
+                wb.create_sheet(self.page_name)
+                ws = wb[self.page_name]
+
             self.__apply_style(ws, data[:-1])
 
             # Save and close the workbook
@@ -164,6 +190,10 @@ class ExcelPrinter:
                 label = item["label"]
             except KeyError:
                 continue
+            except Exception:
+                self.logger.print_critical_error("Item is not addressed correctly: ")
+                print(item)
+                exit(1)
 
             for i in range(col_span):
                 for _ in range(row_span):
@@ -175,7 +205,9 @@ class ExcelPrinter:
 
             index += col_span
 
-            if index >= num_cols:
+            # Supostamente, ver se há uma quebra de linha
+            # é mais eficiente com item["break-line"]
+            if index >= num_cols or item["break-line"]:
                 index = 0
 
         return cols

@@ -55,13 +55,14 @@ class Results:
                 for grade, measured, _ in question.get_grades():
                     self.dropdown.if_(dropdown_option=measured.get_name(), set_cell_to=grade)   
 
+                print("index", index, "index == 1?", index == 1)
                 self.__add_item_to_layout(
                     id = 0,
                     label= self.dropdown.get_options(),
                     col_span= 1,
                     row_span= 2, # if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
                     end_result = self.final_layout,
-                    break_line= index == 0,
+                    break_line= (index == 1),
                     item = {},
                     style_list=[],
                     major = False,
@@ -94,7 +95,9 @@ class Results:
         excel_printer.print(filepath)
 
     def get_config(self) -> Config:
-        config: Config = Config(False, self.final_layout)
+        self.final_layout.append({"num-columns": 40})
+        final = {"layout": self.final_layout}
+        config: Config = Config(False, final)
         return config
 
     def __get_max_span(self, config: Config, n_questions: int, property: str = "col-span") -> int:
