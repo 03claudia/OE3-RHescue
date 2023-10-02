@@ -53,6 +53,24 @@ class Results:
         for group in av_mensal_groups:
             index = len(group.questions)
             for question in group.questions:
+                q: Question = question
+                self.__add_item_to_layout(
+                    id = 0,
+                    label= q.get_question(),
+                    col_span= 1,
+                    row_span= 2, 
+                    end_result = self.final_layout,
+                    break_line= (index == 1),
+                    item = {},
+                    style_list=[],
+                    major = False,
+                    major_span= False,
+                )
+                index -= 1
+            
+            index = len(group.questions)
+
+            for question in group.questions:
 
                 median_dict: dict[str, float] = {}
                 for person in self.dropdown.people:
