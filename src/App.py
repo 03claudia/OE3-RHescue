@@ -37,7 +37,6 @@ def transform_excel(process_name, config_file, input_file, output_sheet):
 
     layout_input = Config(logger=logger, read_layout_from_file=True, layout=config_file)
 
-
     excel_interpretor = ExcelInterpretor(logger = logger, config=layout_input, input_file=input_file)
 
     logger.print_info(f"Reading {process_name}'s excel file...")
@@ -62,6 +61,9 @@ def transform_excel(process_name, config_file, input_file, output_sheet):
     try:
         group_name= layout_input.get_type(Type.AVALTYPE)[0]['label']
     except:
+        # Caso este erro ocorra, fiquem a saber que só impossibilita que os resultados
+        # sejam processados corretamente, mas claro, recomendo que acrescentem
+        # {"type": "AVAL_TYPE", "label": "..."} nas configurações
         logger.print_critical_error(f"No avaliation type provided for {process_name}.json, use \"type\":\"AVALTYPE\"")
 
     with lock:
@@ -133,7 +135,11 @@ logger = Logger("MAIN THREAD")
 logger.print_info("Loading results... into result.xlsx")
 
 result = Results(global_result)
+
+# Processa os resultados das avalicações mensais
+# nada está a ser desenhado!!! apenas processado
 result.process_av_des_mensal()
+
 config = result.get_config()
 printer: ExcelPrinter = ExcelPrinter(config, "resultado", logger)
 printer.set_lock(lock)

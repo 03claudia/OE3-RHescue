@@ -10,7 +10,7 @@ class Dropdown:
 
     def __init__(self, people: list[str], dropdown_pos: str):
         self.people = people
-        self.options = "=CONCATENAR("
+        self.options = "=CONCAT("
         self.dropdown_pos = dropdown_pos
 
     # objetivo
@@ -25,11 +25,12 @@ class Dropdown:
     #     SE(Avaliacao!A1="Rafaela Carvalho", "8", "")
     # )
     def if_(self, dropdown_option: str, set_cell_to: str):
-        self.options += f'SE({self.worksheet_name}!{self.dropdown_pos}="{dropdown_option}", {set_cell_to}, ""),'
+        self.options += f'IF({self.worksheet_name}!{self.dropdown_pos}="{dropdown_option}", {set_cell_to}, ""),'
 
 
     def get_options(self) -> str:
         # o codigo por aqui está demasiado feio
+        print(self.options + ')')
         return self.options + ')'
 
     def draw_dropdown(self, filepath):
@@ -62,4 +63,4 @@ class Dropdown:
         existing_workbook.save(filepath)
 
     def reset(self):
-        self.options = "=CONCATENAR("
+        self.options = "=CONCAT("
