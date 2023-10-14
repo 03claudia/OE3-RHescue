@@ -1,0 +1,88 @@
+{
+    "layout": [
+        {
+            "type": "DATE",
+            "label": "Carimbo de data/hora"
+        },
+        {
+            "type": "MEASURER",
+            "label": "Nome do avaliador"
+        },
+        {
+            "type": "MEASURED",
+            "names": [
+                "Catarina Milheiro",
+                "Gonçalo Figueiredo",
+                "Inês Cabral",
+                "Mariana Arezes",
+                "Mariana Oliveira",
+                "Paula Ferreira",
+                "Paulo Vieira",
+                "Rafaela Carvalho"
+            ]
+        },
+        {
+            "type": "QUESTIONS",
+            "questions": [
+                {
+                    "label": "4. Em tarefas de grupo, o membro é capaz de comunicar com os seus colegas de forma clara e concisa, conseguindo defender a sua opinião mas respeitando a opinião dos outros, mantendo uma boa relação interpessoal.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "Observações",
+                    "type": "OBSERVATION"
+                }
+            ]
+        }
+    ],
+    "output": [
+        {
+            "type": "HEADER",
+            "label": "Avaliação de desempenho",
+            "col-span": "full",
+            "row-span": 1,
+            "bg-color": "FFC000",
+            "text-color": "FFFFFF",
+            "x-alignment": "center",
+            "y-alignment": "center",
+            "border": "thin",
+            "border-color": "000000"
+        },
+        {
+            "type": "CONTENT",
+            "rows": [
+                {
+                    "type": "MEASURER",
+                    "label": "Avaliador",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURED",
+                    "label": "Avaliado",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURE",
+                    "col-span": 1,
+                    "row-span": 1,
+                    "bg-color": "FFFFFF",
+                    "text-color": "000000",
+                    "x-alignment": "left",
+                    "y-alignment": "center",
+                    "border": "thin",
+                    "border-color": "CCCCCC"
+                }
+            ]
+        }
+    ]
+}
