@@ -10,9 +10,15 @@ data_mk=None
 def interface():
 
     global data_mk
+    global data_rh
 
-    file= open("./layouts/Avaliacao-Membros-MKT.json", 'r', encoding="UTF-8")
-    data_mk=json.loads(file.read()) 
+    file_mk= open("./layouts/Avaliacao-Membros-MKT.json", 'r', encoding="UTF-8")
+    data_mk=json.loads(file_mk.read()) 
+
+    file_rh= open("./layouts/Avaliacao-Membro-RH.json", 'r', encoding="UTF-8")
+    data_rh=json.loads(file_rh.read()) 
+
+
 
     ficheiros=None
     
@@ -28,9 +34,8 @@ def interface():
     if selected_page=='Marketing':
         data_mk=layout_MK(data_mk)
         
-
     if selected_page=='Recursos Humanos':
-        layout_RH()      
+        data_rh=layout_RH(data_rh)      
 
     if ficheiros is not None: 
         return ficheiros  
@@ -70,6 +75,14 @@ def layout_MK(data):
 
     st.write("\n\n")
     st.title('Marketing')
+    
+    if st.button('Adicionar uma pergunta'):
+        for i in data['layout']:
+            if 'QUESTIONS'==i['type']:
+                i['questions'].append({'label':'','type':'NUMBER'})
+        with open("./layouts/Avaliacao-Membros-MKT.json", 'w', encoding="UTF-8") as file:
+            file.write(json.dumps(data_mk, indent=2))
+        file.close()
 
     for i in data['layout']:
         if 'MEASURED'== i['type']:
@@ -118,6 +131,7 @@ def layout_MK(data):
         st.write(data['layout'])
         with open("./layouts/Avaliacao-Membros-MKT.json", 'w', encoding="UTF-8") as file:
             file.write(json.dumps(data_mk, indent=2))
+        file.close()
         return data
 
         
@@ -128,14 +142,18 @@ def layout_MK(data):
 
   
     
-def layout_RH():
+def layout_RH(data):
 
-    file= open("./layouts/RH.json", 'r',encoding="UTF-8")
-    data=json.loads(file.read())
-
-    
     st.write("\n\n")
     st.title('Recursos Humanos')
+    
+    if st.button('Adicionar uma pergunta'):
+        for i in data['layout']:
+            if 'QUESTIONS'==i['type']:
+                i['questions'].append({'label':'','type':'NUMBER'})
+        with open("./layouts/Avaliacao-Membro-RH.json", 'w', encoding="UTF-8") as file:
+            file.write(json.dumps(data_rh, indent=2))
+        file.close()
 
     for i in data['layout']:
         if 'MEASURED'== i['type']:
@@ -164,12 +182,12 @@ def layout_RH():
             for j in questoes:
                 question=st.text_input(f'Questao {num_question}:',value=j['label'])
                 if j['type']=='NUMBER':
-                    tipo=st.selectbox(f'Escolha a opção da pergunta {num_question}:',['Número','Observação'])
+                    tipo=st.selectbox(f'Escolha a opção da pergunta {num_question}:',['NUMBER','OBSERVATION'])
                 elif j['type']=='OBSERVATION':
-                    tipo=st.selectbox(f'Escolha a opção {num_question}',['Observação','Número'])
-
-                if question != '':
-                    questions.append((question,tipo))  
+                    tipo=st.selectbox(f'Escolha a opção {num_question}',['OBSERVATION','NUMBER'])
+                
+                if question != '' and tipo != '':
+                    questions.append({'label':question,'type':tipo})
                 num_question+=1
 
       
@@ -182,7 +200,10 @@ def layout_RH():
 
     if st.button('Concluido'):
         st.write(data['layout'])
-
+        with open("./layouts/Avaliacao-Membro-RH.json", 'w', encoding="UTF-8") as file:
+            file.write(json.dumps(data_rh, indent=2))
+        file.close()
+        return data
   
         
 
