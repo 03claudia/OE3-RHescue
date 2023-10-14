@@ -39,8 +39,13 @@ class Results:
     def convert_xy_to_excel(self, x: int, y: int) -> str:
         return f"{chr(x)}{y}"
 
-    # nome do excel tem de comecar com "gen_m"
     def process_av_des_mensal(self):
+        # nome do excel tem de comecar com "gen_m"
+
+        # border_style_binder = StyleBinder(Style.BORDER, self.__get_item_property(measure_leaf, Style.BORDER, "thin"))
+        # border_color_binder = StyleBinder(Style.BORDER_COLOR, self.__get_item_property(measure_leaf, Style.BORDER_COLOR, "000000"))
+                    
+
         
         av_mensal_groups = []
         for group in self.data:
@@ -58,7 +63,7 @@ class Results:
                     id = 0,
                     label= q.get_question(),
                     col_span= 1,
-                    row_span= 2, 
+                    row_span= 1, 
                     end_result = self.final_layout,
                     break_line= (index == 1),
                     item = {},
@@ -92,7 +97,7 @@ class Results:
                     id = 0,
                     label= self.dropdown.get_options(),
                     col_span= 1,
-                    row_span= 2, # if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
+                    row_span= 1, # if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
                     end_result = self.final_layout,
                     break_line= (index == 1),
                     item = {},

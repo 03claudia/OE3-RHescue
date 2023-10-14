@@ -1,5 +1,7 @@
 from enum import Enum
 
+# Usado para determinar o tipo de dado
+# dos ficheiros de configuração
 class Type(Enum):
     DATE = "DATE"
     NUMBER = "NUMBER"
@@ -13,6 +15,8 @@ class Type(Enum):
     SUBHEADER = "SUBHEADER"
     AVALTYPE = "AVALTYPE"
 
+# Usado para determinar o estilo a usar
+# nas células
 class Style(Enum):
     ID = "id",
     BG_COLOR = "bg-color",
