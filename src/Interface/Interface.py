@@ -1,10 +1,11 @@
 import streamlit as st
 import json
 
-Av_Mensal=['Excel de Input','Avaliacao-Membros-MKT','Avaliacao-Membro-RH']
+
+Av_Mensal=['Avaliacao-Membros-MKT','Avaliacao-Membro-RH']
 Av_Trimestral=[]
 Av_Projeto=[]
-Av_Direcao=['Excel de Input','Avaliacao-Vice-Externo']
+Av_Direcao=['Avaliacao-Vice-Presidente-Externo']
 
 
 data_mk=None
@@ -21,9 +22,9 @@ def escrever(file,data):
         file.write(json.dumps(data, indent=2))
         file.close()
 
-def input(num_files,name,files_list):
+def ficheiros(num_files,name,files_list):
     for i in range (num_files):
-        file = st.file_uploader(f"Upload do Arquivo {name[i+1]}", type=["xlsx"])
+        file = st.file_uploader(f"Upload do Arquivo {name[i]}", type=["xlsx"])
         if file is not None:
             files_list.append(file)
     return files_list        
@@ -85,21 +86,33 @@ def layout(file_name):
 
 
 def interface():
-    ficheiros=None
-    st.title("Avaliação de Desempenho") 
+    st.title('RHescue')
+    st.write('\n')
    
-    st.sidebar.title('Avaliação de Desempenho Mensal')
-    selected_page_Av=st.sidebar.selectbox('Escolha um página',Av_Mensal)
-
-    if selected_page_Av=='Excel de Input':
+    ficheiros=None
+    st.sidebar.title('Input de Ficheiros')
+    if st.sidebar.checkbox('Inserir Ficheiros', value=True):
         ficheiros=input()
+
+    st.sidebar.title('Desempenho Mensal')
+    if st.sidebar.checkbox('Alterar Configurações AM'):
+        selected_page_AM=st.sidebar.selectbox('Escolha um página',Av_Mensal)
         
-    if selected_page_Av=='Avaliacao-Membros-MKT':
-        layout('Avaliacao-Membros-MKT')
-        
-        
-    if selected_page_Av=='Recursos Humanos':
-        layout('Avaliacao-Membro-RH')      
+        for i in range(len(Av_Mensal)):
+            if selected_page_AM== Av_Mensal[i]:
+                layout(Av_Mensal[i])
+                
+          
+
+    
+    st.sidebar.title('Direção e Presidência')
+    if st.sidebar.checkbox('Alterar Configurações DIR/PRES'):
+        selected_page_Dir=st.sidebar.selectbox('Escolha um página',Av_Direcao)
+        for i in range(len(Av_Direcao)):
+            if selected_page_Dir==Av_Direcao[i]:
+                layout(Av_Direcao[i])
+            
+
 
     if ficheiros is not None: 
         return ficheiros  
@@ -111,11 +124,16 @@ def input():
     files_list=[]
     st.write("\n\n")
 
-    st.write("Avaliação de Desempenho Mensal.")
-    Num_Av_Mensal=len(Av_Mensal)-1
-    files_list=input(Num_Av_Mensal,Av_Mensal,files_list)
+    st.title("Avaliação de Desempenho Mensal.")
+    Num_Av_Mensal=len(Av_Mensal)
+    files_list=ficheiros(Num_Av_Mensal,Av_Mensal,files_list)
 
-    num_files=Num_Av_Mensal
+
+    st.title('Direção e Presidência.')
+    Num_Av_Dir=len(Av_Direcao)
+    files_list=ficheiros(Num_Av_Dir,Av_Direcao,files_list)
+
+    num_files=Num_Av_Mensal+Num_Av_Dir
 
     if st.button("Processar Arquivos"):
        if len(files_list)==num_files:
