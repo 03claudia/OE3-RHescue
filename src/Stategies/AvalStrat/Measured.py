@@ -1,3 +1,4 @@
+from Log.Logger import Logger
 from Utils.ToAscii import to_ascii
 from typing import Union
 from Stategies.AvalStrat.Measurer import Measurer
@@ -6,6 +7,7 @@ from Types import Type
 
 class Measured:
     __questions = []
+    logger = Logger("Measured")
 
     def __init__(self, name: str, all_questions: list[Question]) -> None:
         self.name = name
@@ -25,7 +27,7 @@ class Measured:
                 result.append(question)
         
         if len(result) <= num_obs:
-            print(f"{self.name} não tem perguntas para ser avaliada.")
+            self.logger.print_critical_error(f"{self.name} não tem perguntas para ser avaliada.")
             exit(1)
         return result
     

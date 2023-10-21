@@ -15,6 +15,9 @@ class Question:
         self.grade_and_measurer_list = []
         self.question_type = Type(question_type)
 
+    def is_observation(self) -> bool:
+        return self.question_type == Type.OBSERVATION
+
     def __str__(self):
         question = f"\nQuestion: {self.question}"
         for grade, measured, measurer in self.grade_and_measurer_list:

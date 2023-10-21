@@ -39,43 +39,68 @@ class Results:
     def convert_xy_to_excel(self, x: int, y: int) -> str:
         return f"{chr(x)}{y}"
 
-    def process_av_des_mensal(self):
-        # nome do excel tem de comecar com "gen_m"
-
-        # border_style_binder = StyleBinder(Style.BORDER, self.__get_item_property(measure_leaf, Style.BORDER, "thin"))
-        # border_color_binder = StyleBinder(Style.BORDER_COLOR, self.__get_item_property(measure_leaf, Style.BORDER_COLOR, "000000"))
-                    
-
-        
+    def _get_num_of_non_obs_questions(self, questions: list):
+        num = 0
+        for question in questions:
+            if not question.is_observation():
+                num += 1
+        return num
+    
+    def _filter_obs_questions(self, questions: list):
+        return [question for question in questions if not question.is_observation()]
+    
+    def _get_groups_by_name(self, name: str) -> list['Group']:
         av_mensal_groups = []
         for group in self.data:
-            filename = group.group_name
-            if "gen_m" not in filename:
+            gn = group.group_name
+            if name not in gn:
                 continue
 
             av_mensal_groups.append(group)
+        return av_mensal_groups
+    
 
-        for group in av_mensal_groups:
-            index = len(group.questions)
-            for question in group.questions:
-                q: Question = question
-                self.__add_item_to_layout(
-                    id = 0,
-                    label= q.get_question(),
-                    col_span= 1,
-                    row_span= 1, 
-                    end_result = self.final_layout,
-                    break_line= (index == 1),
-                    item = {},
-                    style_list=[],
-                    major = False,
-                    major_span= False,
-                )
+    def _process_questions_headings(self, questions: list[Question], num_of_questions, styles):
+        index = num_of_questions
+        tmp_item_changed = None 
+        for question in self._filter_obs_questions(questions):
+            if question.is_observation():
+                # skip observations...
+                if index == 1:
+                    if tmp_item_changed is not None:
+                        tmp_item_changed["break-line"] = False
+                    # if the last question is an
+                    # observation, the last item needs to break
+                    last_item = self.final_layout[-1]
+                    last_item["break-line"] = True
+                    tmp_item_changed = last_item
                 index -= 1
-            
-            index = len(group.questions)
+                continue
+            q: Question = question
 
-            for question in group.questions:
+            # draw the questions
+            self.__add_item_to_layout(
+                id = index,
+                label= q.get_question(),
+                col_span= 1,
+                row_span= 1, 
+                end_result = self.final_layout,
+                break_line= (index == 1),
+                item = {
+                    "border": "thin",
+                    "border-color": "000000",
+                    },
+                style_list=styles,
+                major = False,
+                major_span= False,
+            )
+            index -= 1
+
+    def _process_medias(self, num_of_questions: int, questions: list["Question"]):
+            index = num_of_questions
+            medias_by_person_by_question = {} 
+
+            for question in self._filter_obs_questions(questions):
 
                 median_dict: dict[str, float] = {}
                 for person in self.dropdown.people:
@@ -89,24 +114,122 @@ class Results:
 
                 for person in median_dict.keys():
                     median = median_dict[person]["median"] / median_dict[person]["n_aval"]
+                    if median == 0:
+                        median = "-"
 
                     self.dropdown.if_(dropdown_option=person, set_cell_to=(median))   
 
-                print("index", index, "index == 1?", index == 1)
+                medias_by_person_by_question[question.get_question()] = median_dict
+
+                # Draw media of the grades 
                 self.__add_item_to_layout(
-                    id = 0,
+                    id = index,
                     label= self.dropdown.get_options(),
                     col_span= 1,
                     row_span= 1, # if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
                     end_result = self.final_layout,
-                    break_line= (index == 1),
-                    item = {},
+                    break_line= (bool)(index == 1),
+                    item = {
+                        "border": "thin",
+                        "border-color": "000000",
+                        },
                     style_list=[],
                     major = False,
                     major_span= False,
                 )
                 self.dropdown.reset()
                 index -= 1
+
+            return medias_by_person_by_question
+
+                
+
+
+    def _add_title(self, title: str, num_of_questions: int, styles):
+        self.__add_item_to_layout(
+            id = 0,
+            label= title, 
+            col_span= num_of_questions,
+            row_span= 1, 
+            end_result = self.final_layout,
+            break_line= True,
+            item = {
+                    "border": "thin",
+                    "border-color": "000000",
+                    "bg-color": "cccccc"
+                },
+            style_list= styles,
+            major = False,
+            major_span= False,
+        )
+
+    def _process_total_media(self, medias_by_person_by_question, styles, num_of_questions):
+        # "person": {
+        #   "sum": total_sum,
+        #   "n_question": total_questions
+        # }
+        person_total_media = {} 
+
+        # init this data structure
+        for person in self.dropdown.people:
+            person_total_media[person] = {"sum": 0, "n_question": 0}
+
+        for question in medias_by_person_by_question.keys():
+            for person in medias_by_person_by_question[question]:
+                singular_media = medias_by_person_by_question[question][person]["median"] / medias_by_person_by_question[question][person]["n_aval"]
+                if singular_media != "-":
+                    person_total_media[person]["sum"] += singular_media
+                    person_total_media[person]["n_question"] += 1 
+
+        for person in person_total_media.keys():
+            self.logger.print_info(f"P: {person} -> {person_total_media[person]}")
+            # Desenhar a media final da pessoa
+            self.dropdown.if_(dropdown_option=person, set_cell_to=(person_total_media[person]["sum"] / person_total_media[person]["n_question"]))   
+
+        self.__add_item_to_layout(
+            id = 0,
+            label= self.dropdown.get_options(),
+            col_span= num_of_questions,
+            row_span= 1, # if not is_observation else config.process_dimentions_of(Type.MEASURER, "output")["col-span"],
+            end_result = self.final_layout,
+            break_line= True,
+            item = {
+                "border": "thin",
+                "border-color": "000000",
+                },
+            style_list= styles,
+            major = False,
+            major_span= False,
+        )
+        self.dropdown.reset()
+
+
+
+    def process_av_des_mensal(self, final_path, lock):
+        # nome do excel tem de comecar com "gen_m"
+        GROUP_ID:str = "gen_m"
+
+        border_style_binder = StyleBinder(Style.BORDER, self.__get_item_property({}, Style.BORDER, "thin"))
+        border_color_binder = StyleBinder(Style.BORDER_COLOR, self.__get_item_property({}, Style.BORDER_COLOR, "000000"))
+                    
+        av_mensal_groups = self._get_groups_by_name(GROUP_ID)
+        medias_by_person_by_questions = None
+
+        for group in av_mensal_groups:
+            num_of_questions= self._get_num_of_non_obs_questions(group.questions)
+            # usado para dar skip às observações
+            self._add_title("Avaliação Mensal", num_of_questions, [border_style_binder, border_color_binder])
+            self._process_questions_headings(group.questions, num_of_questions, [border_style_binder, border_color_binder])
+            medias_by_person_by_questions = self._process_medias(num_of_questions, group.questions)
+            self._process_total_media(medias_by_person_by_questions, [border_style_binder, border_color_binder], num_of_questions)
+
+            config = self.get_config()
+            printer: ExcelPrinter = ExcelPrinter(config, "resultado")
+            printer.set_lock(lock)
+
+            # desenha cada grupo separadamente
+            self.draw_results(printer, final_path)
+            self.final_layout = []
 
 
     # nome do excel tem de comecar com "gen_s"

@@ -138,14 +138,8 @@ result = Results(global_result)
 
 # Processa os resultados das avalicações mensais
 # nada está a ser desenhado!!! apenas processado
-result.process_av_des_mensal()
-
-config = result.get_config()
-printer: ExcelPrinter = ExcelPrinter(config, "resultado", logger)
-printer.set_lock(lock)
-
+result.process_av_des_mensal("./output/result.xlsx", logger)
 
 result.draw_dropdown("./output/result.xlsx")
-result.draw_results(printer, "./output/result.xlsx")
 
 
