@@ -28,15 +28,15 @@ class ExcelPrinter:
         self.layout = layout
         self.page_name = page_name
 
-    def print(self, filepath, d_type: str ="layout"):
+    def print(self, filepath, offset_x = 0, offset_y = 0, d_type: str ="layout"):
         try:
             data = self.layout.get_data(d_type)
         except:
             self.logger.print_critical_error(f"{filepath} does not contain usefull information")
             exit(1)
-        self.__save_file(data, filepath)
+        self.__save_file(data, filepath, offset_x, offset_y)
         
-    def __process_output_style(self, data: []) -> dict[str: str]:
+    def __process_output_style(self, data: [], offset_y) -> dict[str: str]:
  
         for row in data:
             col_span = row[Style.COL_SPAN.value[0]]
@@ -45,7 +45,7 @@ class ExcelPrinter:
             offset_col = row["offset-col"] 
             major = row[Style.MAJOR.value[0]]
 
-            self.__add_style_process(row, col_span, row_span, not break_line, offset_col, major)
+            self.__add_style_process(row, col_span, row_span, not break_line, offset_col, major, offset_y)
 
         return data
     
@@ -67,12 +67,12 @@ class ExcelPrinter:
             return default_to
 
     same_row = False
-    def __add_style_process(self, row: dict, col_span, row_span, same_row: bool = False, offset_col = 0, major = False):
+    def __add_style_process(self, row: dict, col_span, row_span, same_row: bool = False, offset_col = 0, major = False, offset_row = 0):
         row.update({
             "col-start": self.__process_col_pos + 1 + offset_col,
             "col-end": self.__process_col_pos + col_span + offset_col,
-            "row-start": self.__process_row_pos + 1,
-            "row-end": self.__process_row_pos + row_span,
+            "row-start": self.__process_row_pos + 1 + offset_row,
+            "row-end": self.__process_row_pos + row_span + offset_row,
         })
 
         if not same_row:
@@ -85,7 +85,7 @@ class ExcelPrinter:
 
     # função à prova de multi-threading
     # já implementa locks
-    def __save_file(self, data, filepath):
+    def __save_file(self, data, filepath, offset_x = 0, offset_y = 0):
         # esta função é executada mais abaixo com locks
         def __save():
             global exec_in_threads
@@ -136,7 +136,7 @@ class ExcelPrinter:
             except IOError:
                 self.logger.print_error(f"{filepath} is already open")
 
-            with pd.ExcelWriter(filepath, mode='a', if_sheet_exists="replace", engine="openpyxl") as writer:
+            with pd.ExcelWriter(filepath, mode='a', if_sheet_exists="overlay", engine="openpyxl") as writer:
 
                 # remove arrays from the dict_data with len == 0
                 keys_to_remove = []
@@ -154,7 +154,7 @@ class ExcelPrinter:
                     for key in dict_data:
                         self.logger.print_info("Column size: " + len(dict_data[key]).__str__())
                     pdDataframe = pd.DataFrame(dict_data)
-                    pdDataframe.to_excel(writer, index=False, header=False, sheet_name=self.page_name)
+                    pdDataframe.to_excel(writer, startrow = offset_y, startcol = offset_x, index=False, header=False, sheet_name=self.page_name)
                 except Exception as e:
                     self.logger.print_critical_error(f"Error while writing to {filepath}: {e}")
 
@@ -168,7 +168,7 @@ class ExcelPrinter:
                 wb.create_sheet(self.page_name)
                 ws = wb[self.page_name]
 
-            self.__apply_style(ws, data[:-1])
+            self.__apply_style(ws, data[:-1], offset_x, offset_y)
 
             # Save and close the workbook
             wb.save(filepath)
@@ -212,7 +212,7 @@ class ExcelPrinter:
 
         return cols
     
-    def __apply_style(self, ws, data:list[dict]):
+    def __apply_style(self, ws, data:list[dict], offset_x = 0, offset_y = 0):
         from openpyxl.styles import Alignment, PatternFill, Font, Border, Side
 
         major_data: dict[str: int] = {}
@@ -243,7 +243,7 @@ class ExcelPrinter:
             style_list.append(style)
             prev_item = style
 
-        self.__process_output_style(style_list)
+        self.__process_output_style(style_list, offset_y)
 
         for style in style_list:
             ws.merge_cells(start_row=style['row-start'], start_column=style['col-start'],

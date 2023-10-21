@@ -215,6 +215,7 @@ class Results:
         av_mensal_groups = self._get_groups_by_name(GROUP_ID)
         medias_by_person_by_questions = None
 
+        offset_y = 0
         for group in av_mensal_groups:
             num_of_questions= self._get_num_of_non_obs_questions(group.questions)
             # usado para dar skip às observações
@@ -228,8 +229,10 @@ class Results:
             printer.set_lock(lock)
 
             # desenha cada grupo separadamente
-            self.draw_results(printer, final_path)
+            self.draw_results(printer, final_path, offset_y)
+
             self.final_layout = []
+            offset_y += 5
 
 
     # nome do excel tem de comecar com "gen_s"
@@ -251,8 +254,8 @@ class Results:
     def draw_dropdown(self, filepath: str):
         self.dropdown.draw_dropdown(filepath)
 
-    def draw_results(self, excel_printer: ExcelPrinter, filepath: str):
-        excel_printer.print(filepath)
+    def draw_results(self, excel_printer: ExcelPrinter, filepath: str, offset_y):
+        excel_printer.print(filepath, offset_y = offset_y)
 
     def get_config(self) -> Config:
         self.final_layout.append({"num-columns": 40})
