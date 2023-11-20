@@ -111,35 +111,36 @@ else:
 
 threads_used: [] = []
 
-for excel in xlsxfiles:
+if xlsxfiles is not None:
+    for excel in xlsxfiles:
 
-    if excel == "result.xlsx":
-        continue
-    
-    filename = ntpath.basename(excel).split('.')[0] if i_active else excel.name.split('.')[0]
-    th = async_transform_excel(
-        process_name=filename,
-        config_file=f"./layouts/{filename}.json",
-        input_file=excel,
-        output_sheet=filename
-    )
-    threads_used.append(th)
+        if excel == "result.xlsx":
+            continue
+        
+        filename = ntpath.basename(excel).split('.')[0] if i_active else excel.name.split('.')[0]
+        th = async_transform_excel(
+            process_name=filename,
+            config_file=f"./layouts/{filename}.json",
+            input_file=excel,
+            output_sheet=filename
+        )
+        threads_used.append(th)
 
-for thread in threads_used:
-    thread.join()
+    for thread in threads_used:
+        thread.join()
 
-# Depois de se ter analisado todos
-# os exceis, podemos criar o ralatório final
-# com tudo organizado
-logger = Logger("MAIN THREAD")
-logger.print_info("Loading results... into result.xlsx")
+    # Depois de se ter analisado todos
+    # os exceis, podemos criar o ralatório final
+    # com tudo organizado
+    logger = Logger("MAIN THREAD")
+    logger.print_info("Loading results... into result.xlsx")
 
-result = Results(global_result)
+    result = Results(global_result)
 
-# Processa os resultados das avalicações mensais
-# nada está a ser desenhado!!! apenas processado
-result.process_av_des_mensal("./output/result.xlsx", lock)
+    # Processa os resultados das avalicações mensais
+    # nada está a ser desenhado!!! apenas processado
+    result.process_av_des_mensal("./output/result.xlsx", lock)
 
-result.draw_dropdown("./output/result.xlsx")
+    result.draw_dropdown("./output/result.xlsx")
 
 

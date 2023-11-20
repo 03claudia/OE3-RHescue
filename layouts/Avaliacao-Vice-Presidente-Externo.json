@@ -1,6 +1,10 @@
 {
     "layout": [
         {
+            "type": "AVALTYPE",
+            "label": "gen_m"
+        },
+        {
             "type": "DATE",
             "label": "Carimbo de data/hora"
         },
