@@ -3,4 +3,4 @@ import streamlit as st
 
 saved_files = st.session_state.saved_files
 st.write("rodrigo")
-Interface.ler_ficheiro(saved_files[5])
+Interface.ler_ficheiro(saved_files[3])
