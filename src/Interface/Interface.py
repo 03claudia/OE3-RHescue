@@ -1,3 +1,4 @@
+from Config import Config
 from Interface.File import File
 from Interface.Pages import Pages
 import streamlit as st
@@ -38,9 +39,6 @@ def interface():
     if "saved_files" not in st.session_state:
         st.session_state.saved_files = Pages.load_app_state() 
 
-    for file in st.session_state.saved_files:
-        st.code(file.__str__())
-
     if "error" in st.session_state:
         st.error(st.session_state.error)
         st.session_state.error = None
@@ -73,10 +71,14 @@ def ler_ficheiro(file: File):
     file_list = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
     
     # Print the list of files
-    for file in file_list:
-        default_options.append(file)
+    for file_i in file_list:
+        default_options.append(file_i)
 
     option = st.selectbox('Tipo de Avaliacao', default_options)
+    current_config = Config(read_layout_from_file=True, layout=folder_path + option)
+    st.code(current_config.get_data_as_json() if current_config else "No config loaded")
+
+    customize_config(current_config)
 
     if uploaded_file is not None:
         file.file = uploaded_file
@@ -84,7 +86,7 @@ def ler_ficheiro(file: File):
             if file.file_index == f.file_index:
                 f.file = uploaded_file
                 f.page_name = file.page_name
-                f.config = file.config
+                f.config = current_config 
                 f.file_index = file.file_index
         Pages.save_app_state(st.session_state.saved_files)
         data = None
@@ -102,3 +104,26 @@ def ler_ficheiro(file: File):
     return uploaded_file
     
 
+def customize_config(config: Config):
+    json_config = config.get_data_as_json()["layout"]
+
+    avaliated_people: list[str] = []
+    list_questions: list[dict] = []
+    col1 = "Pergunta"
+    col2 = "Tipo"
+    # encontra os nomes das pessoas a ser avaliadas
+    for row in json_config:
+        if row["type"] == "MEASURED":
+            for name in row["names"]:
+                avaliated_people.append(name)
+        if row["type"] == "QUESTIONS":
+            for question in row["questions"]:
+                row = {col1: question["label"], col2:question["type"]}
+                list_questions.append(row)
+    
+    df = pd.DataFrame(list_questions)
+
+        
+
+    new_people = st.text_input("Escreve o nome das pessoas a avaliar: (separado por vírgula)", key="new_people", value=", ".join(avaliated_people))
+    edited_df = st.data_editor(df, num_rows="dynamic")

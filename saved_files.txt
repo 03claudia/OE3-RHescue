@@ -2,3 +2,7 @@ lll||,0||,None||,{}
 rodrigo||,1||,None||,{}
 rodrigo||,2||,None||,{}
 rodrigo||,3||,None||,{}
+ooo||,4||,None||,{}
+ooo||,5||,None||,<Config.Config object at 0x7fbc0c6d2d50>
+pppp||,6||,None||,{}
+pppp||,7||,None||,{}
