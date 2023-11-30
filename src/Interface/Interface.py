@@ -1,4 +1,5 @@
 from Config import Config
+import shutil
 from Interface.File import File
 from Interface.Pages import Pages
 from Types import Type
@@ -60,22 +61,28 @@ def interface():
     Pages.save_app_state(st.session_state.saved_files)
     st.title('RHescue')
     st.write('\n')
+
+    if st.button("Apagar tudo"):
+        os.remove("saved_files.txt")
+        shutil.rmtree("./src/pages", ignore_errors=True)
     
     add_new_page(st.session_state.saved_files)
+    
+    if st.button("Processar"):
+        return st.session_state.saved_files
 
 
 def ler_ficheiro(file: File):
-    # st.code(file)
     st.title("Ficheiro Excel")
     uploaded_file = None
     uploaded_file = st.file_uploader("Upload excel", key=f"input {file.page_name}")
 
     default_options = []
     folder_path = "./layouts/"
-    
+
     # Get a list of all files in the folder
     file_list = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
-    
+
     # Print the list of files
     for file_i in file_list:
         default_options.append(file_i)

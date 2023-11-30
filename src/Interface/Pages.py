@@ -28,6 +28,7 @@ class Pages:
         except Exception as e:
             st.error(f"An error occurred: {e}")
         st.session_state.new_file = None
+        file.active = False
     
     def save_app_state(saved_files, filename="saved_files.txt"):
         with open(filename, "w") as f:

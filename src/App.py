@@ -1,10 +1,11 @@
 # Entry point do programa
+import streamlit as st
 import ntpath
 import sys
 from threading import Thread
 from pandas.io.common import os
+from Interface.File import File
 
-from streamlit import logger
 from Log.Logger import Logger
 from Interface.Interface import interface
 from Interpretors.ExcelInterpretor import ExcelInterpretor
@@ -30,12 +31,12 @@ class Group:
 
 global_result: list[Group] = []
 
-def transform_excel(process_name, config_file, input_file, output_sheet):
+def transform_excel(process_name, config_file, input_file, output_sheet, is_config_file = True):
     global lock
     logger = Logger(process_name)
     logger.set_lock(lock)
 
-    layout_input = Config(logger=logger, read_layout_from_file=True, layout=config_file)
+    layout_input = Config(logger=logger, read_layout_from_file=True, layout=config_file) if is_config_file else config_file
 
     excel_interpretor = ExcelInterpretor(logger = logger, config=layout_input, input_file=input_file)
 
@@ -70,8 +71,8 @@ def transform_excel(process_name, config_file, input_file, output_sheet):
         global global_result 
         global_result.append(Group(questions=question_list, group_name=group_name))
 
-def async_transform_excel(process_name, config_file, input_file, output_sheet):
-    t1 = Thread(target=transform_excel, args=(process_name, config_file, input_file, output_sheet))
+def async_transform_excel(process_name, config_file, input_file, output_sheet, is_config_file = True):
+    t1 = Thread(target=transform_excel, args=(process_name, config_file, input_file, output_sheet, is_config_file))
     t1.start()
     return t1
 
@@ -112,19 +113,35 @@ else:
 threads_used: [] = []
 
 if xlsxfiles is not None:
-    for excel in xlsxfiles:
+    if i_active:
+        for excel in xlsxfiles:
 
-        if excel == "result.xlsx":
-            continue
-        
-        filename = ntpath.basename(excel).split('.')[0] if i_active else excel.name.split('.')[0]
-        th = async_transform_excel(
-            process_name=filename,
-            config_file=f"./layouts/{filename}.json",
-            input_file=excel,
-            output_sheet=filename
-        )
-        threads_used.append(th)
+            if excel == "result.xlsx":
+                continue
+            
+            filename = ntpath.basename(excel).split('.')[0] if i_active else excel.name.split('.')[0]
+            th = async_transform_excel(
+                process_name=filename,
+                config_file=f"./layouts/{filename}.json",
+                input_file=excel,
+                output_sheet=filename
+            )
+            threads_used.append(th)
+    else:
+        for file in xlsxfiles:
+            if file.active == False:
+                continue
+
+            excel: File = file
+            
+            st.write(f"Processando {excel.page_name}...")
+            th = async_transform_excel(
+                process_name=excel.page_name,
+                config_file=excel.config,
+                input_file=excel,
+                output_sheet=excel.page_name
+            )
+            threads_used.append(th)
 
     for thread in threads_used:
         thread.join()
@@ -143,4 +160,19 @@ if xlsxfiles is not None:
 
     result.draw_dropdown("./output/result.xlsx")
 
+    if not i_active:
+        st.title("Resultados prontos")
+        st.code("\n".join(Logger.all_logs))
+        
+            # Assuming your Excel file is located at './output/result.xlsx'
+        excel_file_path = "./output/result.xlsx"
+        
+    
+        # Create a download button for the Excel file
+        st.download_button(
+            label="Download Excel workbook",
+            data=excel_file_path,
+            file_name="result.xlsx",
+            key="download_button"
+        )
 

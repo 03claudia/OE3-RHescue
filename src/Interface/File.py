@@ -4,6 +4,7 @@ class File:
     page_name = "No name"
     config = {}
     file_index = 0
+    active = True
 
     def __str__(self):
         return f"File: {self.file},\n Page Name: {self.page_name},\n Config: {self.config},\n File Index: {self.file_index}"

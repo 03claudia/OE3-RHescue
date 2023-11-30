@@ -24,6 +24,7 @@ class Logger:
     argv_keywords = ["-v", "-vi", "-iv", "--verbose", "-d", "--debug"]
     custom_descriptor = ""
     lock: threading.Lock = threading.Lock()
+    all_logs: list[str] = []
 
     def __init__(self, custom_descriptor: str) -> None:
         self.custom_descriptor = custom_descriptor
@@ -73,6 +74,7 @@ class Logger:
             if result:
                 self.lock.release()
 
+    
     def execute_locked_process(self, callback) -> None:
         # uncomment this to get perfect logs
         # but have in mind the performance impact
@@ -81,11 +83,13 @@ class Logger:
 
 
     def print_critical_error(self, log: str):
+        Logger.all_logs.append(f"[CRITICAL ERROR] ({self.custom_descriptor})->{log}{self.get_debug_info()}")
         self.execute_locked_process(
                 lambda: print(f"{Colors.FAIL}[CRITICAL ERROR] ({self.custom_descriptor})-> {log}{Colors.ENDC} {self.get_debug_info()}")
         )
 
     def print_success(self, log: str):
+        Logger.all_logs.append(f"[SUCCESS] ({self.custom_descriptor})->{log}")
         self.execute_locked_process(
                 lambda: print(f"{Colors.OKGREEN}[SUCCESS] ({self.custom_descriptor})-> {log}{Colors.ENDC}")
         )
@@ -101,6 +105,7 @@ class Logger:
     def print_info(self, log: str):
         if(Logger.log_type != LogType.DEBUG and Logger.log_type != LogType.VERBOSE):
             return
+        Logger.all_logs.append(f"[INFO] ({self.custom_descriptor})->{log}")
         self.execute_locked_process(
                 lambda: print(f"{Colors.OKBLUE}[INFO] ({self.custom_descriptor})-> {log}{Colors.ENDC}") 
         )
