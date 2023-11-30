@@ -98,6 +98,7 @@ class Logger:
         if(Logger.log_type != LogType.DEBUG and Logger.log_type != LogType.VERBOSE):
             return
         
+        Logger.all_logs.append(f"[ERROR] ({self.custom_descriptor})->{log}")
         self.execute_locked_process(
                 lambda: print(f"[{Colors.WARNING}ERROR] ({self.custom_descriptor})-> {log}{Colors.ENDC} {self.get_debug_info()}")
         )

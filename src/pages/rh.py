@@ -2,5 +2,5 @@ import Interface.Interface as Interface
 import streamlit as st
 
 saved_files = st.session_state.saved_files
-st.write("RH")
-Interface.ler_ficheiro(saved_files[1])
+st.write("rh")
+Interface.ler_ficheiro(saved_files[3])
