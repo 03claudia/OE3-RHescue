@@ -22,8 +22,12 @@ class Pages:
             st.error(f"An error occurred: {e}")
 
     def delete_page(file: File):
-
-        pass
+        try:
+            os.remove(f"./src/pages/{file.page_name}.py")
+            st.write(f"File {file.page_name} deleted successfully.")
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+        st.session_state.new_file = None
     
     def save_app_state(saved_files, filename="saved_files.txt"):
         with open(filename, "w") as f:

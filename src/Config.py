@@ -34,7 +34,6 @@ class Config:
         return self.data[type_used]
 
     def get_data_as_json(self):
-        print(self.data)
         return self.data
         self.logger.print_info(self.data)
         return json.dumps(self.data)
@@ -50,6 +49,18 @@ class Config:
                 result += self.get_type(key, row["rows"])
 
         return result
+
+    # Enables us to edit the data directly
+    def get_type_mut(self, key: Type, data=None) -> dict:
+        if not data:
+            data = self.get_data()
+        for row in data:
+            if row["type"] == key.name:
+                return row
+            elif row["type"] == Type.CONTENT.name:
+                return self.get_type(key, row["rows"])
+
+        return {} 
 
     def set_data_directly(self, data) -> None:
         self.data = data

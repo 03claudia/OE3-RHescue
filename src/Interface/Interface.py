@@ -1,6 +1,7 @@
 from Config import Config
 from Interface.File import File
 from Interface.Pages import Pages
+from Types import Type
 import streamlit as st
 import os
 import json
@@ -36,6 +37,10 @@ def add_new_page(saved_files: list[File]):
 
         
 def interface():
+    st.set_page_config(layout="wide")
+    if "last_option" not in st.session_state:
+        st.session_state.last_option = {}
+
     if "saved_files" not in st.session_state:
         st.session_state.saved_files = Pages.load_app_state() 
 
@@ -60,7 +65,8 @@ def interface():
 
 
 def ler_ficheiro(file: File):
-    st.code(file)
+    # st.code(file)
+    st.title("Ficheiro Excel")
     uploaded_file = None
     uploaded_file = st.file_uploader("Upload excel", key=f"input {file.page_name}")
 
@@ -74,23 +80,6 @@ def ler_ficheiro(file: File):
     for file_i in file_list:
         default_options.append(file_i)
 
-    option = st.selectbox('Tipo de Avaliacao', default_options)
-    current_config = Config(read_layout_from_file=True, layout=folder_path + option)
-    st.code(current_config.get_data_as_json() if current_config else "No config loaded")
-
-    customize_config(current_config)
-
-    if uploaded_file is not None:
-        file.file = uploaded_file
-        for f in st.session_state.saved_files:
-            if file.file_index == f.file_index:
-                f.file = uploaded_file
-                f.page_name = file.page_name
-                f.config = current_config 
-                f.file_index = file.file_index
-        Pages.save_app_state(st.session_state.saved_files)
-        data = None
-
     if file.file is not None:
         try:
             data = pd.read_excel(file.file)
@@ -101,11 +90,52 @@ def ler_ficheiro(file: File):
                 st.dataframe(data, hide_index=True, height=200)
             except:
                 st.error("File format not supported.")
-    return uploaded_file
+
+
+    st.title("Configurações")
+    option = st.selectbox(
+        'Tipo de Avaliacao',
+        default_options,
+    )
+
+    new_template = False
+    if st.button("Carregar template"):
+        new_template = True
+
+    try:
+        if file.config is not None:
+            file.config = file.config.replace("'", "\"")
+            file.config = json.loads(file.config)
+    except:
+        pass
+    
+    try:
+        current_config = Config(read_layout_from_file=False if not new_template else True, layout=(folder_path + option) if new_template else file.config)
+
+        new_config = customize_config(current_config)
+        file.config = new_config.get_data_as_json()
+
+        if uploaded_file is not None:
+            file.file = uploaded_file
+            for f in st.session_state.saved_files:
+                if file.file_index == f.file_index:
+                    f.file = uploaded_file
+                    f.page_name = file.page_name
+                    f.config = current_config.get_data_as_json()
+                    f.file_index = file.file_index
+            Pages.save_app_state(st.session_state.saved_files)
+            data = None
+
+
+        if st.button("Apagar"):
+            Pages.delete_page(file)
+        return uploaded_file
+    except:
+        pass
     
 
 def customize_config(config: Config):
-    json_config = config.get_data_as_json()["layout"]
+    json_config = config.get_data()
 
     avaliated_people: list[str] = []
     list_questions: list[dict] = []
@@ -122,8 +152,19 @@ def customize_config(config: Config):
                 list_questions.append(row)
     
     df = pd.DataFrame(list_questions)
-
         
-
     new_people = st.text_input("Escreve o nome das pessoas a avaliar: (separado por vírgula)", key="new_people", value=", ".join(avaliated_people))
     edited_df = st.data_editor(df, num_rows="dynamic")
+
+    if st.button("Guardar"):
+        questions = []
+        for i, question in enumerate(edited_df[col1]):
+            questions.append({
+                "label": question,
+                "type": edited_df[col2][i]
+            })
+        # 2. Update the Configuration Data
+        config.get_type_mut(Type.QUESTIONS)["questions"] = questions
+        config.get_type_mut(Type.MEASURED)["names"] = new_people.split(", ")
+        return config
+    return config
