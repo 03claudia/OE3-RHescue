@@ -85,7 +85,6 @@ def save_uploaded_file(uploaded_file):
         file_path = os.path.join("uploads", uploaded_file.name)
         with open(file_path, "wb") as f:
             f.write(uploaded_file.getvalue())
-        st.success(f"File '{uploaded_file.name}' saved to {file_path}")
         return file_path
     return None
 
@@ -147,9 +146,7 @@ if xlsxfiles is not None:
 
             excel: File = file
             
-            st.write(f"Processando {excel.page_name}...")
-            st.code(f"Configurações utilizadas: {excel.config}")
-            st.code(f"Ficheiro: {excel.file}")
+            st.success(f"Processando {excel.page_name}...")
             file_path = save_uploaded_file(excel.file)
             
             th = async_transform_excel(
@@ -161,8 +158,16 @@ if xlsxfiles is not None:
             )
             threads_used.append(th)
 
+    progress_text = "A processar os ficheiros. Por favor, aguarde."
+    percent_complete = 0
+    my_bar = st.progress(0, text=progress_text)
+
+
     for thread in threads_used:
+        my_bar.progress(percent_complete + 15, text=progress_text)
         thread.join()
+
+    my_bar.progress(percent_complete + 50, text=progress_text)
 
     # Depois de se ter analisado todos
     # os exceis, podemos criar o ralatório final
@@ -174,9 +179,12 @@ if xlsxfiles is not None:
 
     # Processa os resultados das avalicações mensais
     # nada está a ser desenhado!!! apenas processado
-    # result.process_av_des_mensal("./output/result.xlsx", lock)
+    result.process_av_des_mensal("./output/result.xlsx", lock)
 
-    # result.draw_dropdown("./output/result.xlsx")
+    result.draw_dropdown("./output/result.xlsx")
+
+    prograss_text = "A processar os resultados. Por favor, aguarde."
+    my_bar.progress(percent_complete + 100, text=progress_text)
 
     if not i_active:
         st.title("Resultados prontos")
@@ -193,3 +201,4 @@ if xlsxfiles is not None:
                 key="download_button"
             )
 
+    my_bar.empty()
