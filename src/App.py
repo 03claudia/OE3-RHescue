@@ -36,7 +36,7 @@ def transform_excel(process_name, config_file, input_file, output_sheet, is_conf
     logger = Logger(process_name)
     logger.set_lock(lock)
 
-    layout_input = Config(logger=logger, read_layout_from_file=True, layout=config_file) if is_config_file else config_file
+    layout_input = Config(logger=logger, read_layout_from_file=is_config_file, layout=config_file) 
 
     excel_interpretor = ExcelInterpretor(logger = logger, config=layout_input, input_file=input_file)
 
@@ -75,6 +75,19 @@ def async_transform_excel(process_name, config_file, input_file, output_sheet, i
     t1 = Thread(target=transform_excel, args=(process_name, config_file, input_file, output_sheet, is_config_file))
     t1.start()
     return t1
+
+def save_uploaded_file(uploaded_file):
+    if uploaded_file is not None:
+        # Save the file to a local directory
+        if not os.path.exists("uploads"):
+            os.makedirs("uploads")
+
+        file_path = os.path.join("uploads", uploaded_file.name)
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getvalue())
+        st.success(f"File '{uploaded_file.name}' saved to {file_path}")
+        return file_path
+    return None
 
 # main
 Logger.set_log_type(sys.argv)
@@ -129,17 +142,22 @@ if xlsxfiles is not None:
             threads_used.append(th)
     else:
         for file in xlsxfiles:
-            if file.active == False:
+            if file.active == False or file.file is None:
                 continue
 
             excel: File = file
             
             st.write(f"Processando {excel.page_name}...")
+            st.code(f"Configurações utilizadas: {excel.config}")
+            st.code(f"Ficheiro: {excel.file}")
+            file_path = save_uploaded_file(excel.file)
+            
             th = async_transform_excel(
                 process_name=excel.page_name,
                 config_file=excel.config,
-                input_file=excel,
-                output_sheet=excel.page_name
+                input_file=file_path,
+                output_sheet=excel.page_name,
+                is_config_file=False
             )
             threads_used.append(th)
 
@@ -156,9 +174,9 @@ if xlsxfiles is not None:
 
     # Processa os resultados das avalicações mensais
     # nada está a ser desenhado!!! apenas processado
-    result.process_av_des_mensal("./output/result.xlsx", lock)
+    # result.process_av_des_mensal("./output/result.xlsx", lock)
 
-    result.draw_dropdown("./output/result.xlsx")
+    # result.draw_dropdown("./output/result.xlsx")
 
     if not i_active:
         st.title("Resultados prontos")
@@ -166,13 +184,12 @@ if xlsxfiles is not None:
         
             # Assuming your Excel file is located at './output/result.xlsx'
         excel_file_path = "./output/result.xlsx"
-        
-    
-        # Create a download button for the Excel file
-        st.download_button(
-            label="Download Excel workbook",
-            data=excel_file_path,
-            file_name="result.xlsx",
-            key="download_button"
-        )
+        with open("./output/result.xlsx", "rb") as file:
+            # Create a download button for the Excel file
+            st.download_button(
+                label="Download Excel workbook",
+                data=file,
+                file_name="result.xlsx",
+                key="download_button"
+            )
 

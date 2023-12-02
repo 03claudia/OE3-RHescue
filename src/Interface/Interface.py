@@ -65,6 +65,7 @@ def interface():
     if st.button("Apagar tudo"):
         os.remove("saved_files.txt")
         shutil.rmtree("./src/pages", ignore_errors=True)
+        st.session_state.saved_files = [] 
     
     add_new_page(st.session_state.saved_files)
     
