@@ -1,4 +1,5 @@
 # Entry point do programa
+import shutil
 import streamlit as st
 import ntpath
 import sys
@@ -121,6 +122,12 @@ else:
     xlsxfiles = interface()
 
 
+if os.path.exists("./output"):
+    shutil.rmtree("./output", ignore_errors=True)
+
+# esvaziar todos os logos sempre que existe um
+# re-run do programa
+Logger.all_logs = []
 
 threads_used: [] = []
 
