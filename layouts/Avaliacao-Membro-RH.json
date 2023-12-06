@@ -116,13 +116,11 @@
             "type": "HEADER",
             "label": "Avalia\u00e7\u00e3o de desempenho",
             "col-span": "full",
-            "row-span": 1,
+            "row-span": 2,
             "bg-color": "FFC000",
             "text-color": "FFFFFF",
             "x-alignment": "center",
-            "y-alignment": "center",
-            "border": "thin",
-            "border-color": "000000"
+            "y-alignment": "center"
         },
         {
             "type": "CONTENT",
@@ -156,9 +154,10 @@
                     "x-alignment": "left",
                     "y-alignment": "center",
                     "border": "thin",
-                    "border-color": "CCCCCC"
+                    "border-color": "000000"
                 }
             ]
         }
-    ]
+    ],
+]
 }

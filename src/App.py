@@ -1,5 +1,8 @@
 # Entry point do programa
 import shutil
+import openpyxl
+
+from pandas.io.formats.style import pd
 import streamlit as st
 import ntpath
 import sys
@@ -121,11 +124,17 @@ if i_active:
 else:
     xlsxfiles = interface()
 
+output_directory = "output"
 
 if os.path.exists("./output"):
     shutil.rmtree("./output", ignore_errors=True)
 
-# esvaziar todos os logos sempre que existe um
+os.mkdir("./output")
+filepath = "./output/result.xlsx"
+wb = openpyxl.Workbook()
+
+wb.save(filepath)
+
 # re-run do programa
 Logger.all_logs = []
 
