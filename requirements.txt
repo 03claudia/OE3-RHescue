@@ -3,3 +3,4 @@ pandas
 numpy
 openpyxl
 st_material_table
+unidecode
