@@ -3,19 +3,12 @@ import shutil
 from Interface.File import File
 from Interface.Pages import Pages
 from Types import Type
-import streamlit as st
+import streamlit as st # type: ignore
 import os
 import json
-from st_material_table import st_material_table
-import pandas as pd
-from io import StringIO
-import streamlit as st
-
-
-Av_Mensal=['Avaliacao-Membros-MKT','Avaliacao-Membro-RH']
-Av_Trimestral=[]
-Av_Projeto=[]
-Av_Direcao=['Avaliacao-Vice-Presidente-Externo']
+from st_material_table import st_material_table # type: ignore
+import pandas as pd # type: ignore
+import streamlit as st # type: ignore
 
 
 def add_new_page(saved_files: list[File]):
