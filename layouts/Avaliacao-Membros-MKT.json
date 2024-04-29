@@ -15,16 +15,17 @@
         {
             "type": "MEASURED",
             "names": [
-                "Beatriz Sousa",
-                "Catarina Oliveira",
-                "Claudia Santos",
-                "Ines Faria",
-                "Ines Geraldes",
-                "Leticia Santos",
-                "Marcia Costa",
-                "Margarida Ribeiro",
-                "Mariana Coelho",
-                "Raquel Baptista"
+                "Ana Carolina Cunha",
+                "Beatriz Fonseca",
+                "Daniel Leite",
+                "Fernanda Carvalho",
+                "Inês Faria",
+                "Joana Morgado",
+                "Márcia Costa",
+                "Margarida Correia",
+                "Margarida Fernandes",
+                "Margarida Lima",
+                "Maria Moreira"
             ]
         },
         {
@@ -63,15 +64,43 @@
                     "type": "NUMBER"
                 },
                 {
-                    "label": "O membro sabe comportar-se de uma forma correta e adequada e de uma maneira profissional e respeitosa, em situa\u00e7\u00f5es em que representa a EPIC J\u00fanior",
+                    "label": "3. O membro é capaz de desenvolver propostas de valor claras, concisas e transparentes capazes de conquistar/convencer o público alvo.",
                     "type": "NUMBER"
                 },
                 {
-                    "label": "O membro cumpre os objetivos das tarefas pelos quais \u00e9 respons\u00e1vel.",
+                    "label": "4. O membro é capaz de manter um contacto com os clientes, de forma profissional, pontual e assertiva, quer via email quer em reuniões.",
                     "type": "NUMBER"
                 },
                 {
-                    "label": "O membro respeita os valores, os membros, as instala\u00e7\u00f5es e todos os recursos da EPIC J\u00fanior.",
+                    "label": "5. O membro consegue pensar, pesquisar, justificar e decidir a estratégia adequada a cada tarefa.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "1. O membro sabe comportar-se de uma forma correta e adequada e de uma maneira profissional e respeitosa, em situações em que representa a EPIC Júnior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "2. O membro respeita os valores, os membros, as instalações e todos os recursos da EPIC Júnior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "1. O membro cumpre os objetivos das tarefas pelos quais é responsável.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "2. O membro respeita o prazo de entrega das suas tarefas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "3. O membro, caso necessário, desenvolve conhecimento técnico especifico para completar a sua tarefa.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "4. Em tarefas de grupo, o membro é capaz de comunicar com os seus colegas de forma clara e concisa, conseguindo defender a sua opinião mas respeitando a opinião dos outros, mantendo uma boa relação interpessoal.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "5. O membro é capaz de executar a sua tarefa de forma eficaz e com qualidade, apresentando espírito crítico, ou seja, questionando e analisando-a de forma racional.",
                     "type": "NUMBER"
                 },
                 {

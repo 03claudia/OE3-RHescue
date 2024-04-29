@@ -1,0 +1,111 @@
+{
+    "layout": [
+        {
+            "type": "AVALTYPE",
+            "label": "gen_m"
+        },
+        {
+            "type": "DATE",
+            "label": "Carimbo de data/hora"
+        },
+        {
+            "type": "MEASURER",
+            "label": "Avaliador"
+        },
+        {
+            "type": "MEASURED",
+            "names": [
+                "Francisco Salgado",
+                "Mariana Coelho",
+                "Paula Ferreira",
+                "Pedro Vieira",
+                "Philip May-Clement"
+            ]
+        },
+        {
+            "type": "QUESTIONS",
+            "questions": [
+                {
+                    "label": "1. O membro conseguiu alcançar os objetivos, estabelecidos a priori, das tarefas pelas quais foi responsável.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "2. O membro cumpriu o prazo de entrega das suas tarefas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "3. O membro, caso necessário, desenvolveu conhecimento técnico especifico para completar a sua tarefa.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "4. O membro foi capaz de comunicar com os seus colegas de forma clara e concisa, conseguindo defender a sua opinião mas respeitando a opinião dos outros, mantendo uma boa relação interpessoal e tendo sempre em mente o melhor interesse do Projeto.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "5. O membro cooperou com os seus colegas para alcançar os objetivos das suas tarefas e, ultimamente, do Projeto.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "6. O membro tinha noção do que era prioritário para uma tarefa, respondendo, em regra, prontamente nos momentos de pressão e urgência.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "7. O membro executou as suas tarefas de forma eficaz e com qualidade, apresentando espírito crítico, ou seja, questionando e analisando-a de forma racional",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "Observações",
+                    "type": "OBSERVATION"
+                }
+            ]
+        }
+    ],
+    "output": [
+        {
+            "type": "HEADER",
+            "label": "Avalia\u00e7\u00e3o de desempenho",
+            "col-span": "full",
+            "row-span": 2,
+            "bg-color": "FFC000",
+            "text-color": "FFFFFF",
+            "x-alignment": "center",
+            "y-alignment": "center"
+        },
+        {
+            "type": "CONTENT",
+            "rows": [
+                {
+                    "type": "MEASURER",
+                    "label": "Avaliador",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURED",
+                    "label": "Avaliado",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURE",
+                    "col-span": 1,
+                    "row-span": 1,
+                    "bg-color": "FFFFFF",
+                    "text-color": "000000",
+                    "x-alignment": "left",
+                    "y-alignment": "center",
+                    "border": "thin",
+                    "border-color": "000000"
+                }
+            ]
+        }
+    ]
+}
