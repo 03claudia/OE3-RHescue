@@ -1,0 +1,155 @@
+{
+    "layout": [
+        {
+            "type": "AVALTYPE",
+            "label": "gen_m"
+        },
+        {
+            "type": "DATE",
+            "label": "Carimbo de data/hora"
+        },
+        {
+            "type": "MEASURER",
+            "label": "Nome do Avaliador"
+        },
+        {
+            "type": "MEASURED",
+            "names": [
+                "Mariana Oliveira"
+            ]
+        },
+        {
+            "type": "QUESTIONS",
+            "questions": [
+                {
+                    "label": "O VPI coopera com os seus colegas para alcançar objetivos comuns que tenham sido estabelecidos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI assume, em regra, objetivos ambiciosos e exigentes, embora realistas, para si e para os seus colegas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI compromete-se com os resultados a alcançar de acordo com os objetivos estratégicos da júnior empresa, e é persistente perante obstáculos e dificuldades. ",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI aceita correr riscos para atingir os resultados desejados e assume as responsabilidades pelo sucesso ou fracasso dos mesmos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI tem noção do que é prioritário para uma tarefa, respondendo, em regra, prontamente nos momentos de pressão e urgência.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI procura desenvolver o seu conhecimento técnico nas áreas relevantes para o seu departamento ou projeto em que esteja envolvido, promovendo um autodesenvolvimento contínuo",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI é capaz de mediar e ultrapassar problemas e oposição de ideias.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI sabe delegar tarefas de forma produtiva, justa e homogénea. Consegue manter uma dinâmica saudável dentro da EPIC Júnior e consegue ajudar cada departamento, tendo sempre em mente uma visão mais abrangente e futura.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI consegue convencer os seus colegas a aceitar uma ideia ou a tomar uma atitude, de forma correta e ponderada.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI é capaz de estruturar o seu pensamento de forma coerente, levando a boas conclusões. Sabe desenvolver estratégias ou ideias bem planeadas/estruturadas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI consegue comunicar com os seus colegas de forma clara, concisa e respeitosa.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI consegue organizar o que faz de forma eficiente e clara, exibindo uma boa gestão de tarefas e tempo.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI sabe comportar-se de uma forma correta e adequada e de uma maneira profissional e respeitosa, em situações em que representa a EPIC Júnior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI respeita os valores, os membros, as instalações e todos os recursos da EPIC Júnior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI cumpre os objetivos das tarefas pelos quais é responsável.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI respeita o prazo de entrega das suas tarefas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI, caso necessário, desenvolve conhecimento técnico especifico para completar a sua tarefa.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "Em tarefas de grupo, o VPI é capaz de comunicar com os seus membros de forma clara e concisa, conseguindo defender a sua opinião mas respeitando a opinião dos outros, mantendo uma boa relação interpessoal.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O VPI é capaz de executar a sua tarefa de forma eficaz e com qualidade, apresentando espírito crítico, ou seja, questionando e analisando-a de forma racional.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "Observações",
+                    "type": "OBSERVATION"
+                }
+            ]
+        }
+    ],
+    "output": [
+        {
+            "type": "HEADER",
+            "label": "Avalia\u00e7\u00e3o de desempenho",
+            "col-span": "full",
+            "row-span": 2,
+            "bg-color": "FFC000",
+            "text-color": "FFFFFF",
+            "x-alignment": "center",
+            "y-alignment": "center"
+        },
+        {
+            "type": "CONTENT",
+            "rows": [
+                {
+                    "type": "MEASURER",
+                    "label": "Avaliador",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURED",
+                    "label": "Avaliado",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURE",
+                    "col-span": 1,
+                    "row-span": 1,
+                    "bg-color": "FFFFFF",
+                    "text-color": "000000",
+                    "x-alignment": "left",
+                    "y-alignment": "center",
+                    "border": "thin",
+                    "border-color": "000000"
+                }
+            ]
+        }
+    ]
+}

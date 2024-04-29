@@ -1,0 +1,123 @@
+{
+    "layout": [
+        {
+            "type": "AVALTYPE",
+            "label": "gen_m"
+        },
+        {
+            "type": "DATE",
+            "label": "Carimbo de data/hora"
+        },
+        {
+            "type": "MEASURER",
+            "label": "Avaliador"
+        },
+        {
+            "type": "MEASURED",
+            "names": [
+                "Pedro Mendes",
+                "Francisco Salgado",
+                "Pedro Vieira",
+                "Simão Dias",
+                "Sofia Gonçalves"
+            ]
+        },
+        {
+            "type": "QUESTIONS",
+            "questions": [
+                {
+                    "label": "O avaliado assume, em regra, objetivos ambiciosos e exigentes, embora realistas, para si e para os seus colegas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O avaliado compromete-se com os resultados a alcançar de acordo com os objetivos estratégicos do departamento/projeto e júnior empresa, e é persistente perante obstáculos e dificuldades.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O avaliado aceita correr riscos para atingir os resultados desejados e assume as responsabilidades pelo sucesso ou fracasso dos mesmos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O avaliado procura desenvolver o seu conhecimento técnico nas áreas relevantes para o seu departamento ou projeto em que esteja envolvido, promovendo um autodesenvolvimento contínuo.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O avaliado consegue estimular e incentivar os membros de forma a que estes atinjam os seus objetivos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O avaliado é capaz de encontrar formas de resolver problemas eficazmente e eficientemente, conseguindo lidar bem com a pressão existente.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "3. O avaliado é capaz de se focar na concretização dos objetivos do trabalho, guiar e encaminhar de forma a garantir que os resultados sejam alcançados conforme o esperado.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "4. O avaliado apresenta uma boa relação entre o esforço e a qualidade dos resultados obtidos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "5. O avaliado consegue manter uma postura positiva e determinada perante adversidades e obstáculos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "6. O avaliado é capaz de mediar e ultrapassar problemas e oposição de ideias.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "Observações",
+                    "type": "OBSERVATION"
+                }
+            ]
+        }
+    ],
+    "output": [
+        {
+            "type": "HEADER",
+            "label": "Avalia\u00e7\u00e3o de desempenho",
+            "col-span": "full",
+            "row-span": 2,
+            "bg-color": "FFC000",
+            "text-color": "FFFFFF",
+            "x-alignment": "center",
+            "y-alignment": "center"
+        },
+        {
+            "type": "CONTENT",
+            "rows": [
+                {
+                    "type": "MEASURER",
+                    "label": "Avaliador",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURED",
+                    "label": "Avaliado",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURE",
+                    "col-span": 1,
+                    "row-span": 1,
+                    "bg-color": "FFFFFF",
+                    "text-color": "000000",
+                    "x-alignment": "left",
+                    "y-alignment": "center",
+                    "border": "thin",
+                    "border-color": "000000"
+                }
+            ]
+        }
+    ]
+}
