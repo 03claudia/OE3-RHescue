@@ -1,0 +1,149 @@
+{
+    "layout": [
+        {
+            "type": "AVALTYPE",
+            "label": "gen_m"
+        },
+        {
+            "type": "DATE",
+            "label": "Carimbo de data/hora"
+        },
+        {
+            "type": "MEASURER",
+            "label": "Nome do avaliador"
+        },
+        {
+            "type": "MEASURED",
+            "names": [
+                "Tiago Figueiredo",
+                "Vítor Alves",
+                "Luana Borges"
+            ]
+        },
+        {
+            "type": "QUESTIONS",
+            "questions": [
+                {
+                    "label": "O membro coopera com os seus colegas para alcan\u00e7ar objetivos comuns que tenham sido estabelecidos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O membro assume, em regra, objetivos ambiciosos e exigentes, embora realistas, para si e para os seus colegas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O membro compromete-se com os resultados a alcan\u00e7ar de acordo com os objetivos estrat\u00e9gicos do departamento e j\u00fanior empresa, e \u00e9 persistente perante obst\u00e1culos e dificuldades.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "4. O membro aceita correr riscos para atingir os resultados desejados e assume as responsabilidades pelo sucesso ou fracasso dos mesmos. ",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "5. O membro tem no\u00e7\u00e3o do que \u00e9 priorit\u00e1rio para uma tarefa, respondendo, em regra, prontamente nos momentos de press\u00e3o e urg\u00eancia.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "6. O membro procura desenvolver o seu conhecimento t\u00e9cnico nas \u00e1reas relevantes para o seu departamento ou projeto em que esteja envolvido, promovendo um autodesenvolvimento cont\u00ednuo.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "1. O membro atualiza constantemente o tracking das atividades em que está inserido.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "2. O membro é capaz de elaborar contratos de forma correta, clara e transparente.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "3. O membro é capaz de realizar uma fatura para um cliente de forma correta.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "4. O membro é capaz de realizar um orçamento de forma correta.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "1. O membro sabe comportar-se de uma forma correta e adequada e de uma maneira profissional e respeitosa, em situa\u00e7\u00f5es em que representa a EPIC J\u00fanior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "2. O membro respeita os valores, os membros, as instala\u00e7\u00f5es e todos os recursos da EPIC J\u00fanior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "1. O membro cumpre os objetivos das tarefas pelos quais \u00e9 respons\u00e1vel.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "2. O membro respeita o prazo de entrega das suas tarefas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "3. O membro, caso necess\u00e1rio, desenvolve conhecimento t\u00e9cnico especifico para completar a sua tarefa.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "4. Em tarefas de grupo, o membro \u00e9 capaz de comunicar com os seus colegas de forma clara e concisa, conseguindo defender a sua opini\u00e3o mas respeitando a opini\u00e3o dos outros, mantendo uma boa rela\u00e7\u00e3o interpessoal.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "5. O membro \u00e9 capaz de executar a sua tarefa de forma eficaz e com qualidade, apresentando esp\u00edrito cr\u00edtico, ou seja, questionando e analisando-a de forma racional.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "Observa\u00e7\u00f5es",
+                    "type": "OBSERVATION"
+                }
+            ]
+        }
+    ],
+    "output": [
+        {
+            "type": "HEADER",
+            "label": "Avalia\u00e7\u00e3o de desempenho",
+            "col-span": "full",
+            "row-span": 2,
+            "bg-color": "FFC000",
+            "text-color": "FFFFFF",
+            "x-alignment": "center",
+            "y-alignment": "center"
+        },
+        {
+            "type": "CONTENT",
+            "rows": [
+                {
+                    "type": "MEASURER",
+                    "label": "Avaliador",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURED",
+                    "label": "Avaliado",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURE",
+                    "col-span": 1,
+                    "row-span": 1,
+                    "bg-color": "FFFFFF",
+                    "text-color": "000000",
+                    "x-alignment": "left",
+                    "y-alignment": "center",
+                    "border": "thin",
+                    "border-color": "000000"
+                }
+            ]
+        }
+    ]
+}
