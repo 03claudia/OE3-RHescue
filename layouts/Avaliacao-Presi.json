@@ -86,10 +86,6 @@
                     "type": "NUMBER"
                 },
                 {
-                    "label": "O Presidente participa regularmente em formações internas e noutras atividades recreativas promovidas pelo departamento de Recursos Humanos.",
-                    "type": "NUMBER"
-                },
-                {
                     "label": "O Presidente participa regularmente em reuniões gerais e reuniões de departamento.",
                     "type": "NUMBER"
                 },
