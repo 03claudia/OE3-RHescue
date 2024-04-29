@@ -1,0 +1,175 @@
+{
+    "layout": [
+        {
+            "type": "AVALTYPE",
+            "label": "gen_m"
+        },
+        {
+            "type": "DATE",
+            "label": "Carimbo de data/hora"
+        },
+        {
+            "type": "MEASURER",
+            "label": "Nome do Avaliador"
+        },
+        {
+            "type": "MEASURED",
+            "names": [
+                "Pedro Mendes"
+            ]
+        },
+        {
+            "type": "QUESTIONS",
+            "questions": [
+                {
+                    "label": "O Secretário Geral coopera com os seus colegas para alcançar objetivos comuns que tenham sido estabelecidos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral assume, em regra, objetivos ambiciosos e exigentes, embora realistas, para si e para os seus colegas",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral compromete-se com os resultados a alcançar de acordo com os objetivos estratégicos da júnior empresa, e é persistente perante obstáculos e dificuldades.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral aceita correr riscos para atingir os resultados desejados e assume as responsabilidades pelo sucesso ou fracasso dos mesmos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral tem noção do que é prioritário para uma tarefa, respondendo, em regra, prontamente nos momentos de pressão e urgência.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral procura desenvolver o seu conhecimento técnico nas áreas relevantes para o seu departamento ou projeto em que esteja envolvido, promovendo um autodesenvolvimento contínuo.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral sabe delegar tarefas de forma produtiva, justa e homogénea. Consegue manter uma dinâmica saudável dentro da EPIC Júnior e consegue ajudar cada departamento, tendo sempre em mente uma visão mais abrangente e futura.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral sabe comportar-se de uma forma correta e adequada, que represente a EPIC Júnior de uma maneira profissional e respeitosa.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral tem sempre em mente o futuro nas suas decisões ou planos, e de que forma a EPIC Júnior poderá crescer.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral consegue organizar o que faz de forma eficiente e clara, exibindo uma boa gestão de tarefas e tempo.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral consegue estruturar o seu pensamento de forma coerente, levando a boas conclusões. Sabe desenvolver estratégias ou ideias bem planeadas/estruturadas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral é capaz de assumir compromissos e arcar com as consequências do próprio comportamento e, em certos casos, do comportamento de outros membros da EPIC Júnior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral consegue analisar bem os prós e contras face a uma escolha e decidir da forma mais correta ou vantajosa para a EPIC Júnior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral tem a capacidade de agir com aceitação e respeito perante algo que não concorda, ou que não quer que aconteça ou que não pode impedir.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral consegue animar, encorajar ou entusiasmar os membros da EPIC Júnior, de forma a que tenham mais motivação para concluir uma determinada tarefa ou para que se esforcem mais.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral participa regularmente em formações internas e noutras atividades recreativas promovidas pelo departamento de Recursos Humanos.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral participa regularmente em reuniões gerais e reuniões de departamento.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral sabe comportar-se de uma forma correta e adequada e de uma maneira profissional e respeitosa, em situações em que representa a EPIC Júnior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral respeita os valores, os membros, as instalações e todos os recursos da EPIC Júnior.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral cumpre os objetivos das tarefas pelos quais é responsável.", 
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral respeita o prazo de entrega das suas tarefas.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral, caso necessário, desenvolve conhecimento técnico especifico para completar a sua tarefa.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "Em tarefas de grupo, o Secretário Geral é capaz de comunicar com os seus membros de forma clara e concisa, conseguindo defender a sua opinião mas respeitando a opinião dos outros, mantendo uma boa relação interpessoal.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "O Secretário Geral é capaz de executar a sua tarefa de forma eficaz e com qualidade, apresentando espírito crítico, ou seja, questionando e analisando-a de forma racional.",
+                    "type": "NUMBER"
+                },
+                {
+                    "label": "Observações",
+                    "type": "OBSERVATION"
+                }
+            ]
+        }
+    ],
+    "output": [
+        {
+            "type": "HEADER",
+            "label": "Avalia\u00e7\u00e3o de desempenho",
+            "col-span": "full",
+            "row-span": 2,
+            "bg-color": "FFC000",
+            "text-color": "FFFFFF",
+            "x-alignment": "center",
+            "y-alignment": "center"
+        },
+        {
+            "type": "CONTENT",
+            "rows": [
+                {
+                    "type": "MEASURER",
+                    "label": "Avaliador",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURED",
+                    "label": "Avaliado",
+                    "col-span": 2,
+                    "row-span": 1,
+                    "bg-color": "AAAAAA",
+                    "text-color": "000000",
+                    "x-alignment": "center",
+                    "y-alignment": "center"
+                },
+                {
+                    "type": "MEASURE",
+                    "col-span": 1,
+                    "row-span": 1,
+                    "bg-color": "FFFFFF",
+                    "text-color": "000000",
+                    "x-alignment": "left",
+                    "y-alignment": "center",
+                    "border": "thin",
+                    "border-color": "000000"
+                }
+            ]
+        }
+    ]
+}
